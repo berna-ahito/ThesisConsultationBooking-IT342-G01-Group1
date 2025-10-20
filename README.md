@@ -11,7 +11,7 @@ A centralized platform designed for the College of Computer Studies – IT Depar
 - **Backend:** Spring Boot  
 - **Frontend (Web):** React.js  
 - **Mobile Application:** Android (Kotlin)  
-- **Database:** PostgreSQL  
+- **Database:** PostgreSQL (Supabase)  
 - **Other Tools & Libraries:** JWT Authentication, Retrofit, Render, Railway, Google OAuth
 
 ---
