@@ -61,10 +61,10 @@ A centralized platform designed for the College of Computer Studies – IT Depar
 
 ## 👥 Team Members
 
-Abadiano, Kent Dominic L. – Developer
+Abadiano, Kent Dominic L. – Developer - kentdominic.abadiano@cit.edu
 
-Abella, Franchesca Louise R. – Developer
+Abella, Franchesca Louise R. – Developer - franchescalouise.abella@cit.edu
 
-Agramon, Vicci Louise D. – Developer
+Agramon, Vicci Louise D. – Developer - viccilouise.agramon@cit.edu
 
-Ahito, Bernadeth Claire G. – Developer
+Ahito, Bernadeth Claire G. – Developer - bernadethclaire.ahito@cit.edu
