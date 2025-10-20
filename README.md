@@ -1,5 +1,6 @@
 # ThesisConsultationBooking-IT342-G01-Group1
-IT342 System Integration Project – Thesis Consultation Booking System (IT Department)
+
+## IT342 System Integration Project – Thesis Consultation Booking System (IT Department)
 
 A centralized platform designed for the College of Computer Studies – IT Department that streamlines the thesis consultation process. The system enables IT students to conveniently book consultations with their thesis advisers while allowing faculty and staff to manage schedules, approve or deny requests, and maintain proper consultation records. It eliminates informal arrangements through chats or walk-ins, reducing scheduling conflicts and ensuring transparency and organized documentation.
 
