@@ -43,17 +43,17 @@ A centralized platform designed for the College of Computer Studies – IT Depar
      ```
    - For local Android emulator use `http://10.0.2.2:8080` as backend base URL.
 
-3. Frontend (React)
-   - Open `frontend`:
+### 🔹 Web (React)
+   - Open `web`:
      ```bash
-     cd frontend
+     cd web
      npm install
      npm run dev
      ```
    - The dev server typically runs at `http://localhost:3000` (or as printed by Vite).
 
-4. Mobile (Android - Kotlin)
-   - Open the `android` folder in Android Studio.
+### 🔹 Mobile (Android – Kotlin)
+   - Open the `mobile` folder in Android Studio.
    - Update API base URL in `ApiClient.kt`.
    - Sync Gradle and run on an emulator or device.
 
@@ -62,10 +62,10 @@ A centralized platform designed for the College of Computer Studies – IT Depar
 
 ## 👥 Team Members
 
-Abadiano, Kent Dominic L. – Developer - kentdominic.abadiano@cit.edu
+| Name | Role | CIT-U Email | GitHub |
+|------|------|--------------|--------|
+| **Abadiano, Kent Dominic L.** | Backend Developer (Web & Mobile) | kentdominic.abadiano@cit.edu | [@KapitanKent](https://github.com/KapitanKent) |
+| **Abella, Franchesca Louise R.** | Frontend Developer (Web & Mobile) | franchescalouise.abella@cit.edu | [@chescaabella](https://github.com/chescaabella) |
+| **Agramon, Vicci Louise D.** | Backend Developer (Web & Mobile) | viccilouise.agramon@cit.edu | [@Xansxxx3](https://github.com/Xansxxx3) |
+| **Ahito, Bernadeth Claire G.** | Project Leader & Lead Developer (Web) | bernadethclaire.ahito@cit.edu | [@berna-ahito](https://github.com/berna-ahito) |
 
-Abella, Franchesca Louise R. – Developer - franchescalouise.abella@cit.edu
-
-Agramon, Vicci Louise D. – Developer - viccilouise.agramon@cit.edu
-
-Ahito, Bernadeth Claire G. – Developer - bernadethclaire.ahito@cit.edu
