@@ -1,0 +1,18 @@
+# Sensitive configuration - CRITICAL!
+src/main/resources/application.properties
+
+# Other sensitive files
+application-local.properties
+.env
+*.env
+
+# Build outputs
+target/
+*.jar
+*.war
+*.class
+
+# IDE files
+.idea/
+.vscode/
+*.iml
