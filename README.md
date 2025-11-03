@@ -30,7 +30,7 @@ Before you begin, ensure you have:
 Verify installation:
 
 ```bash
-java --version    # Should show 21.x.x
+java --version    # Should show 17.x.x or higher
 mvn --version     # Should show 3.9.x
 node --version    # Should show 18.x.x or higher
 ```
