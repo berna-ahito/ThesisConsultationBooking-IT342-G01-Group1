@@ -1,7 +1,16 @@
 package com.cit.thesis.service;
 
+import java.util.Collections;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.cit.thesis.dto.AuthResponse;
+import com.cit.thesis.dto.CompleteProfileRequest;
 import com.cit.thesis.dto.GoogleLoginRequest;
+import com.cit.thesis.dto.LoginRequest;
+import com.cit.thesis.dto.RegisterRequest;
 import com.cit.thesis.dto.UserDto;
 import com.cit.thesis.model.User;
 import com.cit.thesis.model.UserRole;
@@ -11,27 +20,26 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
-    @Transactional
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
+
     public AuthResponse loginWithGoogle(GoogleLoginRequest request) {
         try {
-            // Verify Google ID token
+            // 1. Verify Google token
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(),
                     GsonFactory.getDefaultInstance())
@@ -41,62 +49,160 @@ public class AuthService {
             GoogleIdToken idToken = verifier.verify(request.getCredential());
 
             if (idToken == null) {
-                throw new RuntimeException("Invalid Google ID token");
+                throw new RuntimeException("Invalid Google token");
             }
 
+            // 2. Extract user info from Google
             GoogleIdToken.Payload payload = idToken.getPayload();
             String email = payload.getEmail();
             String name = (String) payload.get("name");
-            String pictureUrl = (String) payload.get("picture");
-            String googleId = payload.getSubject();
+            String picture = (String) payload.get("picture");
 
-            // Find or create user
-            User user = userRepository.findByEmail(email)
-                    .orElseGet(() -> {
-                        User newUser = new User();
-                        newUser.setEmail(email);
-                        newUser.setName(name);
-                        newUser.setPictureUrl(pictureUrl);
-                        newUser.setGoogleId(googleId);
-                        newUser.setRole(UserRole.STUDENT_REP); // Default role
-                        newUser.setActive(true);
-                        return userRepository.save(newUser);
-                    });
+            // 3. Check if user exists
+            User user = userRepository.findByEmail(email).orElse(null);
 
-            // Update user info if changed
-            if (!user.getName().equals(name) || !user.getPictureUrl().equals(pictureUrl)) {
+            if (user == null) {
+                user = new User();
+                user.setEmail(email);
                 user.setName(name);
-                user.setPictureUrl(pictureUrl);
-                userRepository.save(user);
+                user.setPictureUrl(picture);
+                user.setAuthProvider("google");
+                user.setEmailVerified(true);
+                user.setRole(null);
+                user.setIsProfileComplete(false);
+                user = userRepository.save(user);
+            } else {
+
+                if (!user.getIsProfileComplete()) {
+                    String token = jwtUtil.generateToken(user.getEmail());
+                    return buildAuthResponse(user, token);
+                }
+
+                if (user.getRole() == UserRole.PENDING) {
+                    throw new RuntimeException(
+                            "Your account is pending IT Department approval. You will be notified via email once approved.");
+                }
             }
 
-            // Generate JWT token
-            String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+            // 4. Generate JWT token
+            String token = jwtUtil.generateToken(user.getEmail());
 
-            // Create response
-            UserDto userDto = new UserDto(
-                    user.getId(),
-                    user.getEmail(),
-                    user.getName(),
-                    user.getPictureUrl(),
-                    user.getRole());
-
-            return new AuthResponse(token, userDto);
+            // 5. Return response
+            return buildAuthResponse(user, token);
 
         } catch (Exception e) {
             throw new RuntimeException("Google authentication failed: " + e.getMessage(), e);
         }
     }
 
-    public UserDto getCurrentUser(String email) {
+    public AuthResponse completeProfile(CompleteProfileRequest request, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new UserDto(
+        if (user.getIsProfileComplete()) {
+            throw new RuntimeException("Profile already completed");
+        }
+
+        UserRole selectedRole;
+        try {
+            selectedRole = UserRole.valueOf(request.getRole().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid role: " + request.getRole());
+        }
+
+        if (selectedRole == UserRole.ADMIN) {
+            throw new RuntimeException("Admin accounts must be created by system administrators");
+        }
+
+        if (selectedRole == UserRole.STUDENT_REP) {
+            if (request.getStudentId() == null || request.getStudentId().isBlank()) {
+                throw new RuntimeException("Student ID is required for student accounts");
+            }
+            user.setStudentId(request.getStudentId());
+            user.setRole(UserRole.STUDENT_REP);
+            user.setIsProfileComplete(true);
+            user.setAccountStatus("ACTIVE");
+
+        } else if (selectedRole == UserRole.FACULTY_ADVISER) {
+            if (request.getDepartment() == null || request.getDepartment().isBlank()) {
+                throw new RuntimeException("Department is required for faculty accounts");
+            }
+            user.setDepartment(request.getDepartment());
+            user.setRole(UserRole.FACULTY_ADVISER);
+            user.setIsProfileComplete(true);
+            user.setAccountStatus("PENDING");
+
+        } else if (selectedRole == UserRole.ADMIN) {
+            user.setRole(UserRole.ADMIN);
+            user.setIsProfileComplete(true);
+            user.setAccountStatus("ACTIVE");
+        }
+
+        user = userRepository.save(user);
+
+        String token = jwtUtil.generateToken(user.getEmail());
+        return buildAuthResponse(user, token);
+    }
+
+    public AuthResponse loginWithEmail(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+
+        if ("google".equals(user.getAuthProvider())) {
+            throw new RuntimeException("This email is registered with Google. Please use Google Sign-In.");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        if (!user.getIsProfileComplete()) {
+            String token = jwtUtil.generateToken(user.getEmail());
+            return buildAuthResponse(user, token);
+        }
+
+        if (user.getRole() == UserRole.PENDING) {
+            throw new RuntimeException("Your account is pending approval. Contact IT Department.");
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail());
+        return buildAuthResponse(user, token);
+    }
+
+    public AuthResponse register(RegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setName(request.getName());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setAuthProvider("email");
+        user.setEmailVerified(false);
+
+        user.setRole(null);
+        user.setIsProfileComplete(false);
+        user.setAccountStatus("ACTIVE");
+
+        user = userRepository.save(user);
+
+        String token = jwtUtil.generateToken(user.getEmail());
+        return buildAuthResponse(user, token);
+    }
+
+    private AuthResponse buildAuthResponse(User user, String token) {
+        UserDto userDto = new UserDto(
                 user.getId(),
                 user.getEmail(),
                 user.getName(),
                 user.getPictureUrl(),
-                user.getRole());
+                user.getRole() != null ? user.getRole().name() : null,
+                user.getIsProfileComplete(),
+                user.getStudentId(),
+                user.getDepartment(),
+                user.getAccountStatus());
+
+        return new AuthResponse(token, userDto);
     }
 }
