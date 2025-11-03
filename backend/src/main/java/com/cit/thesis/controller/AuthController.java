@@ -1,47 +1,74 @@
 package com.cit.thesis.controller;
 
-import com.cit.thesis.dto.AuthResponse;
-import com.cit.thesis.dto.GoogleLoginRequest;
-import com.cit.thesis.dto.UserDto;
+import com.cit.thesis.dto.*;
 import com.cit.thesis.service.AuthService;
-import lombok.RequiredArgsConstructor;
+import com.cit.thesis.security.JwtUtil;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${app.cors.allowed-origins}")
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtUtil jwtUtil;
 
+    public AuthController(AuthService authService, JwtUtil jwtUtil) {
+        this.authService = authService;
+        this.jwtUtil = jwtUtil;
+    }
+
+    /**
+     * Google OAuth Login
+     */
     @PostMapping("/google")
-    public ResponseEntity<AuthResponse> loginWithGoogle(@RequestBody GoogleLoginRequest request) {
+    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest request) {
         try {
             AuthResponse response = authService.loginWithGoogle(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<UserDto> getCurrentUser(Authentication authentication) {
-        if (authentication == null) {
-            return ResponseEntity.status(401).build();
-        }
+    /**
+     * Complete Profile (after Google OAuth)
+     */
+    @PostMapping("/complete-profile")
+    public ResponseEntity<?> completeProfile(
+            @Valid @RequestBody CompleteProfileRequest request,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            String email = jwtUtil.extractUsername(token);
 
-        String email = authentication.getName();
-        UserDto user = authService.getCurrentUser(email);
-        return ResponseEntity.ok(user);
+            AuthResponse response = authService.completeProfile(request, email);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
-        // JWT is stateless, logout is handled on frontend by removing token
-        return ResponseEntity.ok().build();
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+        try {
+            AuthResponse response = authService.register(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        try {
+            AuthResponse response = authService.loginWithEmail(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/test")

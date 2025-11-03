@@ -24,6 +24,9 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    /**
+     * Generate token with email and role (for complete profiles)
+     */
     public String generateToken(String email, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
@@ -37,8 +40,24 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String generateToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+
+        return Jwts.builder()
+                .claims(claims)
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey())
+                .compact();
+    }
+
     public String extractEmail(String token) {
         return extractAllClaims(token).getSubject();
+    }
+
+    public String extractUsername(String token) {
+        return extractEmail(token);
     }
 
     public String extractRole(String token) {

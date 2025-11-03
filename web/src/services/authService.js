@@ -1,46 +1,53 @@
 import api from './api';
 
-const authService = {
-    // Login with Google OAuth
-    async loginWithGoogle(credential) {
-        try {
-            const response = await api.post('/api/auth/google', { credential });
-            const { token, user } = response.data;
-
-            // Store token and user info
-            localStorage.setItem('accessToken', token);
-            localStorage.setItem('user', JSON.stringify(user));
-
-            return { token, user };
-        } catch (error) {
-            console.error('Login failed:', error);
-            throw error;
-        }
-    },
-
-    // Logout
-    logout() {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
-    },
-
-    // Get current user
-    getCurrentUser() {
-        const userStr = localStorage.getItem('user');
-        return userStr ? JSON.parse(userStr) : null;
-    },
-
-    // Check if user is authenticated
-    isAuthenticated() {
-        return !!localStorage.getItem('accessToken');
-    },
-
-    // Get user role
-    getUserRole() {
-        const user = this.getCurrentUser();
-        return user?.role || null;
-    },
+// Google OAuth Login
+export const loginWithGoogle = async (credential) => {
+    const response = await api.post('/auth/google', { credential });
+    return response.data;
 };
 
-export default authService;
+// Traditional Email/Password Login
+export const loginWithEmail = async (credentials) => {
+    const response = await api.post('/auth/login', credentials);
+    return response.data;
+};
+
+// Registration
+export const register = async (userData) => {
+    const response = await api.post('/auth/register', userData);
+    return response.data;
+};
+
+// Complete Profile (after Google OAuth)
+export const completeProfile = async (profileData) => {
+    console.log('🚀 [authService] completeProfile called with:', profileData);
+    console.log('🔑 [authService] Token from localStorage:', localStorage.getItem('token'));
+
+    try {
+        const response = await api.post('/auth/complete-profile', profileData);
+        console.log('✅ [authService] Complete profile success:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('❌ [authService] Complete profile error:', error);
+        console.error('❌ [authService] Error response:', error.response?.data);
+        console.error('❌ [authService] Error status:', error.response?.status);
+        throw error;
+    }
+};
+
+// Logout
+export const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+};
+
+// Get current user
+export const getCurrentUser = () => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+};
+
+// Get token
+export const getToken = () => {
+    return localStorage.getItem('token');
+};

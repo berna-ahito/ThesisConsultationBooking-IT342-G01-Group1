@@ -1,40 +1,19 @@
-# IDE and Editor files
-.vscode/*
-!.vscode/settings.json
-!.vscode/extensions.json
-.idea/
-*.iml
-*.swp
-*.swo
-
-# OS files
-.DS_Store
-Thumbs.db
-*.ctxt
-
-# Credentials and sensitive files
-CREDENTIALS.md
-
-# Backend specific
-backend/target/
-backend/src/main/resources/application.properties
-
-# Frontend specific  
+﻿# ─── FRONTEND (Vite/React) ───
 web/node_modules/
 web/dist/
-web/.env.local
 web/.env
+web/.env.*
+!web/.env.example
 
-# Java specific
-*.class
-*.log
-.mtj.tmp/
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-hs_err_pid*
-replay_pid*
+# ─── BACKEND (Spring Boot) ───
+backend/target/
+backend/.env
+backend/src/main/resources/application.properties
+backend/*.log
+!backend/src/main/resources/application.properties.example
+
+# ─── IDE / OS Files ───
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

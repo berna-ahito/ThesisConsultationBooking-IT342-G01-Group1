@@ -1,0 +1,107 @@
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.quick-actions-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-gray-900, #111827);
+  margin: 0;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 16px;
+  background: white;
+  border: 2px solid var(--color-gray-200, #e5e7eb);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 120px;
+}
+
+.action-card:hover:not(:disabled) {
+  border-color: var(--color-primary, #8b2635);
+  background: var(--color-gray-50, #f9fafb);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 38, 53, 0.15);
+}
+
+.action-card:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.action-card:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-card.action-primary {
+  background: var(--color-primary, #8b2635);
+  border-color: var(--color-primary, #8b2635);
+  color: white;
+}
+
+.action-card.action-primary:hover:not(:disabled) {
+  background: var(--color-primary-dark, #6b1e2b);
+  border-color: var(--color-primary-dark, #6b1e2b);
+}
+
+.action-card.action-primary .action-icon {
+  filter: brightness(0) invert(1);
+}
+
+.action-card.action-primary .action-label {
+  color: white;
+}
+
+.action-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.action-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-gray-700, #374151);
+  text-align: center;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .actions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .action-card {
+    padding: 20px 12px;
+    min-height: 100px;
+  }
+
+  .action-icon {
+    font-size: 28px;
+  }
+
+  .action-label {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
