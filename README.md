@@ -22,7 +22,7 @@ A centralized platform designed for the College of Computer Studies – IT Depar
 
 Before you begin, ensure you have:
 
-- **Java 21** - [Download](https://www.oracle.com/java/technologies/downloads/)
+- **Java 17 or higher** - [Download](https://www.oracle.com/java/technologies/downloads/)
 - **Maven 3.9+** - [Download](https://maven.apache.org/download.cgi)
 - **Node.js 18+** - [Download](https://nodejs.org/)
 - **Git** - [Download](https://git-scm.com/)
