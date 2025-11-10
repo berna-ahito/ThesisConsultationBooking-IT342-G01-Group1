@@ -1,0 +1,69 @@
+.consultation-calendar {
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  height: calc(100vh - 200px);
+  min-height: 600px;
+}
+
+/* Override react-big-calendar default styles */
+.consultation-calendar .rbc-calendar {
+  font-family: var(--font-family);
+}
+
+.consultation-calendar .rbc-toolbar {
+  margin-bottom: var(--spacing-md);
+}
+
+.consultation-calendar .rbc-toolbar button {
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  background-color: var(--color-white);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.consultation-calendar .rbc-toolbar button:hover {
+  background-color: var(--color-gray-100);
+  border-color: var(--border-dark);
+}
+
+.consultation-calendar .rbc-toolbar button.rbc-active {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary-dark);
+}
+
+.consultation-calendar .rbc-header {
+  padding: var(--spacing-sm);
+  font-weight: var(--font-weight-medium);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.consultation-calendar .rbc-event {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+}
+
+.consultation-calendar .rbc-today {
+  background-color: var(--color-primary-light);
+}
+
+.calendar-loading,
+.calendar-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+}
+
+.calendar-error {
+  color: var(--color-error);
+}
