@@ -12,6 +12,8 @@ import com.cit.thesis.dto.GoogleLoginRequest;
 import com.cit.thesis.dto.LoginRequest;
 import com.cit.thesis.dto.RegisterRequest;
 import com.cit.thesis.dto.UserDto;
+import com.cit.thesis.model.Faculty;
+import com.cit.thesis.model.Student;
 import com.cit.thesis.model.User;
 import com.cit.thesis.model.UserRole;
 import com.cit.thesis.repository.UserRepository;
@@ -62,7 +64,7 @@ public class AuthService {
             User user = userRepository.findByEmail(email).orElse(null);
 
             if (user == null) {
-                user = new User();
+                user = new User() {};
                 user.setEmail(email);
                 user.setName(name);
                 user.setPictureUrl(picture);
@@ -118,7 +120,6 @@ public class AuthService {
             if (request.getStudentId() == null || request.getStudentId().isBlank()) {
                 throw new RuntimeException("Student ID is required for student accounts");
             }
-            user.setStudentId(request.getStudentId());
             user.setRole(UserRole.STUDENT_REP);
             user.setIsProfileComplete(true);
             user.setAccountStatus("ACTIVE");
@@ -169,26 +170,50 @@ public class AuthService {
         return buildAuthResponse(user, token);
     }
 
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponse registerFaculty(RegisterRequest request) {
+        Faculty faculty = new Faculty();
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
+        faculty.setEmail(request.getEmail());
+        faculty.setName(request.getName());
+        faculty.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        faculty.setAuthProvider("email");
+        faculty.setEmailVerified(false);
+        faculty.setRole(UserRole.FACULTY_ADVISER);
+        faculty.setDepartment(request.getDepartment());
+        faculty.setFacultyId(request.getFacultyId());
+        faculty.setIsAvailable(request.getIsAvailable());
+        faculty.setIsProfileComplete(false);
+        faculty.setAccountStatus("ACTIVE");
+
+        faculty = userRepository.save(faculty);
+
+        String token = jwtUtil.generateToken(faculty.getEmail());
+        return buildAuthResponse(faculty, token);
+    }
+    public AuthResponse registerStudent(RegisterRequest request) {
+        Student student = new Student();
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
 
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setName(request.getName());
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setAuthProvider("email");
-        user.setEmailVerified(false);
+        
+        student.setEmail(request.getEmail());
+        student.setName(request.getName());
+        student.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        student.setAuthProvider("email");
+        student.setEmailVerified(false);
+        student.setRole(UserRole.STUDENT_REP);
+        student.setIsProfileComplete(false);
+        student.setAccountStatus("ACTIVE");
+        student.setStudentId(request.getStudentId());
+        student.setGroupId(request.getGroupId());
+        student.setDepartment(request.getDepartment());
+        student = userRepository.save(student);
 
-        user.setRole(null);
-        user.setIsProfileComplete(false);
-        user.setAccountStatus("ACTIVE");
-
-        user = userRepository.save(user);
-
-        String token = jwtUtil.generateToken(user.getEmail());
-        return buildAuthResponse(user, token);
+        String token = jwtUtil.generateToken(student.getEmail());
+        return buildAuthResponse(student, token);
     }
 
     private AuthResponse buildAuthResponse(User user, String token) {
@@ -199,7 +224,6 @@ public class AuthService {
                 user.getPictureUrl(),
                 user.getRole() != null ? user.getRole().name() : null,
                 user.getIsProfileComplete(),
-                user.getStudentId(),
                 user.getDepartment(),
                 user.getAccountStatus());
 

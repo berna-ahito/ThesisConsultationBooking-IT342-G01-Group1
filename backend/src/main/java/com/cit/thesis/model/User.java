@@ -1,5 +1,7 @@
 package com.cit.thesis.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,9 +33,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private UserRole role;
-
-    @Column(name = "student_id", unique = true)
-    private String studentId;
 
     @Column(length = 100)
     private String department;
@@ -81,5 +81,94 @@ public class User {
         if (accountStatus == null) {
             accountStatus = "ACTIVE";
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+    public void setPasswordHash(String passwordHash){
+        this.passwordHash = passwordHash;
+    }
+    public String getPasswordHash(){
+        return passwordHash;
+    }
+
+    public Boolean getIsProfileComplete() {
+        return isProfileComplete;
+    }
+
+    public void setIsProfileComplete(Boolean isProfileComplete) {
+        this.isProfileComplete = isProfileComplete;
+    }
+
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
+    }
+    public LocalDateTime getApprovedAt(){
+        return approvedAt;
+    }
+    public void setApprovedAt(LocalDateTime approvedAt){
+        this.approvedAt = approvedAt;
+    }
+    public void setActive(Boolean active){
+        this.active = active;
+    }
+    public void setAuthProvider(String authProvider){
+        this.authProvider = authProvider;
+    }
+    public String getAuthProvider(){
+        return authProvider;
+    }
+    public void setEmailVerified(Boolean emailVerified){
+        this.emailVerified = emailVerified;
     }
 }

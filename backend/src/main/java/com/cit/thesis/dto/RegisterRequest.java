@@ -18,7 +18,11 @@ public class RegisterRequest {
     private String password;
 
     private String role;
-    private String studentId;
+    private int studentId;
+    private int facultyId;
+    private boolean isAvailable;
+    private int groupId;
+    private String department;
 
     public RegisterRequest() {
     }
@@ -52,6 +56,12 @@ public class RegisterRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+    public String getDepartment() {
+        return department;
+    }
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
     public String getRole() {
         return role;
@@ -60,12 +70,30 @@ public class RegisterRequest {
     public void setRole(String role) {
         this.role = role;
     }
+    public int getFacultyId() {
+        return facultyId;
+    }
+    public void setFacultyId(int facultyId) {
+        this.facultyId = facultyId;
+    }
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+    public int getGroupId() {
+        return groupId;
+    }
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
 
-    public String getStudentId() {
+    public int getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(String studentId) {
+    public void setStudentId(int studentId) {
         this.studentId = studentId;
     }
 }

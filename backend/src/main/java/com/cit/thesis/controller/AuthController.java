@@ -51,10 +51,19 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/register")
+    @PostMapping("/registerStudent")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
-            AuthResponse response = authService.register(request);
+            AuthResponse response = authService.registerStudent(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PostMapping("/registerFaculty")
+    public ResponseEntity<?> registerFaculty(@Valid @RequestBody RegisterRequest request) {
+        try {
+            AuthResponse response = authService.registerFaculty(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
