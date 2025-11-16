@@ -67,10 +67,6 @@ public class ConsultationService {
 
     public List<ConsultationResponse> getUserConsultationsInRange(
             LocalDateTime start, LocalDateTime end) {
-        // This endpoint is intended to be called with the current user's email
-        // resolved in the controller; here we will just fetch by email when provided
-        // via a security principal in the controller layer.
-        // For now, the controller calls this method after resolving the user.
         throw new UnsupportedOperationException("Use getStudentConsultations or getAdviserConsultations instead.");
     }
 
