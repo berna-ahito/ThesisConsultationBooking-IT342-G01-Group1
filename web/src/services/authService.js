@@ -35,6 +35,12 @@ export const completeProfile = async (profileData) => {
     }
 };
 
+// Update existing profile (editable profile page)
+export const updateProfile = async (profileData) => {
+    const response = await api.post('/auth/update-profile', profileData);
+    return response.data;
+};
+
 // Logout
 export const logout = () => {
     localStorage.removeItem('token');

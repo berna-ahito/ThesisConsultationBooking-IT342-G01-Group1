@@ -11,7 +11,14 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import CompleteProfilePage from "./pages/CompleteProfilePage"; // 🎯 NEW
 import PendingApprovalPage from "./pages/PendingApprovalPage"; // 🎯 NEW
+import StudentShell from "./components/layout/StudentShell";
 import StudentDashboard from "./pages/dashboards/StudentDashboard";
+import Consultations from "./pages/student/Consultations";
+import Schedule from "./pages/student/Schedule";
+import Documents from "./pages/student/Documents";
+import Messages from "./pages/student/Messages";
+import Settings from "./pages/student/Settings";
+import Profile from "./pages/student/Profile";
 import AdviserDashboard from "./pages/dashboards/AdviserDashboard";
 import AdminDashboard from "./pages/dashboards/AdminDashboard";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
@@ -37,13 +44,22 @@ function App() {
 
             {/* Protected Routes */}
             <Route
-              path="/student/dashboard"
+              path="/student"
               element={
                 <ProtectedRoute allowedRoles={["STUDENT_REP"]}>
-                  <StudentDashboard />
+                  <StudentShell />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route path="dashboard" element={<StudentDashboard />} />
+              <Route path="consultations" element={<Consultations />} />
+              <Route path="schedule" element={<Schedule />} />
+              <Route path="documents" element={<Documents />} />
+              <Route path="messages" element={<Messages />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="" element={<Navigate to="dashboard" replace />} />
+            </Route>
             <Route
               path="/adviser/dashboard"
               element={

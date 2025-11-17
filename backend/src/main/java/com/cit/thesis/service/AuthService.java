@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.cit.thesis.dto.AuthResponse;
 import com.cit.thesis.dto.CompleteProfileRequest;
+import com.cit.thesis.dto.UpdateProfileRequest;
 import com.cit.thesis.dto.GoogleLoginRequest;
 import com.cit.thesis.dto.LoginRequest;
 import com.cit.thesis.dto.RegisterRequest;
@@ -27,6 +28,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
@@ -188,6 +190,28 @@ public class AuthService {
         user = userRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getEmail());
+        return buildAuthResponse(user, token);
+    }
+
+    public AuthResponse updateProfile(UpdateProfileRequest request, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (request.getName() != null && !request.getName().isBlank()) {
+            user.setName(request.getName());
+        }
+
+        if (request.getStudentId() != null) {
+            user.setStudentId(request.getStudentId());
+        }
+
+        if (request.getDepartment() != null) {
+            user.setDepartment(request.getDepartment());
+        }
+
+        user = userRepository.save(user);
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole() != null ? user.getRole().name() : null);
         return buildAuthResponse(user, token);
     }
 

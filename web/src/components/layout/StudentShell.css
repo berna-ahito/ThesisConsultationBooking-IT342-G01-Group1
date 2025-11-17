@@ -1,0 +1,20 @@
+.student-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.student-content {
+  flex: 1;
+  background: var(--color-gray-50, #f9fafb);
+  padding: 24px;
+}
+
+.student-content .dashboard-main {
+  padding: 0; /* Dashboard will control its own spacing */
+}
+
+/* Make inner pages align with dashboard content width */
+.student-content > * {
+  max-width: 1100px;
+  margin: 0 auto;
+}

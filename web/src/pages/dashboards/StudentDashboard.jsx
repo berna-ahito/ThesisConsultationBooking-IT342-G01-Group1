@@ -70,13 +70,13 @@ const StudentDashboard = () => {
 
   return (
     <div className="dashboard-page">
-      <DashboardHeader
-        title="Thesis Consultation Booking"
-        subtitle="Student Portal"
-        icon="🎓"
-      />
+      <div className="dashboard-main">
+        <DashboardHeader
+          title="Thesis Consultation Booking"
+          subtitle="Student Portal"
+          icon="🎓"
+        />
 
-      <main className="dashboard-main">
         <div className="dashboard-content">
           <WelcomeCard
             userName={user?.name}
@@ -100,7 +100,7 @@ const StudentDashboard = () => {
             activities={recentActivities}
           />
         </div>
-      </main>
+      </div>
     </div>
   );
 };
