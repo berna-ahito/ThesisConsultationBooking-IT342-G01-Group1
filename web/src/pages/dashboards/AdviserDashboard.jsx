@@ -1,90 +1,145 @@
 import { useAuth } from "../../context/AuthContext";
-import Button from "../../components/common/Button";
-import { Calendar } from "../../components/common/calendar";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getMySchedules,
+  createSchedule,
+  deleteSchedule,
+} from "../../services/scheduleService";
+import DashboardLayout from "../../components/layout/DashboardLayout";
+import DashboardHeader from "../../components/layout/DashboardHeader";
+import StatsGrid from "../../components/common/StatsGrid";
+import QuickActions from "../../components/common/QuickActions";
+import SchedulesTable from "../../components/schedules/SchedulesTable";
+import CreateScheduleModal from "../../components/schedules/CreateScheduleModal";
+import "../../styles/dashboard-common.css";
 
 const AdviserDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [schedules, setSchedules] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const students = [
-    { name: "Juan Dela Cruz", date: "2025-11-12", section: "BSIT 3A" },
-    { name: "Maria Santos", date: "2025-11-13", section: "BSIT 3B" },
-    { name: "Pedro Reyes", date: "2025-11-14", section: "BSIT 3A" },
-    { name: "Ana Villanueva", date: "2025-11-15", section: "BSIT 3C" },
-    { name: "Luis Gomez", date: "2025-11-16", section: "BSIT 3B" },
+  const fetchSchedules = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getMySchedules();
+      setSchedules(data);
+    } catch (err) {
+      console.error("❌ Failed to fetch schedules:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSchedules();
+  }, [fetchSchedules]);
+
+  const handleCreateSchedule = () => {
+    setShowModal(true);
+  };
+
+  const handleSubmitSchedule = async (formData) => {
+    try {
+      setSubmitting(true);
+      await createSchedule(formData);
+      await fetchSchedules();
+      setShowModal(false);
+    } catch (err) {
+      console.error("❌ Failed to create schedule:", err);
+      alert(err.response?.data?.message || "Failed to create schedule");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteSchedule = async (scheduleId) => {
+    if (!window.confirm("Are you sure you want to delete this schedule?")) {
+      return;
+    }
+
+    try {
+      await deleteSchedule(scheduleId);
+      await fetchSchedules();
+    } catch (err) {
+      console.error("❌ Failed to delete schedule:", err);
+      alert(err.response?.data?.message || "Failed to delete schedule");
+    }
+  };
+
+  const quickActions = [
+    {
+      icon: "➕",
+      label: "Create Schedule",
+      onClick: handleCreateSchedule,
+      primary: true,
+    },
+    {
+      icon: "📋",
+      label: "View Consultations",
+      onClick: () => navigate("/adviser/consultations"),
+    },
+    {
+      icon: "📬",
+      label: "Pending Requests",
+      onClick: () => navigate("/adviser/pending"),
+    },
+    {
+      icon: "👤",
+      label: "My Profile",
+      onClick: () => navigate("/adviser/profile"),
+    },
   ];
 
+  if (loading) {
+    return (
+      <DashboardLayout role="FACULTY_ADVISER">
+        <div style={{ padding: "2rem" }}>Loading...</div>
+      </DashboardLayout>
+    );
+  }
+
   return (
-    <div className="container" style={{ paddingTop: "40px" }}>
-      <div className="card">
-        <h1>Faculty Adviser Dashboard</h1>
-        <p>Welcome, {user?.name}!</p>
-        <p>Email: {user?.email}</p>
-        <p>Role: {user?.role}</p>
-         <Button
-          onClick={logout}
-          className="btn btn-danger"
-          style={{ marginTop: "20px" }}
-        >
-          Update Profile
-        </Button>
-        <Button
-          onClick={logout}
-          className="btn btn-danger"
-          style={{ marginTop: "20px" }}
-        >
-          Logout
-        </Button>
-      </div>
+    <DashboardLayout role="FACULTY_ADVISER">
+      <DashboardHeader
+        title={`Good ${new Date().getHours() < 12 ? "morning" : "afternoon"}, ${
+          user?.name?.split(" ")[0]
+        }! 👋`}
+        subtitle="Manage your thesis consultations and track student progress"
+        icon="👨‍🏫"
+      />
 
-      <div className="card" style={{ marginTop: "20px", padding: "20px" }}>
-        <h2>Quick Actions</h2>
-        <p>Manage schedules, approve requests, view consultations.</p>
+      <main className="dashboard-main">
+        <div className="dashboard-grid">
+          <QuickActions actions={quickActions} />
 
-        {/* Flex layout: Student table + Calendar */}
-        <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
-          
-          {/* Student table */}
-          <div style={{ flex: 2, maxHeight: "400px", overflowY: "auto", border: "1px solid #ccc", borderRadius: "10px", backgroundColor: "#f5f5f5" }}>
-            
-            {/* Table Header */}
-            <div style={{ display: "flex", padding: "10px", fontWeight: "bold", borderBottom: "1px solid #ccc" }}>
-              <div style={{ flex: 2 }}>Student Name</div>
-              <div style={{ flex: 1 }}>Date</div>
-              <div style={{ flex: 1 }}>Section</div>
-              <div style={{ flex: 2 }}>Action</div>
+          <div className="section-card">
+            <div className="section-header">
+              <h3>My Availability Schedules</h3>
+              <button onClick={handleCreateSchedule} className="btn-create">
+                ➕ Add Schedule
+              </button>
             </div>
-
-            {/* Table Rows */}
-            {students.map((student, index) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  padding: "10px",
-                  borderBottom: "1px solid #eee",
-                  backgroundColor: index % 2 === 0 ? "#fff" : "#f9f9f9",
-                  alignItems: "center",
-                }}
-              >
-                <div style={{ flex: 2 }}>{student.name}</div>
-                <div style={{ flex: 1 }}>{student.date}</div>
-                <div style={{ flex: 1 }}>{student.section}</div>
-                <div style={{ flex: 2, display: "flex", gap: "5px" }}>
-                  <Button style={{ flex: 1 }} className="btn btn-primary">View</Button>
-                  <Button style={{ flex: 1 }} className="btn btn-success">Accept</Button>
-                  <Button style={{ flex: 1 }} className="btn btn-danger">Cancel</Button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Calendar */}
-          <div style={{ flex: 1 }}>
-            <Calendar />
+            <SchedulesTable
+              schedules={schedules}
+              onDelete={handleDeleteSchedule}
+              onCreate={handleCreateSchedule}
+            />
           </div>
         </div>
-      </div>
-    </div>
+      </main>
+
+      {showModal && (
+        <CreateScheduleModal
+          onClose={() => setShowModal(false)}
+          onSubmit={handleSubmitSchedule}
+          loading={submitting}
+        />
+      )}
+    </DashboardLayout>
   );
 };
 

@@ -8,11 +8,13 @@ public class UserDto {
     private String role;
     private Boolean isProfileComplete;
     private String studentId;
+    private String teamCode;
     private String department;
     private String accountStatus;
 
     public UserDto(Long id, String email, String name, String pictureUrl, String role,
-            Boolean isProfileComplete, String studentId, String department, String accountStatus) {
+            Boolean isProfileComplete, String studentId, String teamCode,
+            String department, String accountStatus) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -20,17 +22,18 @@ public class UserDto {
         this.role = role;
         this.isProfileComplete = isProfileComplete;
         this.studentId = studentId;
+        this.teamCode = teamCode;
         this.department = department;
         this.accountStatus = accountStatus;
     }
 
     public UserDto(Long id, String email, String name, String pictureUrl, String role,
             Boolean isProfileComplete, String studentId, String department) {
-        this(id, email, name, pictureUrl, role, isProfileComplete, studentId, department, "ACTIVE");
+        this(id, email, name, pictureUrl, role, isProfileComplete, studentId, null, department, "ACTIVE");
     }
 
     public UserDto(Long id, String email, String name, String pictureUrl, String role) {
-        this(id, email, name, pictureUrl, role, true, null, null, "ACTIVE");
+        this(id, email, name, pictureUrl, role, true, null, null, null, "ACTIVE");
     }
 
     public UserDto() {
@@ -90,6 +93,14 @@ public class UserDto {
 
     public void setStudentId(String studentId) {
         this.studentId = studentId;
+    }
+
+    public String getTeamCode() {
+        return teamCode;
+    }
+
+    public void setTeamCode(String teamCode) {
+        this.teamCode = teamCode;
     }
 
     public String getDepartment() {

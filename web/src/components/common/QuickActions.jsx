@@ -1,21 +1,20 @@
-// components/common/QuickActions.jsx
 import PropTypes from "prop-types";
 import "./QuickActions.css";
 
-const QuickActions = ({ actions = [] }) => {
+const QuickActions = ({ actions = [], title = "Quick Actions" }) => {
   return (
-    <div className="quick-actions">
-      <h3 className="quick-actions-title">Quick Actions</h3>
-      <div className="actions-grid">
+    <div className="quick-actions-card">
+      <h3 className="card-title">{title}</h3>
+      <div className="actions-list">
         {actions.map((action, index) => (
           <button
             key={index}
             onClick={action.onClick}
-            className={`action-card ${action.primary ? "action-primary" : ""}`}
+            className="action-item"
             disabled={action.disabled}
           >
-            <span className="action-icon">{action.icon}</span>
             <span className="action-label">{action.label}</span>
+            <span className="action-arrow">→</span>
           </button>
         ))}
       </div>
@@ -26,13 +25,12 @@ const QuickActions = ({ actions = [] }) => {
 QuickActions.propTypes = {
   actions: PropTypes.arrayOf(
     PropTypes.shape({
-      icon: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       onClick: PropTypes.func.isRequired,
-      primary: PropTypes.bool,
       disabled: PropTypes.bool,
     })
   ).isRequired,
+  title: PropTypes.string,
 };
 
 export default QuickActions;

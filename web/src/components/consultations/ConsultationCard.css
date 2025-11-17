@@ -1,0 +1,125 @@
+.consultation-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.consultation-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f172a 0%, #7c3aed 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.student-info h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.team-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #ede9fe;
+  color: #6d28d9;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.info-row {
+  display: flex;
+  gap: 8px;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: #64748b;
+  font-size: 14px;
+  min-width: 100px;
+}
+
+.info-row .value {
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.description,
+.rejection-reason,
+.adviser-notes {
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.description .label,
+.rejection-reason .label,
+.adviser-notes .label {
+  display: block;
+  font-weight: 600;
+  color: #475569;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.description p,
+.rejection-reason p,
+.adviser-notes p {
+  margin: 0;
+  color: #1e293b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.rejection-reason {
+  background: #fef2f2;
+  border-left: 3px solid #dc2626;
+}
+
+.adviser-notes {
+  background: #f0fdf4;
+  border-left: 3px solid #16a34a;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}

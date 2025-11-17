@@ -1,27 +1,59 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { register } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
+import { register, loginWithGoogle } from "../services/authService";
 import AuthLayout from "../components/layout/AuthLayout";
 import GoogleAuthButton from "../components/auth/GoogleAuthButton";
 import "./LoginPage.css";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const { updateUser } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
     name: "",
     password: "",
     confirmPassword: "",
-    role: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // Redirect logic (same as LoginPage)
+  const handleRedirect = (user) => {
+    if (!user.isProfileComplete) {
+      navigate("/complete-profile", { replace: true });
+      return;
+    }
+
+    if (user.role === "FACULTY_ADVISER" && user.accountStatus === "PENDING") {
+      navigate("/pending-approval", { replace: true });
+      return;
+    }
+
+    switch (user.role) {
+      case "ADMIN":
+        navigate("/admin/dashboard", { replace: true });
+        break;
+      case "FACULTY_ADVISER":
+        navigate("/adviser/dashboard", { replace: true });
+        break;
+      case "STUDENT_REP":
+        navigate("/student/dashboard", { replace: true });
+        break;
+      default:
+        navigate("/login", { replace: true });
+        break;
+    }
+  };
+
+  // Email/Password registration
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -38,22 +70,51 @@ const RegisterPage = () => {
         email: formData.email,
         name: formData.name,
         password: formData.password,
-        role: formData.role || undefined,
       });
 
-      // ✅ new: go to login after successful registration
-      setLoading(false);
+      // After successful registration, redirect to login
       navigate("/login", { replace: true, state: { registered: true } });
-      return;
     } catch (err) {
-      setError(err.response?.data || "Registration failed. Please try again.");
+      console.error("Registration error:", err);
+      setError(
+        err.response?.data?.message || "Registration failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // Google OAuth registration (same flow as login)
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await loginWithGoogle(credentialResponse.credential);
+
+      // Save to localStorage
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+
+      // Update context
+      updateUser(response.user);
+
+      // Redirect (will go to complete-profile if needed)
+      handleRedirect(response.user);
+    } catch (err) {
+      console.error("Google registration error:", err);
+      setError("Google sign-up failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError("Google sign-up failed. Please try again.");
+  };
+
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <AuthLayout
         title="Create Account"
         subtitle="Join the Thesis Consultation Booking System"
@@ -117,24 +178,6 @@ const RegisterPage = () => {
             />
           </div>
 
-          {/* optional: role dropdown (kept commented for now)
-          <div className="form-group">
-            <label className="form-label">I am a...</label>
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="form-input"
-              disabled={loading}
-            >
-              <option value="">Select your role</option>
-              <option value="STUDENT_REP">Student Representative</option>
-              <option value="FACULTY_ADVISER">Faculty Adviser</option>
-              <option value="ADMIN">Administrator</option>
-            </select>
-          </div>
-          */}
-
           <button type="submit" disabled={loading} className="submit-button">
             {loading ? "Creating account..." : "Create Account"}
           </button>
@@ -147,8 +190,8 @@ const RegisterPage = () => {
         </div>
 
         <GoogleAuthButton
-          onSuccess={(cred) => console.log("Google Success", cred)}
-          onError={() => setError("Google Sign-In failed")}
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
           text="signup_with"
         />
 
