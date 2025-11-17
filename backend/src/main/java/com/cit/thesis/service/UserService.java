@@ -28,18 +28,11 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Update allowed fields
         if (request.getName() != null && !request.getName().isBlank()) {
             user.setName(request.getName());
         }
 
-        // Student ID cannot be changed after registration
-        // if (request.getStudentId() != null && !request.getStudentId().isBlank()) {
-        // user.setStudentId(request.getStudentId());
-        // }
-
         if (request.getTeamCode() != null && !request.getTeamCode().isBlank()) {
-            // Validate and uppercase team code
             String teamCode = request.getTeamCode().toUpperCase().trim();
             if (!teamCode.matches("^TEAM-\\d{2}$")) {
                 throw new RuntimeException("Team code must follow format TEAM-XX (e.g., TEAM-01)");
@@ -49,6 +42,10 @@ public class UserService {
 
         if (request.getDepartment() != null && !request.getDepartment().isBlank()) {
             user.setDepartment(request.getDepartment());
+        }
+
+        if (request.getPictureUrl() != null && !request.getPictureUrl().isBlank()) {
+            user.setPictureUrl(request.getPictureUrl());
         }
 
         user = userRepository.save(user);

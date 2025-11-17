@@ -23,6 +23,16 @@ const PendingConsultationsPage = () => {
   const [selectedConsultation, setSelectedConsultation] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
 
+  // Pagination
+  const [page, setPage] = useState(1);
+  const perPage = 6;
+
+  const totalPages = Math.ceil(consultations.length / perPage);
+  const paginatedConsultations = consultations.slice(
+    (page - 1) * perPage,
+    page * perPage
+  );
+
   useEffect(() => {
     fetchPendingConsultations();
   }, []);
@@ -32,6 +42,7 @@ const PendingConsultationsPage = () => {
       setLoading(true);
       const data = await getPendingConsultations();
       setConsultations(data);
+      setPage(1);
     } catch (err) {
       setError("Failed to load pending consultations");
       console.error(err);
@@ -123,18 +134,43 @@ const PendingConsultationsPage = () => {
               </Button>
             </div>
           ) : (
-            <div className="consultations-grid">
-              {consultations.map((consultation) => (
-                <ConsultationCard
-                  key={consultation.id}
-                  consultation={consultation}
-                  showActions={true}
-                  onApprove={handleApprove}
-                  onReject={handleRejectClick}
-                  processing={processingId === consultation.id}
-                />
-              ))}
-            </div>
+            <>
+              <div className="consultations-grid">
+                {paginatedConsultations.map((consultation) => (
+                  <ConsultationCard
+                    key={consultation.id}
+                    consultation={consultation}
+                    showActions={true}
+                    onApprove={handleApprove}
+                    onReject={handleRejectClick}
+                    processing={processingId === consultation.id}
+                  />
+                ))}
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="pagination-controls">
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                  className="pagination-btn"
+                >
+                  Previous
+                </button>
+
+                <span className="pagination-info">
+                  Page {page} of {totalPages}
+                </span>
+
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                  className="pagination-btn"
+                >
+                  Next
+                </button>
+              </div>
+            </>
           )}
         </div>
 

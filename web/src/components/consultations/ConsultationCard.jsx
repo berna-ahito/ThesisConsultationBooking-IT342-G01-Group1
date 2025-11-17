@@ -15,85 +15,55 @@ const ConsultationCard = ({
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-US", {
       weekday: "short",
-      year: "numeric",
       month: "short",
       day: "numeric",
+      year: "numeric",
     });
   };
 
   return (
-    <div className="consultation-card">
-      <div className="card-header">
-        <div className="student-info">
-          <div className="avatar">
+    <div className="compact-card">
+      <div className="compact-top">
+        <div className="compact-left">
+          <div className="compact-avatar">
             {consultation.studentName?.charAt(0) || "?"}
           </div>
-          <div>
-            <h3>{consultation.studentName}</h3>
+
+          <div className="compact-info">
+            <h3 className="compact-name">{consultation.studentName}</h3>
+
             {consultation.teamCode && (
-              <span className="team-badge">{consultation.teamCode}</span>
+              <span className="compact-team">{consultation.teamCode}</span>
             )}
+
+            <span className="compact-date">
+              {formatDate(consultation.scheduledDate)} •{" "}
+              {consultation.startTime}
+            </span>
           </div>
         </div>
-        <StatusBadge status={consultation.status} type="consultation" />
+
+        <div className="compact-status">
+          <StatusBadge status={consultation.status} type="consultation" />
+        </div>
       </div>
 
-      <div className="card-body">
-        <div className="info-row">
-          <span className="label">📚 Topic:</span>
+      <div className="compact-details">
+        <div className="compact-row">
+          <span className="label">Topic:</span>
           <span className="value">{consultation.topic}</span>
-        </div>
-        <div className="info-row">
-          <span className="label">📅 Date:</span>
-          <span className="value">
-            {formatDate(consultation.scheduledDate)}
-          </span>
-        </div>
-        <div className="info-row">
-          <span className="label">⏰ Time:</span>
-          <span className="value">
-            {consultation.startTime} - {consultation.scheduledEnd}
-          </span>
         </div>
 
         {consultation.description && (
-          <div className="description">
-            <span className="label">Description:</span>
-            <p>{consultation.description}</p>
-          </div>
-        )}
-
-        {consultation.rejectionReason && (
-          <div className="rejection-reason">
-            <span className="label">❌ Rejection Reason:</span>
-            <p>{consultation.rejectionReason}</p>
-          </div>
-        )}
-
-        {consultation.adviserNotes && (
-          <div className="adviser-notes">
-            <span className="label">📝 Adviser Notes:</span>
-            <p>{consultation.adviserNotes}</p>
+          <div className="compact-row">
+            <span className="label">Desc:</span>
+            <span className="value">{consultation.description}</span>
           </div>
         )}
       </div>
 
       {showActions && (
-        <div className="card-actions">
-          {/* For Adviser - Add Notes */}
-          {consultation.status === "APPROVED" &&
-            onAddNotes &&
-            !consultation.adviserNotes && (
-              <Button
-                variant="primary"
-                onClick={() => onAddNotes(consultation)}
-                disabled={processing}
-              >
-                📝 Add Notes & Complete
-              </Button>
-            )}
-
-          {/* For Adviser - Approve/Reject */}
+        <div className="compact-actions">
           {consultation.status === "PENDING" && onApprove && onReject && (
             <>
               <Button
@@ -113,14 +83,25 @@ const ConsultationCard = ({
             </>
           )}
 
-          {/* For Student - Cancel */}
+          {consultation.status === "APPROVED" &&
+            onAddNotes &&
+            !consultation.adviserNotes && (
+              <Button
+                variant="primary"
+                onClick={() => onAddNotes(consultation)}
+                disabled={processing}
+              >
+                📝 Add Notes
+              </Button>
+            )}
+
           {consultation.status === "PENDING" && onCancel && (
             <Button
               variant="secondary"
               onClick={() => onCancel(consultation.id)}
               disabled={processing}
             >
-              Cancel Request
+              Cancel
             </Button>
           )}
         </div>

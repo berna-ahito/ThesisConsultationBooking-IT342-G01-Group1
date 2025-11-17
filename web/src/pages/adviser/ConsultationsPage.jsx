@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import {
-  getMyConsultations,
+  getAdviserConsultations,
   addConsultationNotes,
 } from "../../services/consultationService";
 import DashboardHeader from "../../components/layout/DashboardHeader";
@@ -8,6 +8,7 @@ import DashboardLayout from "../../components/layout/DashboardLayout";
 import Alert from "../../components/common/Alert";
 import AddNotesModal from "../../components/consultations/AddNotesModal";
 import ConsultationCard from "../../components/consultations/ConsultationCard";
+import Loader from "../../components/common/Loader";
 import "./ConsultationsPage.css";
 
 const ConsultationsPage = () => {
@@ -28,7 +29,7 @@ const ConsultationsPage = () => {
   const fetchConsultations = async () => {
     try {
       setLoading(true);
-      const data = await getMyConsultations();
+      const data = await getAdviserConsultations();
       setConsultations(data);
     } catch (err) {
       setError("Failed to load consultations");
@@ -96,7 +97,7 @@ const ConsultationsPage = () => {
   if (loading) {
     return (
       <DashboardLayout role="FACULTY_ADVISER">
-        <div style={{ padding: "2rem" }}>Loading...</div>
+        <Loader />
       </DashboardLayout>
     );
   }

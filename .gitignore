@@ -1,23 +1,44 @@
 ﻿# ─── FRONTEND (Vite/React) ───
 web/node_modules/
 web/dist/
+web/dist-ssr/
+web/*.local
+
+# Frontend env files (keep only .env.example in Git)
 web/.env
 web/.env.*
 !web/.env.example
 
 # ─── BACKEND (Spring Boot) ───
 backend/target/
-backend/.env
+backend/*.jar
+backend/*.war
+backend/*.class
+
+# Backend env / config (use .example for sharing)
 backend/src/main/resources/application.properties
-backend/*.log
+backend/application-local.properties
+backend/.env
+backend/*.env
 !backend/src/main/resources/application.properties.example
 
-# ─── IDE / OS Files ───
+# ─── LOGS ───
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ─── IDE / OS FILES ───
 .vscode/
 .idea/
+*.iml
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
-
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

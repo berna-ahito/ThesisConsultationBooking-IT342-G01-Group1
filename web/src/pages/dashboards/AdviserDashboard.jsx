@@ -12,6 +12,7 @@ import StatsGrid from "../../components/common/StatsGrid";
 import QuickActions from "../../components/common/QuickActions";
 import SchedulesTable from "../../components/schedules/SchedulesTable";
 import CreateScheduleModal from "../../components/schedules/CreateScheduleModal";
+import Loader from "../../components/common/Loader";
 import "../../styles/dashboard-common.css";
 
 const AdviserDashboard = () => {
@@ -97,7 +98,7 @@ const AdviserDashboard = () => {
   if (loading) {
     return (
       <DashboardLayout role="FACULTY_ADVISER">
-        <div style={{ padding: "2rem" }}>Loading...</div>
+        <Loader />
       </DashboardLayout>
     );
   }
@@ -114,7 +115,11 @@ const AdviserDashboard = () => {
 
       <main className="dashboard-main">
         <div className="dashboard-grid">
-          <QuickActions actions={quickActions} />
+          <QuickActions
+            actions={quickActions}
+            title="Quick Actions"
+            subtitle="Shortcut tools for your advising tasks"
+          />
 
           <div className="section-card">
             <div className="section-header">
