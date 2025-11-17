@@ -7,6 +7,7 @@ import DashboardHeader from "../../components/layout/DashboardHeader";
 import StatsGrid from "../../components/common/StatsGrid";
 import UpcomingConsultations from "../../components/consultations/UpcomingConsultations";
 import QuickActions from "../../components/common/QuickActions";
+import Loader from "../../components/common/Loader";
 import "../../styles/dashboard-common.css";
 
 const StudentDashboard = () => {
@@ -85,7 +86,7 @@ const StudentDashboard = () => {
   if (loading) {
     return (
       <DashboardLayout role="STUDENT_REP">
-        <div style={{ padding: "2rem" }}>Loading...</div>
+        <Loader />
       </DashboardLayout>
     );
   }
@@ -100,7 +101,7 @@ const StudentDashboard = () => {
       <main className="dashboard-main">
         <StatsGrid stats={stats} />
 
-        <div className="dashboard-layout">
+        <div className="dashboard-section-layout">
           <div className="dashboard-main-content">
             <UpcomingConsultations
               consultations={consultations}

@@ -95,3 +95,9 @@ export const addConsultationNotes = async (consultationId, notes) => {
     }
 };
 
+export const getAdviserConsultations = async () => {
+    const response = await api.get("/consultations/adviser/consultations");
+    return response.data;
+};
+
+

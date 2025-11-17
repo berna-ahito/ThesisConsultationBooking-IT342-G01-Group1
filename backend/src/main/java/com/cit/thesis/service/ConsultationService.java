@@ -263,4 +263,19 @@ public class ConsultationService {
                                 consultation.getStatus().name(),
                                 consultation.getAdviserNotes());
         }
+
+        public List<ConsultationDto> getConsultationsForAdviser(String email) {
+                User adviser = userRepository.findByEmail(email)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                List<Consultation> consultations = consultationRepository
+                                .findByAdviserIdAndStatusNotOrderByScheduledDateDesc(
+                                                adviser.getId(),
+                                                ConsultationStatus.PENDING);
+
+                return consultations.stream()
+                                .map(this::mapToDto)
+                                .collect(Collectors.toList());
+        }
+
 }

@@ -6,6 +6,7 @@ import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import StatsGrid from "../../components/common/StatsGrid";
 import QuickActions from "../../components/common/QuickActions";
+import Loader from "../../components/common/Loader";
 import "../../styles/dashboard-common.css";
 
 const AdminDashboard = () => {
@@ -58,7 +59,7 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <DashboardLayout role="ADMIN">
-        <div style={{ padding: "2rem" }}>Loading...</div>
+        <Loader />
       </DashboardLayout>
     );
   }

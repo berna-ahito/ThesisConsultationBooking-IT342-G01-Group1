@@ -6,6 +6,8 @@ import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import FormInput from "../../components/common/FormInput";
 import Button from "../../components/common/Button";
+import { supabase } from "../../services/supabaseClient";
+import "./ProfileCommon.css";
 import "./FacultyProfilePage.css";
 
 const FacultyProfilePage = () => {
@@ -19,6 +21,9 @@ const FacultyProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState("");
 
   useEffect(() => {
     fetchProfile();
@@ -44,6 +49,51 @@ const FacultyProfilePage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
+  const handleAvatarUpload = async () => {
+    if (!selectedFile) return;
+
+    try {
+      setUploading(true);
+
+      const timestamp = Date.now();
+      const fileExt = selectedFile.name.split(".").pop();
+      const fileName = `${user.id}_${timestamp}.${fileExt}`;
+
+      const { error } = await supabase.storage
+        .from("profile-images")
+        .upload(fileName, selectedFile, { upsert: true });
+
+      if (error) throw error;
+
+      const { data: publicUrlData } = supabase.storage
+        .from("profile-images")
+        .getPublicUrl(fileName);
+
+      const pictureUrl = publicUrlData.publicUrl;
+
+      const updatedProfile = await updateProfile({
+        pictureUrl,
+      });
+
+      updateUser(updatedProfile);
+      setSuccess("Profile photo updated!");
+      setSelectedFile(null);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to upload profile photo");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -100,8 +150,11 @@ const FacultyProfilePage = () => {
           <div className="profile-card">
             <div className="profile-header">
               <div className="profile-avatar">
-                {user?.pictureUrl ? (
-                  <img src={user.pictureUrl} alt={user.name} />
+                {avatarPreview || user?.pictureUrl ? (
+                  <img
+                    src={avatarPreview || user.pictureUrl}
+                    alt={formData.name}
+                  />
                 ) : (
                   <div className="avatar-placeholder">
                     {formData.name?.charAt(0)?.toUpperCase() || "?"}
@@ -112,6 +165,29 @@ const FacultyProfilePage = () => {
                 <h2>{formData.name}</h2>
                 <p className="profile-email">{formData.email}</p>
                 <span className="profile-role-badge">Faculty Adviser</span>
+              </div>
+
+              <div className="profile-avatar-actions">
+                <label className="upload-avatar-label">
+                  Change photo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    style={{ display: "none" }}
+                  />
+                </label>
+
+                {selectedFile && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    loading={uploading}
+                    onClick={handleAvatarUpload}
+                  >
+                    Save Photo
+                  </Button>
+                )}
               </div>
             </div>
 

@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { getProfile, updateProfile } from "../../services/userService";
+import {
+  getProfile,
+  updateProfile,
+  uploadProfileImage,
+} from "../../services/userService";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import FormInput from "../../components/common/FormInput";
 import Button from "../../components/common/Button";
+import "./ProfileCommon.css";
 import "./StudentProfilePage.css";
 
 const StudentProfilePage = () => {
@@ -20,6 +25,9 @@ const StudentProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -35,6 +43,7 @@ const StudentProfilePage = () => {
         teamCode: profile.teamCode || "",
         email: profile.email || "",
       });
+      setAvatarPreview(profile.pictureUrl || null);
     } catch (err) {
       setError("Failed to load profile");
       console.error(err);
@@ -49,6 +58,32 @@ const StudentProfilePage = () => {
       setFormData({ ...formData, [name]: value.toUpperCase() });
     } else {
       setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelectedFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
+  const handleAvatarUpload = async () => {
+    if (!selectedFile) return;
+    setError("");
+    setSuccess("");
+    setUploading(true);
+
+    try {
+      const updatedProfile = await uploadProfileImage(selectedFile);
+      updateUser(updatedProfile);
+      setSuccess("Profile photo updated successfully!");
+      setSelectedFile(null);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to upload profile photo");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -106,18 +141,44 @@ const StudentProfilePage = () => {
         <div className="profile-card">
           <div className="profile-header">
             <div className="profile-avatar">
-              {user?.pictureUrl ? (
-                <img src={user.pictureUrl} alt={user.name} />
+              {avatarPreview || user?.pictureUrl ? (
+                <img
+                  src={avatarPreview || user.pictureUrl}
+                  alt={formData.name}
+                />
               ) : (
                 <div className="avatar-placeholder">
                   {formData.name?.charAt(0)?.toUpperCase() || "?"}
                 </div>
               )}
             </div>
+
             <div className="profile-info">
               <h2>{formData.name}</h2>
               <p className="profile-email">{formData.email}</p>
               <span className="profile-role-badge">Student Representative</span>
+            </div>
+            <div className="profile-avatar-actions">
+              <label className="upload-avatar-label">
+                Change photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  style={{ display: "none" }}
+                />
+              </label>
+
+              {selectedFile && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  loading={uploading}
+                  onClick={handleAvatarUpload}
+                >
+                  Save Photo
+                </Button>
+              )}
             </div>
           </div>
 

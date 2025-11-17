@@ -5,6 +5,7 @@ public class UpdateProfileRequest {
     private String studentId;
     private String teamCode;
     private String department;
+    private String pictureUrl;
 
     public UpdateProfileRequest() {
     }
@@ -47,5 +48,13 @@ public class UpdateProfileRequest {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
     }
 }

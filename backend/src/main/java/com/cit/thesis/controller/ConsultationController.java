@@ -126,4 +126,13 @@ public class ConsultationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/adviser/consultations")
+    public ResponseEntity<List<ConsultationDto>> getConsultationsForAdviser(
+            Authentication authentication) {
+        String email = authentication.getName();
+        List<ConsultationDto> consultations = consultationService.getConsultationsForAdviser(email);
+        return ResponseEntity.ok(consultations);
+    }
+
 }
