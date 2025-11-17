@@ -1,0 +1,56 @@
+/* src/components/common/Logo.css */
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-box-sm,
+.logo-box-md,
+.logo-box-lg {
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #7c3aed 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-box-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.logo-box-md {
+  width: 40px;
+  height: 40px;
+}
+
+.logo-box-lg {
+  width: 48px;
+  height: 48px;
+}
+
+.logo-initial {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.logo-text-sm {
+  font-size: 15px;
+  color: white;
+  font-weight: 500;
+}
+
+.logo-text-md {
+  font-size: 18px;
+  color: white;
+  font-weight: 600;
+}
+
+.logo-text-lg {
+  font-size: 22px;
+  color: white;
+  font-weight: 700;
+}

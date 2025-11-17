@@ -3,60 +3,61 @@ import "./UpcomingConsultations.css";
 
 const UpcomingConsultations = ({
   consultations = [],
-  emptyMessage = "No upcoming consultations",
-  emptySubtext = "Book your first consultation to get started!",
-  onBookNow,
-  showBookButton = true,
+  onBookNew,
+  onViewAll,
 }) => {
   return (
-    <div className="upcoming-consultations">
-      <h3 className="section-title">Upcoming Consultations</h3>
-
-      {consultations.length === 0 ? (
-        <div className="empty-state">
-          <span className="empty-icon">📅</span>
-          <p className="empty-text">{emptyMessage}</p>
-          <p className="empty-subtext">{emptySubtext}</p>
-          {showBookButton && onBookNow && (
-            <button onClick={onBookNow} className="btn-primary">
-              Book Now
-            </button>
-          )}
+    <div className="consultations-section">
+      <div className="section-header">
+        <div className="section-header-text">
+          <h2 className="section-title">Upcoming Consultations</h2>
+          <p className="section-subtitle">Your scheduled thesis meetings</p>
         </div>
-      ) : (
-        <div className="consultations-list">
-          {consultations.map((consultation, index) => (
-            <div key={index} className="consultation-card">
-              <div className="consultation-header">
-                <div className="consultation-date">
-                  <span className="date-day">{consultation.day}</span>
-                  <span className="date-month">{consultation.month}</span>
+        {onBookNew && (
+          <button className="btn-primary" onClick={onBookNew}>
+            Book New
+          </button>
+        )}
+      </div>
+
+      <div className="consultations-card">
+        {consultations.length === 0 ? (
+          <div className="empty-state">
+            <p className="empty-text">No upcoming consultations</p>
+            <p className="empty-subtext">
+              Book your first consultation to get started
+            </p>
+          </div>
+        ) : (
+          <div className="consultations-list">
+            {consultations.map((consultation) => (
+              <div key={consultation.id} className="consultation-item">
+                <div className="consultation-avatar">
+                  {consultation.adviser?.charAt(0) || "A"}
                 </div>
-                <div className="consultation-info">
-                  <h4 className="consultation-title">{consultation.title}</h4>
-                  <p className="consultation-adviser">{consultation.adviser}</p>
-                  <p className="consultation-time">
-                    <span className="time-icon">🕐</span>
-                    {consultation.time}
-                  </p>
+                <div className="consultation-details">
+                  <h4 className="consultation-name">{consultation.adviser}</h4>
+                  <p className="consultation-topic">{consultation.title}</p>
+                  <div className="consultation-meta">
+                    <span>
+                      {consultation.day} {consultation.month}
+                    </span>
+                    <span>{consultation.time}</span>
+                  </div>
                 </div>
-              </div>
-              <div className="consultation-actions">
                 <span className={`status-badge status-${consultation.status}`}>
                   {consultation.status}
                 </span>
-                {consultation.onViewDetails && (
-                  <button
-                    onClick={consultation.onViewDetails}
-                    className="btn-text"
-                  >
-                    View Details
-                  </button>
-                )}
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {onViewAll && consultations.length > 0 && (
+        <button className="btn-text-link" onClick={onViewAll}>
+          View All Consultations
+        </button>
       )}
     </div>
   );
@@ -65,19 +66,17 @@ const UpcomingConsultations = ({
 UpcomingConsultations.propTypes = {
   consultations: PropTypes.arrayOf(
     PropTypes.shape({
+      id: PropTypes.number.isRequired,
       day: PropTypes.string.isRequired,
       month: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       adviser: PropTypes.string.isRequired,
       time: PropTypes.string.isRequired,
-      status: PropTypes.oneOf(["pending", "confirmed", "completed"]).isRequired,
-      onViewDetails: PropTypes.func,
+      status: PropTypes.string.isRequired,
     })
   ),
-  emptyMessage: PropTypes.string,
-  emptySubtext: PropTypes.string,
-  onBookNow: PropTypes.func,
-  showBookButton: PropTypes.bool,
+  onBookNew: PropTypes.func,
+  onViewAll: PropTypes.func,
 };
 
 export default UpcomingConsultations;

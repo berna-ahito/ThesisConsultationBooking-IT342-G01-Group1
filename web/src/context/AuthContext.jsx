@@ -83,6 +83,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -90,5 +91,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-export default AuthContext;

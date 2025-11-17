@@ -1,0 +1,95 @@
+.empty-schedules {
+  background: white;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.empty-schedules h3 {
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+}
+
+.empty-schedules p {
+  color: #6b7280;
+  margin: 0 0 2rem 0;
+}
+
+.schedules-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.schedules-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.schedules-table thead {
+  background: linear-gradient(135deg, #8b1538 0%, #a91d42 100%);
+  color: white;
+}
+
+.schedules-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.schedules-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.schedules-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.schedules-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.schedules-table td {
+  padding: 1rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.available {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.booked {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+@media (max-width: 768px) {
+  .schedules-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .schedules-table {
+    min-width: 600px;
+  }
+}

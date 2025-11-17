@@ -20,19 +20,8 @@ export const register = async (userData) => {
 
 // Complete Profile (after Google OAuth)
 export const completeProfile = async (profileData) => {
-    console.log('🚀 [authService] completeProfile called with:', profileData);
-    console.log('🔑 [authService] Token from localStorage:', localStorage.getItem('token'));
-
-    try {
-        const response = await api.post('/auth/complete-profile', profileData);
-        console.log('✅ [authService] Complete profile success:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('❌ [authService] Complete profile error:', error);
-        console.error('❌ [authService] Error response:', error.response?.data);
-        console.error('❌ [authService] Error status:', error.response?.status);
-        throw error;
-    }
+    const response = await api.post('/auth/complete-profile', profileData);
+    return response.data;
 };
 
 // Logout

@@ -62,6 +62,7 @@ public class AuthService {
             User user = userRepository.findByEmail(email).orElse(null);
 
             if (user == null) {
+                // Create new user with required fields
                 user = new User();
                 user.setEmail(email);
                 user.setName(name);
@@ -70,11 +71,14 @@ public class AuthService {
                 user.setEmailVerified(true);
                 user.setRole(null);
                 user.setIsProfileComplete(false);
+                user.setInstitutionId(1L);
                 user = userRepository.save(user);
             } else {
-
+                // Existing user - check profile completion
                 if (!user.getIsProfileComplete()) {
-                    String token = jwtUtil.generateToken(user.getEmail());
+                    String token = user.getRole() != null
+                            ? jwtUtil.generateToken(user.getEmail(), user.getRole().name())
+                            : jwtUtil.generateToken(user.getEmail());
                     return buildAuthResponse(user, token);
                 }
 
@@ -85,7 +89,9 @@ public class AuthService {
             }
 
             // 4. Generate JWT token
-            String token = jwtUtil.generateToken(user.getEmail());
+            String token = user.getRole() != null
+                    ? jwtUtil.generateToken(user.getEmail(), user.getRole().name())
+                    : jwtUtil.generateToken(user.getEmail());
 
             // 5. Return response
             return buildAuthResponse(user, token);
@@ -118,7 +124,20 @@ public class AuthService {
             if (request.getStudentId() == null || request.getStudentId().isBlank()) {
                 throw new RuntimeException("Student ID is required for student accounts");
             }
+            if (request.getTeamCode() == null || request.getTeamCode().isBlank()) {
+                throw new RuntimeException("Team code is required for student accounts");
+            }
+
+            // CONVERT TO UPPERCASE FIRST
+            String teamCode = request.getTeamCode().toUpperCase().trim();
+
+            // THEN VALIDATE
+            if (!teamCode.matches("^TEAM-\\d{2}$")) {
+                throw new RuntimeException("Team code must follow format TEAM-XX (e.g., TEAM-01, TEAM-15)");
+            }
+
             user.setStudentId(request.getStudentId());
+            user.setTeamCode(teamCode);
             user.setRole(UserRole.STUDENT_REP);
             user.setIsProfileComplete(true);
             user.setAccountStatus("ACTIVE");
@@ -140,7 +159,8 @@ public class AuthService {
 
         user = userRepository.save(user);
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        // ✅ NEW - include role in token
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
         return buildAuthResponse(user, token);
     }
 
@@ -157,7 +177,9 @@ public class AuthService {
         }
 
         if (!user.getIsProfileComplete()) {
-            String token = jwtUtil.generateToken(user.getEmail());
+            String token = user.getRole() != null
+                    ? jwtUtil.generateToken(user.getEmail(), user.getRole().name())
+                    : jwtUtil.generateToken(user.getEmail());
             return buildAuthResponse(user, token);
         }
 
@@ -165,7 +187,9 @@ public class AuthService {
             throw new RuntimeException("Your account is pending approval. Contact IT Department.");
         }
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = user.getRole() != null
+                ? jwtUtil.generateToken(user.getEmail(), user.getRole().name())
+                : jwtUtil.generateToken(user.getEmail());
         return buildAuthResponse(user, token);
     }
 
@@ -180,14 +204,17 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setAuthProvider("email");
         user.setEmailVerified(false);
-
         user.setRole(null);
         user.setIsProfileComplete(false);
         user.setAccountStatus("ACTIVE");
+        user.setInstitutionId(1L);
 
         user = userRepository.save(user);
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        // ✅ NEW - include role in token
+        String token = user.getRole() != null
+                ? jwtUtil.generateToken(user.getEmail(), user.getRole().name())
+                : jwtUtil.generateToken(user.getEmail());
         return buildAuthResponse(user, token);
     }
 
@@ -200,6 +227,7 @@ public class AuthService {
                 user.getRole() != null ? user.getRole().name() : null,
                 user.getIsProfileComplete(),
                 user.getStudentId(),
+                user.getTeamCode(),
                 user.getDepartment(),
                 user.getAccountStatus());
 
