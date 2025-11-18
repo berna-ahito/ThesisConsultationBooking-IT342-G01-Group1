@@ -33,8 +33,7 @@
 }
 
 .redirect-text {
-  color: #8b1538;
-  font-weight: 600;
+  color: #06b6d4;
 }
 
 /* Form Sections */
@@ -52,7 +51,7 @@
   color: #1f2937;
   margin: 0 0 1.5rem 0;
   font-size: 1.125rem;
-  border-bottom: 2px solid #8b1538;
+  border-bottom: 2px solid #06b6d4;
   padding-bottom: 0.5rem;
 }
 
@@ -86,7 +85,8 @@
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #8b1538;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);
 }
 
 .form-select:disabled,
@@ -130,4 +130,22 @@
   .form-actions button {
     width: 100%;
   }
+}
+
+.success-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f172a, #06b6d4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.success-icon::before {
+  content: "✓";
 }

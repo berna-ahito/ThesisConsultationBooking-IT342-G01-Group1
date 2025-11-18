@@ -3,6 +3,71 @@ import Button from "../components/common/Button";
 import Logo from "../components/common/Logo";
 import "./LandingPage.css";
 
+// SVG Icons
+const CalendarIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+    <line x1="16" y1="2" x2="16" y2="6" />
+    <line x1="8" y1="2" x2="8" y2="6" />
+    <line x1="3" y1="10" x2="21" y2="10" />
+  </svg>
+);
+
+const BellIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+  </svg>
+);
+
+const DocumentIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+  </svg>
+);
+
+const UserIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const ChartIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="18" y1="20" x2="18" y2="10" />
+    <line x1="12" y1="20" x2="12" y2="4" />
+    <line x1="6" y1="20" x2="6" y2="14" />
+  </svg>
+);
+
+const ShieldIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const StarIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>
+);
+
 const LandingPage = () => {
   const navigate = useNavigate();
 
@@ -13,8 +78,8 @@ const LandingPage = () => {
         <div className="nav-content">
           <div className="nav-logo">
             <Logo />
-            <span className="logo-text">ThesisHub</span>
           </div>
+
           <div className="nav-actions">
             <button
               onClick={() => navigate("/login")}
@@ -31,7 +96,9 @@ const LandingPage = () => {
       <section className="hero-section">
         <div className="hero-content">
           <div className="hero-badge">
-            <span className="badge-icon">⭐</span>
+            <span className="badge-icon">
+              <StarIcon />
+            </span>
             <span className="badge-text">
               Used by IT students for seamless scheduling
             </span>
@@ -39,7 +106,7 @@ const LandingPage = () => {
 
           <h1 className="hero-title">
             Simplify Your{" "}
-            <span className="gradient-text">Consultation Booking</span>
+            <span className="hero-gradient-text">Consultation Booking</span>
           </h1>
 
           <p className="hero-subtitle">
@@ -57,11 +124,6 @@ const LandingPage = () => {
             >
               Login
             </button>
-          </div>
-
-          <div className="hero-features">
-            <div className="hero-feature-item"></div>
-            <div className="hero-feature-item"></div>
           </div>
         </div>
       </section>
@@ -113,8 +175,6 @@ const LandingPage = () => {
       {/* CTA Section */}
       <section className="cta-section">
         <div className="cta-card">
-          <div className="cta-bg-blur cta-blur-1" />
-          <div className="cta-bg-blur cta-blur-2" />
           <div className="cta-content">
             <h2 className="cta-title">
               Ready to streamline your thesis journey?
@@ -143,37 +203,37 @@ const LandingPage = () => {
 
 const features = [
   {
-    icon: "📅",
+    icon: <CalendarIcon />,
     title: "Real-Time Scheduling",
     description:
       "See adviser availability instantly and request consultation slots without the back-and-forth.",
   },
   {
-    icon: "🔔",
+    icon: <BellIcon />,
     title: "Status Notifications",
     description:
       "Get notified when your consultation is approved, rejected, or updated by your adviser.",
   },
   {
-    icon: "📝",
+    icon: <DocumentIcon />,
     title: "Consultation Records",
     description:
       "Access your full consultation history, including session details, remarks, and status updates.",
   },
   {
-    icon: "👨‍🏫",
+    icon: <UserIcon />,
     title: "Adviser Management",
     description:
       "Faculty advisers can manage their schedules, approve requests, and log consultation notes.",
   },
   {
-    icon: "📊",
+    icon: <ChartIcon />,
     title: "Admin Monitoring",
     description:
       "Department admins can view all bookings and generate simple consultation reports.",
   },
   {
-    icon: "🔒",
+    icon: <ShieldIcon />,
     title: "Secure Login",
     description:
       "Protected with Google OAuth 2.0 and role-based access for Students, Advisers, and Admins.",
@@ -188,7 +248,7 @@ const steps = [
   {
     title: "View Adviser Availability",
     description:
-      "Check open consultation slots based on your adviser’s schedule.",
+      "Check open consultation slots based on your adviser's schedule.",
   },
   {
     title: "Submit a Booking Request",

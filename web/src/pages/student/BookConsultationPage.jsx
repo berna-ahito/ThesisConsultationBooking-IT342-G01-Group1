@@ -104,14 +104,14 @@ const BookConsultationPage = () => {
       <DashboardHeader
         title="Book Consultation"
         subtitle="Schedule a meeting with your thesis adviser"
-        icon="📅"
+        icon="🗓️"
       />
 
       <div className="booking-container">
         <div className="booking-card">
           {success ? (
             <div className="success-state">
-              <div className="success-icon">✅</div>
+              <div className="success-icon"></div>
               <h2>Booking Successful!</h2>
               <p>Your consultation request has been submitted.</p>
               <p className="redirect-text">Redirecting to dashboard...</p>

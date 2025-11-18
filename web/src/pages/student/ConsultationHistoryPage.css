@@ -37,14 +37,14 @@
 }
 
 .filter-btn:hover {
-  border-color: #8b1538;
-  color: #8b1538;
+  border-color: #06b6d4;
+  color: #06b6d4;
 }
 
 .filter-btn.active {
-  background: #8b1538;
-  border-color: #8b1538;
-  color: white;
+  background: linear-gradient(135deg, #0f172a 0%, #06b6d4 100%);
+  border-color: #06b6d4;
+  color: #ffffff;
 }
 
 .filter-count {
@@ -110,7 +110,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #8b1538 0%, #a91d42 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #06b6d4 100%);
   color: white;
 }
 
@@ -193,7 +193,7 @@
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   display: inline-block;
-  color: #8b1538;
+  color: #0f172a;
 }
 
 /* Description, Rejection Reason, Notes */
@@ -287,3 +287,24 @@
     width: 100%;
   }
 }
+
+.empty-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 1rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #0f172a 0%, #06b6d4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.empty-icon::before {
+  content: "📄"; 
+  font-size: 36px;
+}
+
+

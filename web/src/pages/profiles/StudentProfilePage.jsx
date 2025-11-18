@@ -134,7 +134,7 @@ const StudentProfilePage = () => {
       <DashboardHeader
         title="My Profile"
         subtitle="Manage your account information"
-        icon="👤"
+        icon={null}
       />
 
       <div className="profile-container">

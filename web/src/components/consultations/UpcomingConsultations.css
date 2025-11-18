@@ -31,7 +31,7 @@
 
 .btn-primary {
   padding: 10px 20px;
-  background: #3b82f6;
+  background: #06b6d4;
   color: var(--text-inverse);
   border: none;
   border-radius: 8px;
@@ -43,7 +43,7 @@
 }
 
 .btn-primary:hover {
-  background: #2563eb;
+  background: #0e7490;
   transform: translateY(-1px);
 }
 
@@ -84,6 +84,7 @@
   padding: 14px 16px;
   border-bottom: 1px solid var(--border-light);
   transition: background var(--transition);
+  animation: fadeIn 0.35s ease-out;
 }
 
 .consultation-item:last-child {
@@ -91,20 +92,22 @@
 }
 
 .consultation-item:hover {
-  background: var(--bg-secondary);
+  background: rgba(6,182,212,0.06);
+  transform: translateX(4px);
+transition: transform 0.2s ease, background var(--transition);
 }
 
 .consultation-avatar {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(6,182,212,0.22));
+color: #06b6d4;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   font-weight: 600;
-  color: #1e40af;
   flex-shrink: 0;
 }
 
@@ -157,7 +160,7 @@
   align-self: flex-start;
   background: none;
   border: none;
-  color: #3b82f6;
+  color: #06b6d4;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -166,7 +169,7 @@
 }
 
 .btn-text-link:hover {
-  color: #2563eb;
+  color: #22d3ee;
   text-decoration: underline;
 }
 

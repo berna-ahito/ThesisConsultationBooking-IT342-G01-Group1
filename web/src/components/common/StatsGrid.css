@@ -6,23 +6,36 @@
 
 .stat-card {
   background: var(--bg-primary);
-  border: 1px solid var(--border-light);
+  border: 1px solid rgba(6, 182, 212, 0.12);
   border-radius: 12px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   transition: all var(--transition);
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .stat-card:hover {
   border-color: var(--color-primary);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+  box-shadow: 0 4px 14px rgba(6,182,212,0.12);
 }
 
 .stat-card.stat-primary {
-  background: linear-gradient(135deg, #2d4a6f 0%, #1e3a5f 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #06b6d4 100%);
   border: none;
   color: var(--text-inverse);
 }
