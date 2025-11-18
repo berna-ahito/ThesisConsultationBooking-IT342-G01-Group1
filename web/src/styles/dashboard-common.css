@@ -68,18 +68,18 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 8px 18px rgba(185, 28, 28, 0.28);
+  box-shadow: 0 8px 18px rgba(6, 182, 212, 0.25);
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .btn-create:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 28px rgba(185, 28, 28, 0.32);
+  box-shadow: 0 12px 28px rgba(6, 182, 212, 0.32);
 }
 
 .btn-create:active {
   transform: translateY(0);
-  box-shadow: 0 6px 14px rgba(185, 28, 28, 0.25);
+  box-shadow: 0 6px 14px rgba(6, 182, 212, 0.22);
 }
 
 /* responsive tweaks */
@@ -121,4 +121,33 @@
   gap: 24px;
   align-items: flex-start;
 }
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(6px);
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-conten{
+  animation: dashboardSlide 0.4s ease-out;
+}
+
+@keyframes dashboardSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
