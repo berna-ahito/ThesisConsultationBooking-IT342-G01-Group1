@@ -231,21 +231,6 @@ const AdminProfilePage = () => {
               </div>
             </div>
 
-            <div className="info-card">
-              <h3>Quick Stats</h3>
-              <div className="stat-item">
-                <div className="stat-icon">👥</div>
-                <div className="stat-details">
-                  <span className="stat-label">Total Users</span>
-                </div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-icon">📊</div>
-                <div className="stat-details">
-                  <span className="stat-label">Activity Logs</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
