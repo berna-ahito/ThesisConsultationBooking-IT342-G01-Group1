@@ -5,10 +5,12 @@ import {
   approveUser,
   rejectUser,
 } from "../../services/adminService";
+import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import UserCard from "../../components/common/UserCard";
+import Loader from "../../components/common/Loader";
 import "./FacultyApprovalsPage.css";
 
 const FacultyApprovalsPage = () => {
@@ -79,54 +81,60 @@ const FacultyApprovalsPage = () => {
   };
 
   if (loading) {
-    return <div className="faculty-approvals-page">Loading...</div>;
+    return (
+      <DashboardLayout role="ADMIN">
+        <Loader />
+      </DashboardLayout>
+    );
   }
 
   return (
-    <div className="faculty-approvals-page">
-      <DashboardHeader
-        title="Pending Faculty Approvals"
-        subtitle="Review and approve faculty adviser accounts"
-        icon="👨‍🏫"
-      />
+    <DashboardLayout role="ADMIN">
+      <div className="faculty-approvals-page">
+        <DashboardHeader
+          title="Pending Faculty Approvals"
+          subtitle="Review and approve faculty adviser accounts"
+          icon="👨‍🏫"
+        />
 
-      <div className="approvals-container">
-        {error && (
-          <Alert type="error" message={error} onClose={() => setError("")} />
-        )}
-        {success && (
-          <Alert
-            type="success"
-            message={success}
-            onClose={() => setSuccess("")}
-          />
-        )}
+        <div className="approvals-container">
+          {error && (
+            <Alert type="error" message={error} onClose={() => setError("")} />
+          )}
+          {success && (
+            <Alert
+              type="success"
+              message={success}
+              onClose={() => setSuccess("")}
+            />
+          )}
 
-        {pendingUsers.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">✅</div>
-            <h3>No Pending Approvals</h3>
-            <p>All faculty accounts have been reviewed.</p>
-            <Button onClick={() => navigate("/admin/dashboard")}>
-              Back to Dashboard
-            </Button>
-          </div>
-        ) : (
-          <div className="pending-users-grid">
-            {pendingUsers.map((user) => (
-              <UserCard
-                key={user.id}
-                user={user}
-                showActions={true}
-                onApprove={handleApprove}
-                onReject={handleReject}
-                processing={processingId === user.id}
-              />
-            ))}
-          </div>
-        )}
+          {pendingUsers.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">✅</div>
+              <h3>No Pending Approvals</h3>
+              <p>All faculty accounts have been reviewed.</p>
+              <Button onClick={() => navigate("/admin/dashboard")}>
+                Back to Dashboard
+              </Button>
+            </div>
+          ) : (
+            <div className="pending-users-grid">
+              {pendingUsers.map((user) => (
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  showActions={true}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                  processing={processingId === user.id}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

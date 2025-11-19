@@ -74,12 +74,13 @@
 
 .team-code {
   font-family: "Courier New", monospace;
-  background: #8b1538;
-  color: white;
+  background: #06b6d4;
+  color: #0f172a;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   display: inline-block;
   font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .form-group {
@@ -115,7 +116,7 @@
 
 .form-group textarea:focus {
   outline: none;
-  border-color: #8b1538;
+  border-color: #0f172a;
 }
 
 .form-group textarea:disabled {

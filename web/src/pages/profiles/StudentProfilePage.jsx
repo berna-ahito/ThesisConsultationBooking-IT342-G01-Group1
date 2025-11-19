@@ -10,6 +10,7 @@ import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import FormInput from "../../components/common/FormInput";
 import Button from "../../components/common/Button";
+import Loader from "../../components/common/Loader";
 import "./ProfileCommon.css";
 import "./StudentProfilePage.css";
 
@@ -124,7 +125,7 @@ const StudentProfilePage = () => {
   if (loading) {
     return (
       <DashboardLayout role="STUDENT_REP">
-        <div style={{ padding: "2rem" }}>Loading profile...</div>
+        <Loader />
       </DashboardLayout>
     );
   }
@@ -259,15 +260,15 @@ const StudentProfilePage = () => {
           <div className="info-card">
             <h3>Account Status</h3>
             <div className="status-item">
-              <span className="status-label">Status:</span>
+              <span className="status-label">Status: </span>
               <span className="status-badge active">Active</span>
             </div>
             <div className="status-item">
-              <span className="status-label">Role:</span>
+              <span className="status-label">Role: </span>
               <span>Student Representative</span>
             </div>
             <div className="status-item">
-              <span className="status-label">Team Code:</span>
+              <span className="status-label">Team Code: </span>
               <span className="team-code">
                 {formData.teamCode || "Not set"}
               </span>

@@ -5,6 +5,7 @@ import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
+import Loader from "../../components/common/Loader";
 import { supabase } from "../../services/supabaseClient";
 import "./ProfileCommon.css";
 import "./AdminProfilePage.css";
@@ -96,7 +97,7 @@ const AdminProfilePage = () => {
   if (loading) {
     return (
       <DashboardLayout role="ADMIN">
-        <div style={{ padding: "2rem" }}>Loading profile...</div>
+        <Loader />
       </DashboardLayout>
     );
   }

@@ -6,6 +6,7 @@ import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import FormInput from "../../components/common/FormInput";
 import Button from "../../components/common/Button";
+import Loader from "../../components/common/Loader";
 import { supabase } from "../../services/supabaseClient";
 import "./ProfileCommon.css";
 import "./FacultyProfilePage.css";
@@ -132,7 +133,7 @@ const FacultyProfilePage = () => {
   if (loading) {
     return (
       <DashboardLayout role="FACULTY_ADVISER">
-        <div style={{ padding: "2rem" }}>Loading profile...</div>
+        <Loader />
       </DashboardLayout>
     );
   }
@@ -260,38 +261,21 @@ const FacultyProfilePage = () => {
             <div className="info-card">
               <h3>Account Status</h3>
               <div className="status-item">
-                <span className="status-label">Status:</span>
+                <span className="status-label">Status: </span>
                 <span className="status-badge active">Active</span>
               </div>
               <div className="status-item">
-                <span className="status-label">Role:</span>
+                <span className="status-label">Role: </span>
                 <span>Faculty Adviser</span>
               </div>
               <div className="status-item">
-                <span className="status-label">Department:</span>
+                <span className="status-label">Department: </span>
                 <span className="department-text">
                   {formData.department || "Not set"}
                 </span>
               </div>
             </div>
 
-            <div className="info-card">
-              <h3>Quick Stats</h3>
-              <div className="stat-item">
-                <div className="stat-icon">📅</div>
-                <div className="stat-details">
-                  <span className="stat-label">Total Schedules</span>
-                  <span className="stat-value">View Dashboard</span>
-                </div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-icon">📋</div>
-                <div className="stat-details">
-                  <span className="stat-label">Consultations</span>
-                  <span className="stat-value">View All</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

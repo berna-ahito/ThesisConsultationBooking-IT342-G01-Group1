@@ -43,6 +43,8 @@ const Sidebar = ({ role }) => {
 
   let navItems = [];
 
+  let profilePath = "";
+
   if (role === "STUDENT_REP") {
     navItems = [
       { label: "Dashboard", path: "/student/dashboard", icon: icons.dashboard },
@@ -52,8 +54,8 @@ const Sidebar = ({ role }) => {
         path: "/student/consultations",
         icon: icons.consultations,
       },
-      { label: "Profile", path: "/student/profile", icon: icons.profile },
     ];
+    profilePath = "/student/profile";
   }
 
   if (role === "FACULTY_ADVISER") {
@@ -65,8 +67,8 @@ const Sidebar = ({ role }) => {
         icon: icons.consultations,
       },
       { label: "Pending Requests", path: "/adviser/pending", icon: icons.book },
-      { label: "Profile", path: "/adviser/profile", icon: icons.profile },
     ];
+    profilePath = "/adviser/profile";
   }
 
   if (role === "ADMIN") {
@@ -78,8 +80,8 @@ const Sidebar = ({ role }) => {
         icon: icons.book,
       },
       { label: "All Users", path: "/admin/users", icon: icons.consultations },
-      { label: "Profile", path: "/admin/profile", icon: icons.profile },
     ];
+    profilePath = "/admin/profile";
   }
 
   const portalLabel =
@@ -108,6 +110,23 @@ const Sidebar = ({ role }) => {
         </div>
       </div>
 
+      <NavLink
+        to={profilePath}
+        className={({ isActive }) => `nav-item user-nav ${isActive ? "active" : ""}`}
+      >
+        <div className="avatar">
+          {user?.pictureUrl ? (
+            <img src={user.pictureUrl} alt={user?.name || "User avatar"} />
+          ) : (
+            initials
+          )}
+        </div>
+        <div className="user-text">
+          <p className="u-name">{user?.name}</p>
+          <p className="u-email">Manage Profile</p>
+        </div>
+      </NavLink>
+
       <nav className="sidebar-nav">
         {navItems.map((item) => (
           <NavLink
@@ -123,20 +142,6 @@ const Sidebar = ({ role }) => {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="user-box">
-          <div className="avatar">
-            {user?.pictureUrl ? (
-              <img src={user.pictureUrl} alt={user?.name || "User avatar"} />
-            ) : (
-              initials
-            )}
-          </div>
-          <div className="user-text">
-            <p className="u-name">{user?.name}</p>
-            <p className="u-email">{user?.email}</p>
-          </div>
-        </div>
-
         <button className="logout-btn" onClick={logout}>
           Logout
         </button>
