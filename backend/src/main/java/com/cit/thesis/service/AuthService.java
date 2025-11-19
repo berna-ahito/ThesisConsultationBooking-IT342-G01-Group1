@@ -186,6 +186,7 @@ public class AuthService {
         faculty.setIsAvailable(request.getIsAvailable());
         faculty.setIsProfileComplete(false);
         faculty.setAccountStatus("ACTIVE");
+        
 
         faculty = userRepository.save(faculty);
 

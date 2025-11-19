@@ -39,7 +39,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/admin/**").authenticated()
+                        .requestMatchers("/api/consultations/**")
+                        .hasAnyAuthority("STUDENT_REP", "FACULTY_ADVISER", "ADMIN")
+                        .requestMatchers("/api/schedules/**").hasAnyAuthority("STUDENT_REP", "FACULTY_ADVISER", "ADMIN")
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 // Add JWT filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

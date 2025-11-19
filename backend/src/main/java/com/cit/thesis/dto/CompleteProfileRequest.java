@@ -9,6 +9,8 @@ public class CompleteProfileRequest {
 
     private String studentId;
 
+    private String teamCode;
+
     private String department;
 
     public CompleteProfileRequest() {
@@ -17,6 +19,7 @@ public class CompleteProfileRequest {
     public CompleteProfileRequest(String role, String studentId, String department) {
         this.role = role;
         this.studentId = studentId;
+        this.teamCode = teamCode;
         this.department = department;
     }
 
@@ -34,6 +37,14 @@ public class CompleteProfileRequest {
 
     public void setStudentId(String studentId) {
         this.studentId = studentId;
+    }
+
+    public String getTeamCode() {
+        return teamCode;
+    }
+
+    public void setTeamCode(String teamCode) {
+        this.teamCode = teamCode;
     }
 
     public String getDepartment() {

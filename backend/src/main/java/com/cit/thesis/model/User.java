@@ -34,6 +34,15 @@ public abstract class User {
     @Column(length = 20)
     private UserRole role;
 
+    @Column(name = "student_id", unique = true)
+    private String studentId;
+
+    @Column(name = "team_code", length = 20)
+    private String teamCode;
+
+    @Column(name = "institution_id", nullable = false)
+    private Long institutionId;
+
     @Column(length = 100)
     private String department;
 

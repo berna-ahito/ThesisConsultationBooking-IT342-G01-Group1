@@ -1,0 +1,153 @@
+.dashboard-main {
+  max-width: 100%;
+  margin: 0;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.dashboard-main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.dashboard-sidebar {
+  width: 340px;
+  flex-shrink: 0;
+}
+
+/* NEW: dashboard content grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr);
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* NEW: generic section card */
+.section-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 20px 20px 16px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+/* NEW: section header + button */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btn-create {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent-primary);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 18px rgba(6, 182, 212, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btn-create:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(6, 182, 212, 0.32);
+}
+
+.btn-create:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px rgba(6, 182, 212, 0.22);
+}
+
+/* responsive tweaks */
+@media (max-width: 1024px) {
+  .dashboard-layout {
+    gap: 24px;
+  }
+
+  .dashboard-sidebar {
+    order: -1;
+  }
+
+  .dashboard-main {
+    padding: 20px 24px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-main {
+    padding: 16px;
+    gap: 20px;
+  }
+
+  .dashboard-layout {
+    gap: 20px;
+  }
+
+  .section-card {
+    padding: 16px 16px 12px;
+  }
+}
+
+.dashboard-section-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(6px);
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-conten{
+  animation: dashboardSlide 0.4s ease-out;
+}
+
+@keyframes dashboardSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+

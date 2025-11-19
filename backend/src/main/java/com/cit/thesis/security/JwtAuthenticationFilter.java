@@ -29,32 +29,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String authHeader = request.getHeader("Authorization");
+            System.out.println(
+                    "🔍 Step 1: authHeader = " + (authHeader != null ? authHeader.substring(0, 20) + "..." : "null"));
 
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
+                System.out.println("🔍 Step 2: token extracted");
 
                 String email = jwtUtil.extractEmail(token);
+                System.out.println("🔍 Step 3: email = " + email);
 
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    System.out.println("🔍 Step 4: validating token...");
                     if (jwtUtil.validateToken(token, email)) {
+                        System.out.println("🔍 Step 5: token valid");
                         String role = jwtUtil.extractRole(token);
+                        System.out.println("🔍 Step 6: role = " + role);
 
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                                 email,
                                 null,
-                                role != null ? Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
+                                role != null ? Collections.singletonList(new SimpleGrantedAuthority(role))
                                         : Collections.emptyList());
 
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                         SecurityContextHolder.getContext().setAuthentication(authentication);
+                        System.out.println(
+                                "✅ Step 7: Authentication set! Authorities: " + authentication.getAuthorities());
+                    } else {
+                        System.out.println("❌ Token validation failed!");
                     }
+                } else {
+                    System.out.println("⚠️ Email is null or authentication already exists");
                 }
+            } else {
+                System.out.println("⚠️ No Bearer token found in request to: " + request.getRequestURI());
             }
         } catch (Exception e) {
-            System.err.println("Cannot set user authentication: " + e.getMessage());
+            System.err.println("❌ JWT FILTER ERROR: " + e.getMessage());
+            e.printStackTrace();
         }
 
+        System.out.println("🔍 Step 8: Calling filterChain.doFilter()");
         filterChain.doFilter(request, response);
     }
 }

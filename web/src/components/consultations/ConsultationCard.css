@@ -1,0 +1,107 @@
+/* Compact Consultation Card */
+.compact-card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  padding: 18px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: 0.2s ease;
+  min-height: 165px; /* ensures uniform height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.compact-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Top Row */
+.compact-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.compact-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.compact-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #8b1538;
+  color: white;
+  font-size: 17px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+}
+
+.compact-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.compact-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.compact-team {
+  font-size: 11px;
+  padding: 2px 6px;
+  background: #f3e8ff;
+  color: #6b21a8;
+  border-radius: 6px;
+  width: fit-content;
+  margin-top: 2px;
+}
+
+.compact-date {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 1px;
+}
+
+/* Status badge right-aligned & tightened */
+.compact-status {
+  display: flex;
+  align-items: center;
+}
+
+/* Details */
+.compact-details {
+  margin-bottom: 12px;
+}
+
+.compact-row {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  padding: 1px 0;
+}
+
+.label {
+  font-weight: 600;
+  color: #6b7280;
+  min-width: 48px;
+}
+
+.value {
+  color: #111827;
+  font-weight: 500;
+}
+
+/* Actions */
+.compact-actions {
+  display: flex;
+  gap: 8px;
+}

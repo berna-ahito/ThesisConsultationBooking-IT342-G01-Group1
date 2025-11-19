@@ -1,107 +1,121 @@
 import { useAuth } from "../../context/AuthContext";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { getUpcomingConsultations } from "../../services/consultationService";
+import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
-import WelcomeCard from "../../components/common/WelcomeCard";
-import QuickActions from "../../components/common/QuickActions";
+import StatsGrid from "../../components/common/StatsGrid";
 import UpcomingConsultations from "../../components/consultations/UpcomingConsultations";
-import RecentActivity from "../../components/common/RecentActivity";
-import "./StudentDashboard.css";
+import QuickActions from "../../components/common/QuickActions";
+import Loader from "../../components/common/Loader";
+import "../../styles/dashboard-common.css";
 
 const StudentDashboard = () => {
   const { user } = useAuth();
-  const handleBookConsultation = () => {
-    console.log("Book consultation clicked");
-    // TODO: navigate('/student/book');
-  };
+  const navigate = useNavigate();
+  const [consultations, setConsultations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleViewSchedule = () => {
-    console.log("View schedule clicked");
-    // TODO: navigate('/student/schedule');
-  };
+  const fetchConsultations = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getUpcomingConsultations();
 
-  const handleViewDocuments = () => {
-    console.log("View documents clicked");
-    // TODO: navigate('/student/documents');
-  };
+      const formatted = data.map((consultation) => ({
+        id: consultation.id,
+        day: new Date(consultation.scheduledDate).getDate().toString(),
+        month: new Date(consultation.scheduledDate).toLocaleString("en", {
+          month: "short",
+        }),
+        title: consultation.topic || "Thesis Consultation",
+        adviser: consultation.adviserName || "Adviser",
+        time: `${consultation.startTime} - ${consultation.endTime}`,
+        status: consultation.status.toLowerCase(),
+      }));
 
-  const handleViewMessages = () => {
-    console.log("View messages clicked");
-    // TODO: navigate('/student/messages');
-  };
+      setConsultations(formatted);
+    } catch (error) {
+      console.error("Failed to fetch consultations:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const welcomeStats = [
-    { label: "Student ID", value: user?.studentId || "N/A" },
-    { label: "Upcoming", value: 0 },
-    { label: "Completed", value: 0 },
+  useEffect(() => {
+    fetchConsultations();
+  }, [fetchConsultations]);
+
+  const stats = [
+    {
+      label: "Student ID",
+      value: user?.studentId || "N/A",
+      primary: true,
+    },
+    {
+      label: "Team Code",
+      value: user?.teamCode || "N/A",
+      description: "Your thesis group",
+    },
+    {
+      label: "Upcoming",
+      value: consultations.filter((c) => c.status === "approved").length,
+      description: "Consultations scheduled",
+    },
+    {
+      label: "Completed",
+      value: 0,
+      description: "Sessions this semester",
+    },
   ];
 
   const quickActions = [
     {
-      icon: "📅",
-      label: "Book Consultation",
-      onClick: handleBookConsultation,
-      primary: true,
+      label: "Schedule Consultation",
+      onClick: () => navigate("/student/book"),
     },
     {
-      icon: "📋",
-      label: "View Schedule",
-      onClick: handleViewSchedule,
+      label: "View My Consultations",
+      onClick: () => navigate("/student/consultations"),
     },
     {
-      icon: "📄",
-      label: "My Documents",
-      onClick: handleViewDocuments,
-    },
-    {
-      icon: "💬",
-      label: "Messages",
-      onClick: handleViewMessages,
+      label: "Update Profile",
+      onClick: () => navigate("/student/profile"),
     },
   ];
 
-  const recentActivities = [
-    {
-      icon: "✅",
-      title: "Account Created",
-      description: "Welcome to the Thesis Consultation System",
-      time: "Just now",
-      type: "success",
-    },
-  ];
+  if (loading) {
+    return (
+      <DashboardLayout role="STUDENT_REP">
+        <Loader />
+      </DashboardLayout>
+    );
+  }
 
   return (
-    <div className="dashboard-page">
+    <DashboardLayout role="STUDENT_REP">
       <DashboardHeader
-        title="Thesis Consultation Booking"
-        subtitle="Student Portal"
-        icon="🎓"
+        title={`Welcome back, ${user?.name?.split(" ")[0]}!`}
+        subtitle="Here's your thesis consultation overview"
       />
 
       <main className="dashboard-main">
-        <div className="dashboard-content">
-          <WelcomeCard
-            userName={user?.name}
-            greeting="Welcome back"
-            message="You're all set to manage your thesis consultations."
-            stats={welcomeStats}
-          />
+        <StatsGrid stats={stats} />
 
-          <QuickActions actions={quickActions} />
+        <div className="dashboard-section-layout">
+          <div className="dashboard-main-content">
+            <UpcomingConsultations
+              consultations={consultations}
+              onBookNew={() => navigate("/student/book")}
+              onViewAll={() => navigate("/student/consultations")}
+            />
+          </div>
 
-          <UpcomingConsultations
-            consultations={[]}
-            emptyMessage="No upcoming consultations"
-            emptySubtext="Book your first consultation to get started!"
-            onBookNow={handleBookConsultation}
-            showBookButton={true}
-          />
-
-          <RecentActivity
-            title="Recent Activity"
-            activities={recentActivities}
-          />
+          <div className="dashboard-sidebar">
+            <QuickActions actions={quickActions} />
+          </div>
         </div>
       </main>
-    </div>
+    </DashboardLayout>
   );
 };
 

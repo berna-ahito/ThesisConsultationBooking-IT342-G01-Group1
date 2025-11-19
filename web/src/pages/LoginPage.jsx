@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useAuth } from "../context/AuthContext";
-import { loginWithEmail } from "../services/authService";
+import { loginWithEmail, loginWithGoogle } from "../services/authService";
 import AuthLayout from "../components/layout/AuthLayout";
 import GoogleAuthButton from "../components/auth/GoogleAuthButton";
 import "./LoginPage.css";
@@ -10,72 +10,104 @@ import "./LoginPage.css";
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { updateUser } = useAuth();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // If RegisterPage navigates here with { state: { registered: true } }
   const justRegistered = location.state?.registered === true;
-
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // ✅ Fixed explicit redirects that match App.jsx paths
-  const redirectByRole = (role) => {
-    switch (role) {
+  // Redirect logic based on user state
+  const handleRedirect = (user) => {
+    // Check if profile is incomplete
+    if (!user.isProfileComplete) {
+      navigate("/complete-profile", { replace: true });
+      return;
+    }
+
+    // Check if pending approval (Faculty only)
+    if (user.role === "FACULTY_ADVISER" && user.accountStatus === "PENDING") {
+      navigate("/pending-approval", { replace: true });
+      return;
+    }
+
+    // Redirect to dashboard based on role
+    switch (user.role) {
       case "ADMIN":
-        navigate("/admin/dashboard");
+        navigate("/admin/dashboard", { replace: true });
         break;
       case "FACULTY_ADVISER":
-        navigate("/adviser/dashboard");
+        navigate("/adviser/dashboard", { replace: true });
         break;
       case "STUDENT_REP":
-        navigate("/student/dashboard");
+        navigate("/student/dashboard", { replace: true });
         break;
       default:
-        navigate("/login");
+        navigate("/login", { replace: true });
         break;
     }
   };
 
+  // Email/Password login
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    try {
-      const res = await loginWithEmail(formData);
-      const user = await login(res.token, res.user);
-      console.log("Logged in user:", user);
 
-      if (!user.isProfileComplete) return navigate("/complete-profile");
-      if (user.accountStatus === "PENDING")
-        return navigate("/pending-approval");
-      redirectByRole(user.role);
+    try {
+      const response = await loginWithEmail(formData);
+
+      // Save to localStorage
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+
+      // Update context
+      updateUser(response.user);
+
+      // Redirect
+      handleRedirect(response.user);
     } catch (err) {
-      setError(err.response?.data || "Login failed. Please try again.");
+      console.error("Email login error:", err);
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSuccess = async (cred) => {
+  // Google OAuth login
+  const handleGoogleSuccess = async (credentialResponse) => {
     setError("");
     setLoading(true);
+
     try {
-      const user = await login(cred.credential);
-      if (!user.isProfileComplete) return navigate("/complete-profile");
-      if (user.accountStatus === "PENDING")
-        return navigate("/pending-approval");
-      redirectByRole(user.role);
-    } catch {
+      const response = await loginWithGoogle(credentialResponse.credential);
+
+      // Save to localStorage
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+
+      // Update context
+      updateUser(response.user);
+
+      // Redirect
+      handleRedirect(response.user);
+    } catch (err) {
+      console.error("Google login error:", err);
       setError("Google sign-in failed. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleError = () => {
+    setError("Google sign-in failed. Please try again.");
   };
 
   return (
@@ -92,25 +124,17 @@ const LoginPage = () => {
               color: "#1f2937",
               marginBottom: "8px",
             }}
-          >
-            Sign In
-          </h2>
-          <p style={{ color: "#6b7280", fontSize: "14px" }}>
-            Welcome back! Please enter your credentials.
-          </p>
+          ></h2>
         </div>
 
-        {/* ✅ Success banner after registering */}
         {justRegistered && (
           <div className="success-message">
             Account created successfully. Please sign in to continue.
           </div>
         )}
 
-        {/* Existing error banner */}
         {error && <div className="error-message">{error}</div>}
 
-        {/* form markup untouched (same classes) */}
         <form onSubmit={handleEmailLogin} className="auth-form">
           <div className="form-group">
             <label htmlFor="email" className="form-label">
@@ -159,7 +183,7 @@ const LoginPage = () => {
 
         <GoogleAuthButton
           onSuccess={handleGoogleSuccess}
-          onError={() => setError("Google sign-in failed.")}
+          onError={handleGoogleError}
           text="signin_with"
         />
 
