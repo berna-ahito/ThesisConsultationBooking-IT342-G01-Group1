@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Button from "../components/common/Button";
 import "../pages/CompleteProfile.css";
 
 const PendingApprovalPage = () => {
@@ -19,7 +20,6 @@ const PendingApprovalPage = () => {
           <h1 className="gradient-text">Account Pending Approval</h1>
           <p className="subtitle">Hi, {user?.name}!</p>
         </div>
-
         <div className="approval-notice" style={{ marginBottom: "24px" }}>
           <span className="notice-icon">⏳</span>
           <div>
@@ -33,7 +33,7 @@ const PendingApprovalPage = () => {
         </div>
 
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <h3 style={{ color: "#8b2635", marginBottom: "12px" }}>
+          <h3 style={{ color: "#0f172a", marginBottom: "12px" }}>
             What happens next?
           </h3>
           <ul style={{ textAlign: "left", color: "#666", lineHeight: "1.8" }}>
@@ -62,16 +62,16 @@ const PendingApprovalPage = () => {
             <br />
             <a
               href="mailto:itdept@gmail.com"
-              style={{ color: "#8b2635", textDecoration: "underline" }}
+              style={{ color: "#06b6d4", textDecoration: "underline" }}
             >
               itdept@gmail.com
             </a>
           </p>
         </div>
 
-        <button onClick={handleLogout} className="btn-primary">
+        <Button variant="primary" onClick={handleLogout} fullWidth>
           Sign Out
-        </button>
+        </Button>
 
         <div className="profile-footer">
           <p>
