@@ -9,6 +9,7 @@ import DashboardLayout from "../../components/layout/DashboardLayout";
 import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import ConsultationCard from "../../components/consultations/ConsultationCard";
+import Loader from "../../components/common/Loader";
 import "./ConsultationHistoryPage.css";
 
 const ConsultationHistoryPage = () => {
@@ -102,7 +103,7 @@ const ConsultationHistoryPage = () => {
   if (loading) {
     return (
       <DashboardLayout role="STUDENT_REP">
-        <div style={{ padding: "2rem" }}>Loading...</div>
+        <Loader />
       </DashboardLayout>
     );
   }

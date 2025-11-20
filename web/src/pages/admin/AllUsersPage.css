@@ -43,7 +43,7 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #8b1538;
+  border-color: #06b6d4;
 }
 
 .clear-search {
@@ -88,14 +88,14 @@
 }
 
 .filter-btn:hover {
-  border-color: #8b1538;
-  color: #8b1538;
+  border-color: #06b6d4;
+  color: #06b6d4;
 }
 
 .filter-btn.active {
-  background: #8b1538;
-  border-color: #8b1538;
-  color: white;
+  background: #1e293b;
+  border-color: #1e293b;
+  color: #ffffff;
 }
 
 .filter-count {
@@ -146,17 +146,20 @@
 
 .reset-btn {
   padding: 0.75rem 1.5rem;
-  background: #8b1538;
+  background: #06b6d4;
   color: white;
   border: none;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
 }
 
 .reset-btn:hover {
-  background: #6d1028;
+  background: #22d3ee;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(6, 182, 212, 0.45);
 }
 
 /* Table */
@@ -295,8 +298,8 @@
 
 .team-code {
   font-family: "Courier New", monospace;
-  background: #8b1538;
-  color: white;
+  background: #06b6d4;
+  color: #0f172a;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-size: 0.75rem;

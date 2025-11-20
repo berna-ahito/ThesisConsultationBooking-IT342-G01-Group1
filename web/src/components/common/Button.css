@@ -16,13 +16,13 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #0f172a 0%, #06b6d4 100%);
+  background: #06b6d4;
   color: white;
   box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #1e293b 0%, #22d3ee 100%);
+  background: #22d3ee;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(6, 182, 212, 0.45);
 }
@@ -30,13 +30,18 @@
 
 .btn-secondary {
   background: var(--color-gray-500);
-  color: var(--text-inverse);
+  color: white;
   box-shadow: var(--shadow-md);
 }
 
 .btn-secondary:hover:not(:disabled) {
   background: var(--color-gray-600);
   transform: translateY(-2px);
+  color: white;
+}
+
+.btn-secondary:active:not(:disabled) {
+  color: white;
 }
 
 .btn-danger {

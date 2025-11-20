@@ -10,6 +10,7 @@ import DashboardLayout from "../../components/layout/DashboardLayout";
 import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import ConsultationCard from "../../components/consultations/ConsultationCard";
+import Loader from "../../components/common/Loader";
 import "./PendingConsultationsPage.css";
 
 const PendingConsultationsPage = () => {
@@ -98,7 +99,7 @@ const PendingConsultationsPage = () => {
   if (loading) {
     return (
       <DashboardLayout role="FACULTY_ADVISER">
-        <div style={{ padding: "2rem" }}>Loading...</div>
+        <Loader />
       </DashboardLayout>
     );
   }

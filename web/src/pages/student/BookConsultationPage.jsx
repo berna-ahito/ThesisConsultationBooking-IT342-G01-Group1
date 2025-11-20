@@ -7,6 +7,7 @@ import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import FormInput from "../../components/common/FormInput";
+import Loader from "../../components/common/Loader";
 import "./BookConsultationPage.css";
 
 const BookConsultationPage = () => {
@@ -94,7 +95,7 @@ const BookConsultationPage = () => {
   if (loading) {
     return (
       <DashboardLayout role="STUDENT_REP">
-        <div style={{ padding: "2rem" }}>Loading available schedules...</div>
+        <Loader />
       </DashboardLayout>
     );
   }

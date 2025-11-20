@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { getAllUsers } from "../../services/adminService";
+import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import StatusBadge from "../../components/common/StatusBadge";
+import Loader from "../../components/common/Loader";
 import "./AllUsersPage.css";
 
 const AllUsersPage = () => {
@@ -76,16 +78,21 @@ const AllUsersPage = () => {
   ];
 
   if (loading) {
-    return <div className="all-users-page">Loading...</div>;
+    return (
+      <DashboardLayout role="ADMIN">
+        <Loader />
+      </DashboardLayout>
+    );
   }
 
   return (
-    <div className="all-users-page">
-      <DashboardHeader
-        title="All Users"
-        subtitle="Manage system users and accounts"
-        icon="👥"
-      />
+    <DashboardLayout role="ADMIN">
+      <div className="all-users-page">
+        <DashboardHeader
+          title="All Users"
+          subtitle="Manage system users and accounts"
+          icon="👥"
+        />
 
       <div className="users-container">
         {error && (
@@ -206,6 +213,7 @@ const AllUsersPage = () => {
         )}
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 

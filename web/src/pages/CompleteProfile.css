@@ -7,7 +7,7 @@
 /* ===== LEFT: VISUAL PANEL ===== */
 .profile-visual-panel {
   flex: 0 0 45%;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #7c3aed 100%),
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%),
     url('/bg-image.webp') center/cover no-repeat;
   background-blend-mode: overlay;
   color: #fff;
@@ -38,7 +38,7 @@
   left: 5rem;
   width: 24rem;
   height: 24rem;
-  background: rgba(124, 58, 237, 0.4);
+  background: rgba(6, 182, 212, 0.4);
   border-radius: 50%;
   filter: blur(80px);
 }
@@ -69,11 +69,13 @@
   font-size: 28px;
   font-weight: 800;
   color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .brand-subtitle {
   margin: 0;
   color: #cbd5e1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .progress-steps {
@@ -138,11 +140,13 @@
   padding: 18px 20px;
   color: #cbd5e1;
   margin-bottom: 18px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .motivation-box h3 {
   margin: 0 0 6px;
   color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .role-preview-box {
@@ -152,6 +156,7 @@
   border-radius: 12px;
   padding: 18px 20px;
   color: #cbd5e1;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .role-preview-icon {
@@ -162,6 +167,7 @@
 .role-preview-box h4 {
   margin: 0 0 10px;
   color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .role-features {
@@ -218,7 +224,7 @@
   margin: 0 0 8px;
   font-size: 28px;
   font-weight: 800;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #7c3aed 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #06b6d4 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -276,4 +282,96 @@
   .form-title {
     font-size: 24px;
   }
+}
+
+/* ===== PENDING APPROVAL PAGE ===== */
+.complete-profile-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #06b6d4 100%);
+  padding: 24px;
+}
+
+.complete-profile-card {
+  width: min(420px, 92%);
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.2);
+  padding: 36px 32px;
+  border: 1px solid #e2e8f0;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.profile-header img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 16px;
+}
+
+.profile-header h1 {
+  margin: 0 0 16px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.profile-header .gradient-text {
+  background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.profile-header .subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.approval-notice {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.notice-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.approval-notice strong {
+  color: #06b6d4;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.approval-notice p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.profile-footer {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.profile-footer p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
 }

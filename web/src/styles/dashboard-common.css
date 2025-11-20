@@ -150,4 +150,58 @@
   }
 }
 
+/* Alert Card */
+.alert-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1.5px solid rgba(6, 182, 212, 0.3);
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.alert-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.alert-content {
+  flex: 1;
+  color: #0f172a;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.alert-content strong {
+  color: #06b6d4;
+  font-weight: 600;
+}
+
+.alert-button {
+  padding: 10px 16px;
+  background: #06b6d4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.alert-button:hover {
+  background: #22d3ee;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(6, 182, 212, 0.45);
+}
+
+.alert-button:active {
+  transform: translateY(0);
+}
+
 

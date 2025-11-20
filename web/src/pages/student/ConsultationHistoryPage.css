@@ -42,8 +42,8 @@
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, #0f172a 0%, #06b6d4 100%);
-  border-color: #06b6d4;
+  background: #1e293b;
+  border-color: #1e293b;
   color: #ffffff;
 }
 
@@ -189,18 +189,18 @@
 
 .team-code {
   font-family: "Courier New", monospace;
-  background: #f3f4f6;
+  background: #06b6d4;
+  color: #0f172a;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   display: inline-block;
-  color: #0f172a;
 }
 
 /* Description, Rejection Reason, Notes */
 .description,
 .rejection-reason,
 .adviser-notes {
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   padding-top: 1rem;
   border-top: 1px solid #e5e7eb;
 }
