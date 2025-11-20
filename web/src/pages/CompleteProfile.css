@@ -69,11 +69,13 @@
   font-size: 28px;
   font-weight: 800;
   color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .brand-subtitle {
   margin: 0;
   color: #cbd5e1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .progress-steps {
@@ -138,11 +140,13 @@
   padding: 18px 20px;
   color: #cbd5e1;
   margin-bottom: 18px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .motivation-box h3 {
   margin: 0 0 6px;
   color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .role-preview-box {
@@ -152,6 +156,7 @@
   border-radius: 12px;
   padding: 18px 20px;
   color: #cbd5e1;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .role-preview-icon {
@@ -162,6 +167,7 @@
 .role-preview-box h4 {
   margin: 0 0 10px;
   color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .role-features {
