@@ -1,21 +1,20 @@
 import React from "react";
+import LogoImage from "../../assets/Icon_Prototype.png";
 import "./Logo.css";
 
 export default function Logo({ size = "md" }) {
   const sizes = {
-    sm: { box: "logo-box-sm", text: "logo-text-sm" },
-    md: { box: "logo-box-md", text: "logo-text-md" },
-    lg: { box: "logo-box-lg", text: "logo-text-lg" },
+    sm: { logo: "logo-image-sm" },
+    md: { logo: "logo-image-md" },
+    lg: { logo: "logo-image-lg" },
   };
 
-  const { box, text } = sizes[size];
+  const { logo } = sizes[size];
 
   return (
     <div className="logo-wrapper">
-      <div className={box}>
-        <span className="logo-initial">T</span>
-      </div>
-      <span className={text}>ThesisHub</span>
+      <img src={LogoImage} alt="ThesisHub Logo" className={logo} />
+      <span className="logo-text">ThesisHub</span>
     </div>
   );
 }

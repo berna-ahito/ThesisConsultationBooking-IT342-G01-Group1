@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { completeProfile } from "../services/authService";
+import CITULogo from "../assets/Cebu_Institute_of_Technology_University_logo.png";
 import "./CompleteProfile.css";
 import Alert from "../components/common/Alert";
 import NoticeBox from "../components/common/NoticeBox";
@@ -129,7 +130,7 @@ const CompleteProfilePage = () => {
       <div className="profile-visual-panel">
         <div className="visual-content">
           <div className="brand-header">
-            <img src="/logo.png" alt="Logo" className="brand-logo" />
+            <img src={CITULogo} alt="Logo" className="brand-logo" />
             <h1 className="brand-title">
               Thesis Consultation
               <br />

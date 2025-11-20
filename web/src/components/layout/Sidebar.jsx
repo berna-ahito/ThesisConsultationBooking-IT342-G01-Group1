@@ -1,6 +1,7 @@
 // src/components/layout/Sidebar.jsx
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import LogoIcon from "../../assets/Icon_Prototype.png";
 import "./Sidebar.css";
 
 const icons = {
@@ -103,7 +104,9 @@ const Sidebar = ({ role }) => {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <div className="logo-icon">TC</div>
+        <div className="logo-icon">
+          <img src={LogoIcon} alt="ThesisHub Logo" className="logo-image" />
+        </div>
         <div className="logo-info">
           <span className="logo-title">ThesisHub</span>
           <span className="logo-subtitle">{portalLabel}</span>
