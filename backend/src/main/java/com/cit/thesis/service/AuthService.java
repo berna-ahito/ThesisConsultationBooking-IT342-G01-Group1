@@ -180,13 +180,14 @@ public class AuthService {
         faculty.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         faculty.setAuthProvider("email");
         faculty.setEmailVerified(false);
+        faculty.setInstitutionId(request.getInstitutionId());
         faculty.setRole(UserRole.FACULTY_ADVISER);
         faculty.setDepartment(request.getDepartment());
         faculty.setFacultyId(request.getFacultyId());
         faculty.setIsAvailable(request.getIsAvailable());
         faculty.setIsProfileComplete(false);
         faculty.setAccountStatus("ACTIVE");
-        
+
 
         faculty = userRepository.save(faculty);
 
@@ -207,6 +208,7 @@ public class AuthService {
         student.setEmailVerified(false);
         student.setRole(UserRole.STUDENT_REP);
         student.setIsProfileComplete(false);
+        student.setInstitutionId(request.getInstitutionId());
         student.setAccountStatus("ACTIVE");
         student.setStudentId(request.getStudentId());
         student.setGroupId(request.getGroupId());

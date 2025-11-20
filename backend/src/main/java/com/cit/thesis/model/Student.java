@@ -27,11 +27,11 @@ public class Student extends User {
         super();
     }
 
-      public int getStudentId() {
+    public int getStudentId() {
         return studentId;
     }
     public void setStudentId(int id) {
-        this.studentId = studentId;
+        this.studentId = id;
     }
      public int getGroupId() {
         return groupId;

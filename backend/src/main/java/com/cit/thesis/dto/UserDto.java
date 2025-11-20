@@ -13,7 +13,7 @@ public class UserDto {
     private String accountStatus;
 
     public UserDto(Long id, String email, String name, String pictureUrl, String role,
-            Boolean isProfileComplete, String studentId, String teamCode,
+            Boolean isProfileComplete, String teamCode,
             String department, String accountStatus) {
         this.id = id;
         this.email = email;
@@ -29,11 +29,11 @@ public class UserDto {
 
     public UserDto(Long id, String email, String name, String pictureUrl, String role,
             Boolean isProfileComplete, String studentId, String department) {
-        this(id, email, name, pictureUrl, role, isProfileComplete, studentId, null, department, "ACTIVE");
+        this(id, email, name, pictureUrl, role, isProfileComplete,  null, department, "ACTIVE");
     }
 
     public UserDto(Long id, String email, String name, String pictureUrl, String role) {
-        this(id, email, name, pictureUrl, role, true, null, null, null, "ACTIVE");
+        this(id, email, name, pictureUrl, role, true,  null, null, "ACTIVE");
     }
 
     public UserDto() {

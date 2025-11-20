@@ -60,7 +60,6 @@ public class UserService {
                 user.getPictureUrl(),
                 user.getRole() != null ? user.getRole().name() : null,
                 user.getIsProfileComplete(),
-                user.getStudentId(),
                 user.getTeamCode(),
                 user.getDepartment(),
                 user.getAccountStatus());

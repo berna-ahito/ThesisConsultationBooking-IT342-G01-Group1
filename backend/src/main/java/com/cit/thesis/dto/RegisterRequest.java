@@ -23,6 +23,7 @@ public class RegisterRequest {
     private boolean isAvailable;
     private int groupId;
     private String department;
+    private Long institutionId;
 
     public RegisterRequest() {
     }
@@ -61,6 +62,12 @@ public class RegisterRequest {
     }
     public void setDepartment(String department) {
         this.department = department;
+    }
+    public Long getInstitutionId() {
+        return institutionId;
+    }
+    public void setInstitutionId(Long institutionId) {
+        this.institutionId = institutionId;
     }
 
     public String getRole() {
