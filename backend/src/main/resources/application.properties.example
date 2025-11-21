@@ -40,3 +40,13 @@ app.cors.allowed-origins=http://localhost:5173,http://127.0.0.1:5173
 # Logging
 logging.level.com.cit.thesis=DEBUG
 logging.level.org.springframework.security=DEBUG
+
+# File Upload Configuration
+spring.servlet.multipart.max-file-size=5MB
+spring.servlet.multipart.max-request-size=5MB
+app.upload.dir=${UPLOAD_DIR:uploads/profile-images}
+
+# Supabase Storage
+supabase.url=${SUPABASE_URL:https://pzdigeznblspkxcbnqiq.supabase.co}
+supabase.anon.key=${SUPABASE_ANON_KEY}
+supabase.storage.bucket=${SUPABASE_STORAGE_BUCKET:profile-images}

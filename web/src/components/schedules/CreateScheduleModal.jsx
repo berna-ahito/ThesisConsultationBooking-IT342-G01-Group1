@@ -26,8 +26,26 @@ const CreateScheduleModal = ({ onClose, onSubmit, loading, backendError }) => {
       return;
     }
 
+    const selectedDate = new Date(formData.availableDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      setError("Cannot create schedule for past dates");
+      return;
+    }
+
     if (formData.startTime >= formData.endTime) {
       setError("End time must be after start time");
+      return;
+    }
+
+    const [startHour, startMin] = formData.startTime.split(":").map(Number);
+    const [endHour, endMin] = formData.endTime.split(":").map(Number);
+    const duration = endHour * 60 + endMin - (startHour * 60 + startMin);
+
+    if (duration < 30) {
+      setError("Schedule must be at least 30 minutes long");
       return;
     }
 

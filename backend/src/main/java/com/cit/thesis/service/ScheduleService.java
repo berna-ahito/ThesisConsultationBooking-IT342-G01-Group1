@@ -8,6 +8,10 @@ import com.cit.thesis.repository.ScheduleRepository;
 import com.cit.thesis.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import com.cit.thesis.dto.PagedResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,10 +22,13 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final AuditLogService auditLogService;
 
-    public ScheduleService(ScheduleRepository scheduleRepository, UserRepository userRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository, UserRepository userRepository,
+            AuditLogService auditLogService) {
         this.scheduleRepository = scheduleRepository;
         this.userRepository = userRepository;
+        this.auditLogService = auditLogService;
     }
 
     public List<ScheduleDto> getAvailableSchedules() {
@@ -46,17 +53,39 @@ public class ScheduleService {
                 .collect(Collectors.toList());
     }
 
+    public PagedResponse<ScheduleDto> getMySchedules(String email, int page, int size) {
+        User adviser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Schedule> schedulePage = scheduleRepository
+                .findByAdviserIdOrderByAvailableDateAsc(adviser.getId(), pageable);
+
+        List<ScheduleDto> dtos = schedulePage.getContent().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+
+        return new PagedResponse<>(
+                dtos,
+                schedulePage.getNumber(),
+                schedulePage.getTotalPages(),
+                schedulePage.getTotalElements(),
+                schedulePage.getSize(),
+                schedulePage.isFirst(),
+                schedulePage.isLast());
+    }
+
     @Transactional
     public ScheduleDto createSchedule(CreateScheduleRequest request, String email) {
         User adviser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!request.getEndTime().isAfter(request.getStartTime())) {
-            throw new RuntimeException("End time must be after start time");
+            throw new IllegalArgumentException("End time must be after start time");
         }
 
         if (request.getAvailableDate().isBefore(LocalDate.now())) {
-            throw new RuntimeException("Cannot create schedule for past dates");
+            throw new IllegalArgumentException("Cannot create schedule for past dates");
         }
 
         List<Schedule> overlapping = scheduleRepository.findOverlappingSchedules(
@@ -66,11 +95,11 @@ public class ScheduleService {
                 request.getEndTime());
 
         if (!overlapping.isEmpty()) {
-            throw new RuntimeException(
-                    "Schedule overlaps with existing schedule on " +
-                            request.getAvailableDate() + " at " +
-                            overlapping.get(0).getStartTime() + " - " +
-                            overlapping.get(0).getEndTime());
+            Schedule conflict = overlapping.get(0);
+            String conflictTime = conflict.getStartTime() + " - " + conflict.getEndTime();
+            throw new IllegalStateException(
+                    "Schedule conflicts with existing slot on " +
+                            request.getAvailableDate() + " from " + conflictTime);
         }
 
         Schedule schedule = new Schedule();
@@ -81,6 +110,18 @@ public class ScheduleService {
         schedule.setIsBooked(false);
 
         schedule = scheduleRepository.save(schedule);
+
+        // Log schedule creation
+        auditLogService.log(
+                adviser.getId(),
+                adviser.getEmail(),
+                "SCHEDULE_CREATED",
+                "Schedule",
+                schedule.getId(),
+                "Created availability on " + schedule.getAvailableDate() +
+                        " from " + schedule.getStartTime() + " to " + schedule.getEndTime(),
+                null);
+
         return mapToDto(schedule);
     }
 
@@ -99,6 +140,17 @@ public class ScheduleService {
         if (schedule.getIsBooked()) {
             throw new RuntimeException("Cannot delete a booked schedule");
         }
+
+        // Log schedule deletion
+        auditLogService.log(
+                adviser.getId(),
+                adviser.getEmail(),
+                "SCHEDULE_DELETED",
+                "Schedule",
+                schedule.getId(),
+                "Deleted schedule on " + schedule.getAvailableDate() +
+                        " at " + schedule.getStartTime(),
+                null);
 
         scheduleRepository.delete(schedule);
     }

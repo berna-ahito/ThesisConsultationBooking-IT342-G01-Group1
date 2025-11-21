@@ -26,10 +26,12 @@ public class ScheduleController {
     }
 
     @GetMapping("/my-schedules")
-    public ResponseEntity<List<ScheduleDto>> getMySchedules(Authentication authentication) {
+    public ResponseEntity<?> getMySchedules(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
         String email = authentication.getName();
-        List<ScheduleDto> schedules = scheduleService.getMySchedules(email);
-        return ResponseEntity.ok(schedules);
+        return ResponseEntity.ok(scheduleService.getMySchedules(email, page, size));
     }
 
     @PostMapping

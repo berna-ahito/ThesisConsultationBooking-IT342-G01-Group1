@@ -6,6 +6,10 @@ import com.cit.thesis.model.UserRole;
 import com.cit.thesis.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import com.cit.thesis.dto.PagedResponse;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -17,9 +21,11 @@ import java.util.stream.Collectors;
 public class UserManagementService {
 
     private final UserRepository userRepository;
+    private final AuditLogService auditLogService;
 
-    public UserManagementService(UserRepository userRepository) {
+    public UserManagementService(UserRepository userRepository, AuditLogService auditLogService) {
         this.userRepository = userRepository;
+        this.auditLogService = auditLogService;
     }
 
     public List<UserDto> getAllUsers() {
@@ -29,6 +35,25 @@ public class UserManagementService {
                 .collect(Collectors.toList());
 
         return users.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    public PagedResponse<UserDto> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findAll(pageable);
+
+        List<UserDto> dtos = userPage.getContent().stream()
+                .filter(u -> !"DEACTIVATED".equals(u.getAccountStatus()))
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+
+        return new PagedResponse<>(
+                dtos,
+                userPage.getNumber(),
+                userPage.getTotalPages(),
+                userPage.getTotalElements(),
+                userPage.getSize(),
+                userPage.isFirst(),
+                userPage.isLast());
     }
 
     public List<UserDto> getPendingUsers() {
@@ -53,6 +78,16 @@ public class UserManagementService {
 
         user = userRepository.save(user);
 
+        // Log user approval
+        auditLogService.log(
+                null,
+                "system",
+                "USER_APPROVED",
+                "User",
+                user.getId(),
+                "Admin approved " + user.getEmail() + " as " + user.getRole().name(),
+                null);
+
         return convertToDto(user);
     }
 
@@ -65,6 +100,16 @@ public class UserManagementService {
             throw new RuntimeException("User is not pending approval");
         }
 
+        // Log user rejection
+        auditLogService.log(
+                null,
+                "system",
+                "USER_REJECTED",
+                "User",
+                user.getId(),
+                "Admin rejected " + user.getEmail(),
+                null);
+
         userRepository.delete(user);
 
     }
@@ -76,6 +121,16 @@ public class UserManagementService {
 
         user.setAccountStatus("DEACTIVATED");
         user.setActive(false);
+
+        // Log user deletion/deactivation
+        auditLogService.log(
+                null,
+                "system",
+                "USER_DELETED",
+                "User",
+                user.getId(),
+                "Admin deleted/deactivated " + user.getEmail(),
+                null);
 
         userRepository.save(user);
     }

@@ -37,7 +37,13 @@ export const bookConsultation = async (bookingData) => {
 
 // Cancel consultation
 export const cancelConsultation = async (consultationId) => {
-    await api.delete(`/consultations/${consultationId}`);
+    try {
+        const response = await api.delete(`/consultations/${consultationId}`);
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data || "Failed to cancel consultation";
+        throw new Error(message);
+    }
 };
 
 // Get consultation details

@@ -20,10 +20,11 @@ public class UserManagementController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
         try {
-            List<UserDto> users = userManagementService.getAllUsers();
-            return ResponseEntity.ok(users);
+            return ResponseEntity.ok(userManagementService.getAllUsers(page, size));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

@@ -40,7 +40,8 @@ const AdviserDashboard = () => {
     try {
       setLoading(true);
       const data = await getMySchedules();
-      setSchedules(data);
+      // Handle paginated response
+      setSchedules(Array.isArray(data) ? data : data.content || []);
     } catch (err) {
       console.error("❌ Failed to fetch schedules:", err);
     } finally {

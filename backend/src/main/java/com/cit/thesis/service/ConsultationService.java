@@ -11,6 +11,10 @@ import com.cit.thesis.repository.ScheduleRepository;
 import com.cit.thesis.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import com.cit.thesis.dto.PagedResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,13 +26,16 @@ public class ConsultationService {
         private final ConsultationRepository consultationRepository;
         private final ScheduleRepository scheduleRepository;
         private final UserRepository userRepository;
+        private final AuditLogService auditLogService;
 
         public ConsultationService(ConsultationRepository consultationRepository,
                         ScheduleRepository scheduleRepository,
-                        UserRepository userRepository) {
+                        UserRepository userRepository,
+                        AuditLogService auditLogService) {
                 this.consultationRepository = consultationRepository;
                 this.scheduleRepository = scheduleRepository;
                 this.userRepository = userRepository;
+                this.auditLogService = auditLogService;
         }
 
         public List<ConsultationDto> getMyConsultations(String email) {
@@ -69,6 +76,28 @@ public class ConsultationService {
                                 .collect(Collectors.toList());
         }
 
+        public PagedResponse<ConsultationDto> getMyConsultations(String email, int page, int size) {
+                User user = userRepository.findByEmail(email)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                Pageable pageable = PageRequest.of(page, size);
+                Page<Consultation> consultationPage = consultationRepository
+                                .findByStudentIdOrderByScheduledDateDesc(user.getId(), pageable);
+
+                List<ConsultationDto> dtos = consultationPage.getContent().stream()
+                                .map(this::mapToDto)
+                                .collect(Collectors.toList());
+
+                return new PagedResponse<>(
+                                dtos,
+                                consultationPage.getNumber(),
+                                consultationPage.getTotalPages(),
+                                consultationPage.getTotalElements(),
+                                consultationPage.getSize(),
+                                consultationPage.isFirst(),
+                                consultationPage.isLast());
+        }
+
         @Transactional
         public ConsultationDto bookConsultation(BookConsultationRequest request, String email) {
                 User student = userRepository.findByEmail(email)
@@ -105,6 +134,16 @@ public class ConsultationService {
                 schedule.setIsBooked(true);
                 scheduleRepository.save(schedule);
 
+                // Log consultation booking
+                auditLogService.log(
+                                student.getId(),
+                                student.getEmail(),
+                                "CONSULTATION_BOOKED",
+                                "Consultation",
+                                consultation.getId(),
+                                "Booked consultation with " + adviser.getName() + " on " + schedule.getAvailableDate(),
+                                null);
+
                 return mapToDto(consultation);
 
         }
@@ -122,7 +161,21 @@ public class ConsultationService {
                 }
 
                 if (consultation.getStatus() == ConsultationStatus.COMPLETED) {
-                        throw new RuntimeException("Cannot cancel completed consultation");
+                        throw new IllegalStateException("Cannot cancel completed consultation");
+                }
+
+                if (consultation.getStatus() == ConsultationStatus.CANCELLED) {
+                        throw new IllegalStateException("Consultation is already cancelled");
+                }
+
+                if (consultation.getStatus() == ConsultationStatus.REJECTED) {
+                        throw new IllegalStateException("Cannot cancel rejected consultation");
+                }
+
+                // Prevent cancellation if consultation is within 24 hours
+                if (consultation.getScheduledDate().equals(LocalDate.now()) ||
+                                consultation.getScheduledDate().isBefore(LocalDate.now())) {
+                        throw new IllegalStateException("Cannot cancel consultation on the same day or past dates");
                 }
 
                 Schedule schedule = scheduleRepository.findById(consultation.getScheduleId())
@@ -134,6 +187,16 @@ public class ConsultationService {
 
                 consultation.setStatus(ConsultationStatus.CANCELLED);
                 consultationRepository.save(consultation);
+
+                // Log cancellation
+                auditLogService.log(
+                                user.getId(),
+                                user.getEmail(),
+                                "CONSULTATION_CANCELLED",
+                                "Consultation",
+                                consultation.getId(),
+                                "Cancelled consultation on " + consultation.getScheduledDate(),
+                                null);
         }
 
         public ConsultationDto getConsultationDetails(Long consultationId, String email) {
@@ -185,6 +248,16 @@ public class ConsultationService {
                 consultation.setStatus(ConsultationStatus.APPROVED);
                 consultation = consultationRepository.save(consultation);
 
+                // Log approval
+                auditLogService.log(
+                                adviser.getId(),
+                                adviser.getEmail(),
+                                "CONSULTATION_APPROVED",
+                                "Consultation",
+                                consultation.getId(),
+                                "Approved consultation with student ID " + consultation.getStudentId(),
+                                null);
+
                 return mapToDto(consultation);
         }
 
@@ -217,6 +290,16 @@ public class ConsultationService {
                 consultation.setRejectionReason(rejectionReason);
                 consultation = consultationRepository.save(consultation);
 
+                // Log rejection
+                auditLogService.log(
+                                adviser.getId(),
+                                adviser.getEmail(),
+                                "CONSULTATION_REJECTED",
+                                "Consultation",
+                                consultation.getId(),
+                                "Rejected consultation. Reason: " + rejectionReason,
+                                null);
+
                 return mapToDto(consultation);
         }
 
@@ -241,6 +324,16 @@ public class ConsultationService {
                 }
 
                 consultation = consultationRepository.save(consultation);
+
+                // Log notes addition
+                auditLogService.log(
+                                adviser.getId(),
+                                adviser.getEmail(),
+                                "CONSULTATION_NOTES_ADDED",
+                                "Consultation",
+                                consultation.getId(),
+                                "Added notes and marked as completed",
+                                null);
 
                 return mapToDto(consultation);
         }
