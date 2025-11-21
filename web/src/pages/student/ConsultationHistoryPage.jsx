@@ -33,14 +33,7 @@ const ConsultationHistoryPage = () => {
     try {
       setLoading(true);
       const data = await getMyConsultations();
-
-      // ⭐ ADD THESE 4 LINES:
-      console.log("🔍 API Response:", data);
-      console.log("🔍 First item:", data[0]);
-      console.log("🔍 Adviser name:", data[0]?.adviserName);
-      console.log("🔍 Student name:", data[0]?.studentName);
-
-      setConsultations(data);
+      setConsultations(Array.isArray(data) ? data : data.content || []);
     } catch (err) {
       setError("Failed to load consultation history");
       console.error(err);
@@ -106,6 +99,11 @@ const ConsultationHistoryPage = () => {
       label: "Rejected",
       value: "REJECTED",
       count: consultations.filter((c) => c.status === "REJECTED").length,
+    },
+    {
+      label: "Cancelled",
+      value: "CANCELLED",
+      count: consultations.filter((c) => c.status === "CANCELLED").length,
     },
   ];
 

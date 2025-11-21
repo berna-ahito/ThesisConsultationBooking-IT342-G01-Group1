@@ -60,7 +60,9 @@ export const getArchivedUsers = async () => {
     return response.data;
 };
 
-export const getAllUsers = async () => {
-    const response = await api.get("/admin/users");
+export const getAllUsers = async (page = 0, size = 20) => {
+    const response = await api.get("/admin/users", {
+        params: { page, size }
+    });
     return response.data;
 };

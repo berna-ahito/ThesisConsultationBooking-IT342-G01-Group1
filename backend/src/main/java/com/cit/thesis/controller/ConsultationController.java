@@ -22,10 +22,12 @@ public class ConsultationController {
     }
 
     @GetMapping("/my-consultations")
-    public ResponseEntity<List<ConsultationDto>> getMyConsultations(Authentication authentication) {
+    public ResponseEntity<?> getMyConsultations(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         String email = authentication.getName();
-        List<ConsultationDto> consultations = consultationService.getMyConsultations(email);
-        return ResponseEntity.ok(consultations);
+        return ResponseEntity.ok(consultationService.getMyConsultations(email, page, size));
     }
 
     @GetMapping("/upcoming")

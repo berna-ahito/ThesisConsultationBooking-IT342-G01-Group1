@@ -25,6 +25,10 @@ const AllUsersPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [success, setSuccess] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [pageSize] = useState(20);
 
   useEffect(() => {
     fetchUsers();
@@ -34,6 +38,12 @@ const AllUsersPage = () => {
     filterUsers();
   }, [users, searchTerm, filterRole]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (filterRole !== "ARCHIVED") {
+      fetchUsers();
+    }
+  }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -42,11 +52,13 @@ const AllUsersPage = () => {
 
       if (filterRole === "ARCHIVED") {
         data = await getArchivedUsers();
+        setUsers(data);
       } else {
-        data = await getAllUsers();
+        data = await getAllUsers(currentPage, pageSize);
+        setUsers(data.content);
+        setTotalPages(data.totalPages);
+        setTotalElements(data.totalElements);
       }
-
-      setUsers(data);
     } catch {
       setError("Failed to load users");
     } finally {
@@ -218,10 +230,38 @@ const AllUsersPage = () => {
             </div>
           </div>
 
+          {/* Pagination Controls */}
+          {!loading && filterRole !== "ARCHIVED" && totalPages > 1 && (
+            <div className="pagination-controls">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+                disabled={currentPage === 0}
+                className="page-btn"
+              >
+                « Previous
+              </button>
+              <span className="page-info">
+                Page {currentPage + 1} of {totalPages}
+              </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))
+                }
+                disabled={currentPage === totalPages - 1}
+                className="page-btn"
+              >
+                Next »
+              </button>
+            </div>
+          )}
+
           {/* Results Count */}
           <div className="results-info">
             Showing <strong>{filteredUsers.length}</strong> of{" "}
-            <strong>{users.length}</strong> users
+            <strong>
+              {filterRole === "ARCHIVED" ? users.length : totalElements}
+            </strong>{" "}
+            users
           </div>
 
           {/* Users Table */}

@@ -1,9 +1,11 @@
 import api from "./api";
 
 // Get all users
-export const getAllUsers = async () => {
+export const getAllUsers = async (page = 0, size = 20) => {
     try {
-        const response = await api.get("/admin/users");
+        const response = await api.get("/admin/users", {
+            params: { page, size }
+        });
         return response.data;
     } catch (error) {
         console.error("❌ Failed to fetch users:", error);

@@ -30,9 +30,13 @@ const StudentDashboard = () => {
     try {
       setLoading(true);
       const upcomingData = await getUpcomingConsultations();
-      const allData = await getMyConsultations();
+      const upcomingArray = Array.isArray(upcomingData)
+        ? upcomingData
+        : upcomingData.content || [];
 
-      const formatted = upcomingData.map((consultation) => ({
+      const allData = await getMyConsultations();
+      const allArray = Array.isArray(allData) ? allData : allData.content || [];
+      const formatted = upcomingArray.map((consultation) => ({
         id: consultation.id,
         day: new Date(consultation.scheduledDate).getDate().toString(),
         month: new Date(consultation.scheduledDate).toLocaleString("en", {
@@ -46,8 +50,8 @@ const StudentDashboard = () => {
 
       setConsultations(formatted);
 
-      setPendingCount(allData.filter((c) => c.status === "PENDING").length);
-      setUpcomingCount(allData.filter((c) => c.status === "APPROVED").length);
+      setPendingCount(allArray.filter((c) => c.status === "PENDING").length);
+      setUpcomingCount(allArray.filter((c) => c.status === "APPROVED").length);
     } catch (error) {
       console.error("Failed to fetch consultations:", error);
     } finally {

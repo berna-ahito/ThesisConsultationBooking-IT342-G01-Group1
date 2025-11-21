@@ -130,15 +130,17 @@ const ConsultationCard = ({
               </Button>
             )}
 
-          {consultation.status === "PENDING" && onCancel && (
-            <Button
-              variant="secondary"
-              onClick={() => onCancel(consultation.id)}
-              disabled={processing}
-            >
-              Cancel
-            </Button>
-          )}
+          {consultation.status === "PENDING" &&
+            onCancel &&
+            role?.toLowerCase().includes("student") && (
+              <Button
+                variant="secondary"
+                onClick={() => onCancel(consultation.id)}
+                disabled={processing}
+              >
+                Cancel
+              </Button>
+            )}
         </div>
       )}
     </div>
