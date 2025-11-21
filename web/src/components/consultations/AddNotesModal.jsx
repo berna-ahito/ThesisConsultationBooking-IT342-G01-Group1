@@ -35,7 +35,7 @@ const AddNotesModal = ({ consultation, onClose, onSubmit, loading }) => {
             </div>
             <div className="summary-item">
               <span className="label">Team:</span>
-              <span className="team-code">{consultation?.teamCode}</span>
+              <span className="value team-code">{consultation?.teamCode}</span>
             </div>
             <div className="summary-item">
               <span className="label">Topic:</span>

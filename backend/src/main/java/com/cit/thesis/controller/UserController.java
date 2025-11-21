@@ -47,4 +47,58 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    // Student/Faculty: Deactivate own account
+    @PutMapping("/deactivate")
+    public ResponseEntity<?> deactivateMyAccount(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            String email = jwtUtil.extractUsername(token);
+
+            userService.deactivateMyAccount(email);
+            return ResponseEntity.ok("Account deactivated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Admin: Deactivate user
+    @PutMapping("/admin/{userId}/deactivate")
+    public ResponseEntity<?> deactivateUser(
+            @PathVariable Long userId,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            UserDto user = userService.deactivateUser(userId);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Admin: Reactivate user
+    @PutMapping("/admin/{userId}/reactivate")
+    public ResponseEntity<?> reactivateUser(
+            @PathVariable Long userId,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            UserDto user = userService.reactivateUser(userId);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Admin: Delete user
+    @DeleteMapping("/admin/{userId}")
+    public ResponseEntity<?> deleteUser(
+            @PathVariable Long userId,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }

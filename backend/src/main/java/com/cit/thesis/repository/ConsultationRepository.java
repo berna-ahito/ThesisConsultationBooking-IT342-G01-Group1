@@ -24,4 +24,8 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
             Long adviserId,
             ConsultationStatus status);
 
+    long countByStudentId(Long studentId);
+
+    long countByAdviserId(Long adviserId);
+
 }

@@ -29,6 +29,10 @@ const QuickActions = ({
                 <span className="action-icon">{action.icon}</span>
               )}
               <span className="action-label">{action.label}</span>
+              {/* ✅ ADD BADGE SUPPORT */}
+              {action.badge && action.badge > 0 && (
+                <span className="action-badge">{action.badge}</span>
+              )}
             </div>
             <span className="action-arrow">→</span>
           </button>
@@ -46,6 +50,7 @@ QuickActions.propTypes = {
       disabled: PropTypes.bool,
       icon: PropTypes.string,
       primary: PropTypes.bool,
+      badge: PropTypes.number,
     })
   ).isRequired,
   title: PropTypes.string,

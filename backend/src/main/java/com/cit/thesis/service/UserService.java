@@ -3,6 +3,8 @@ package com.cit.thesis.service;
 import com.cit.thesis.dto.UpdateProfileRequest;
 import com.cit.thesis.dto.UserDto;
 import com.cit.thesis.model.User;
+import com.cit.thesis.model.UserRole;
+import com.cit.thesis.repository.ConsultationRepository;
 import com.cit.thesis.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ConsultationRepository consultationRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, ConsultationRepository consultationRepository) {
         this.userRepository = userRepository;
+        this.consultationRepository = consultationRepository;
     }
 
     public UserDto getUserProfile(String email) {
@@ -64,5 +68,66 @@ public class UserService {
                 user.getTeamCode(),
                 user.getDepartment(),
                 user.getAccountStatus());
+    }
+
+    // Deactivate own account
+    @Transactional
+    public void deactivateMyAccount(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setActive(false);
+        user.setAccountStatus("DEACTIVATED");
+        userRepository.save(user);
+    }
+
+    // Admin: Deactivate user
+    @Transactional
+    public UserDto deactivateUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setActive(false);
+        user.setAccountStatus("DEACTIVATED");
+        user = userRepository.save(user);
+        return convertToDto(user);
+    }
+
+    // Admin: Reactivate user
+    @Transactional
+    public UserDto reactivateUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setActive(true);
+        user.setAccountStatus("ACTIVE");
+        user = userRepository.save(user);
+        return convertToDto(user);
+    }
+
+    // Admin: Delete user (with consultation check)
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Check if user has consultations
+        if (user.getRole() == UserRole.STUDENT_REP) {
+            // Check if student has consultations
+            long consultationCount = consultationRepository.countByStudentId(userId);
+            if (consultationCount > 0) {
+                throw new RuntimeException(
+                        "Cannot delete user with existing consultations. Please deactivate instead.");
+            }
+        } else if (user.getRole() == UserRole.FACULTY_ADVISER) {
+            // Check if adviser has consultations
+            long consultationCount = consultationRepository.countByAdviserId(userId);
+            if (consultationCount > 0) {
+                throw new RuntimeException(
+                        "Cannot delete user with existing consultations. Please deactivate instead.");
+            }
+        }
+
+        userRepository.delete(user);
     }
 }

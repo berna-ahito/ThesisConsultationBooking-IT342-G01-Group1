@@ -106,6 +106,7 @@ public class ConsultationService {
                 scheduleRepository.save(schedule);
 
                 return mapToDto(consultation);
+
         }
 
         @Transactional
@@ -269,9 +270,7 @@ public class ConsultationService {
                                 .orElseThrow(() -> new RuntimeException("User not found"));
 
                 List<Consultation> consultations = consultationRepository
-                                .findByAdviserIdAndStatusNotOrderByScheduledDateDesc(
-                                                adviser.getId(),
-                                                ConsultationStatus.PENDING);
+                                .findByAdviserIdOrderByScheduledDateDesc(adviser.getId());
 
                 return consultations.stream()
                                 .map(this::mapToDto)

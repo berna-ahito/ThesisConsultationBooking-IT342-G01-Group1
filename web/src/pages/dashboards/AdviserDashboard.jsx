@@ -8,20 +8,33 @@ import {
 } from "../../services/scheduleService";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
-import StatsGrid from "../../components/common/StatsGrid";
+// import StatsGrid from "../../components/common/StatsGrid"; // optional, remove if unused
 import QuickActions from "../../components/common/QuickActions";
 import SchedulesTable from "../../components/schedules/SchedulesTable";
 import CreateScheduleModal from "../../components/schedules/CreateScheduleModal";
 import Loader from "../../components/common/Loader";
 import "../../styles/dashboard-common.css";
+import Alert from "../../components/common/Alert";
+import { getPendingConsultations } from "../../services/consultationService";
+import {
+  PlusIcon,
+  ListIcon,
+  InboxIcon,
+  UserIcon,
+} from "../../components/common/icons";
 
 const AdviserDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [modalError, setModalError] = useState("");
+  const [pendingCount, setPendingCount] = useState(0);
 
   const fetchSchedules = useCallback(async () => {
     try {
@@ -35,23 +48,44 @@ const AdviserDashboard = () => {
     }
   }, []);
 
+  const fetchPendingCount = useCallback(async () => {
+    try {
+      const data = await getPendingConsultations();
+      setPendingCount(data.length);
+    } catch (err) {
+      console.error("❌ Failed to fetch pending consultations:", err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchSchedules();
-  }, [fetchSchedules]);
+    fetchPendingCount();
+  }, [fetchSchedules, fetchPendingCount]);
 
   const handleCreateSchedule = () => {
+    setModalError("");
     setShowModal(true);
   };
 
   const handleSubmitSchedule = async (formData) => {
     try {
       setSubmitting(true);
+      setModalError("");
+      setError("");
+
       await createSchedule(formData);
+
+      setSuccess("Schedule created successfully!");
+      setTimeout(() => setSuccess(""), 3000);
+
       await fetchSchedules();
+      await fetchPendingCount();
       setShowModal(false);
     } catch (err) {
       console.error("❌ Failed to create schedule:", err);
-      alert(err.response?.data?.message || "Failed to create schedule");
+      setModalError(
+        err.response?.data || err.message || "Failed to create schedule"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -63,33 +97,42 @@ const AdviserDashboard = () => {
     }
 
     try {
+      setError("");
       await deleteSchedule(scheduleId);
+
+      setSuccess("Schedule deleted successfully!");
+      setTimeout(() => setSuccess(""), 3000);
+
       await fetchSchedules();
+      await fetchPendingCount();
     } catch (err) {
       console.error("❌ Failed to delete schedule:", err);
-      alert(err.response?.data?.message || "Failed to delete schedule");
+      setError(
+        err.response?.data || err.message || "Failed to delete schedule"
+      );
     }
   };
 
   const quickActions = [
     {
-      icon: "➕",
+      icon: <PlusIcon />,
       label: "Create Schedule",
       onClick: handleCreateSchedule,
       primary: true,
     },
     {
-      icon: "📋",
+      icon: <ListIcon />,
       label: "View Consultations",
       onClick: () => navigate("/adviser/consultations"),
     },
     {
-      icon: "📬",
+      icon: <InboxIcon />,
       label: "Pending Requests",
       onClick: () => navigate("/adviser/pending"),
+      badge: pendingCount,
     },
     {
-      icon: "👤",
+      icon: <UserIcon />,
       label: "My Profile",
       onClick: () => navigate("/adviser/profile"),
     },
@@ -112,6 +155,17 @@ const AdviserDashboard = () => {
         subtitle="Manage your thesis consultations and track student progress"
         icon="👨‍🏫"
       />
+
+      {error && (
+        <Alert type="error" message={error} onClose={() => setError("")} />
+      )}
+      {success && (
+        <Alert
+          type="success"
+          message={success}
+          onClose={() => setSuccess("")}
+        />
+      )}
 
       <main className="dashboard-main">
         <div className="dashboard-grid">
@@ -139,9 +193,13 @@ const AdviserDashboard = () => {
 
       {showModal && (
         <CreateScheduleModal
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false);
+            setModalError("");
+          }}
           onSubmit={handleSubmitSchedule}
           loading={submitting}
+          backendError={modalError}
         />
       )}
     </DashboardLayout>

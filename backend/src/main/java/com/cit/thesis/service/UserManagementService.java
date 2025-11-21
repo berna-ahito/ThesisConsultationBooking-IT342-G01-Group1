@@ -23,10 +23,12 @@ public class UserManagementService {
     }
 
     public List<UserDto> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(this::convertToDto)
+        List<User> users = userRepository.findAll()
+                .stream()
+                .filter(u -> !"DEACTIVATED".equals(u.getAccountStatus()))
                 .collect(Collectors.toList());
+
+        return users.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     public List<UserDto> getPendingUsers() {
@@ -65,6 +67,17 @@ public class UserManagementService {
 
         userRepository.delete(user);
 
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setAccountStatus("DEACTIVATED");
+        user.setActive(false);
+
+        userRepository.save(user);
     }
 
     public Map<String, Long> getUserStats() {
@@ -111,4 +124,12 @@ public class UserManagementService {
                 user.getDepartment(),
                 user.getAccountStatus());
     }
+
+    public List<UserDto> getArchivedUsers() {
+        return userRepository.findByAccountStatus("DEACTIVATED")
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
 }

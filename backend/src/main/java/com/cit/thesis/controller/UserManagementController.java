@@ -73,4 +73,20 @@ public class UserManagementController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            userManagementService.deleteUser(userId);
+            return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/archived")
+    public List<UserDto> getArchivedUsers() {
+        return userManagementService.getArchivedUsers();
+    }
+
 }

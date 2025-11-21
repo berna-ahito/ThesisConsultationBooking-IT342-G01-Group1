@@ -30,6 +30,9 @@ const ConsultationsPage = () => {
     try {
       setLoading(true);
       const data = await getAdviserConsultations();
+      console.log("🔍 Full API Response:", data);
+      console.log("🔍 First consultation:", data[0]);
+      console.log("🔍 Adviser name in first:", data[0]?.adviserName);
       setConsultations(data);
     } catch (err) {
       setError("Failed to load consultations");
@@ -77,6 +80,11 @@ const ConsultationsPage = () => {
 
   const filters = [
     { label: "All", value: "ALL", count: consultations.length },
+    {
+      label: "Pending",
+      value: "PENDING",
+      count: consultations.filter((c) => c.status === "PENDING").length,
+    },
     {
       label: "Approved",
       value: "APPROVED",

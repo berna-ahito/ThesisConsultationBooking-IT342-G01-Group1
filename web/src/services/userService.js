@@ -52,3 +52,35 @@ export const uploadProfileImage = async (file) => {
 
     return updatedProfile;
 };
+
+// Deactivate own account
+export const deactivateMyAccount = async () => {
+    await api.put('/users/deactivate');
+};
+
+// Admin: Deactivate user
+export const deactivateUser = async (userId) => {
+    const response = await api.put(`/users/admin/${userId}/deactivate`);
+    return response.data;
+};
+
+// Admin: Reactivate user
+export const reactivateUser = async (userId) => {
+    const response = await api.put(`/users/admin/${userId}/reactivate`);
+    return response.data;
+};
+
+// Admin: Delete user
+export const deleteUser = async (userId) => {
+    await api.delete(`/admin/users/${userId}`);
+};
+
+export const getArchivedUsers = async () => {
+    const response = await api.get("/admin/users/archived");
+    return response.data;
+};
+
+export const getAllUsers = async () => {
+    const response = await api.get("/admin/users");
+    return response.data;
+};

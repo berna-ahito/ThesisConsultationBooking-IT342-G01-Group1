@@ -1,5 +1,6 @@
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+// import NotificationBell from "../notifications/NotificationBell"; // ✅ COMMENT OUT
 import "./DashboardHeader.css";
 
 const DashboardHeader = ({
@@ -40,6 +41,9 @@ const DashboardHeader = ({
         </div>
 
         <div className="header-right">
+          {/* ✅ COMMENT OUT NOTIFICATION BELL */}
+          {/* <NotificationBell /> */}
+
           <div className="user-info">
             <span className="user-name">{user?.name}</span>
             <span className="user-role">{getRoleDisplay()}</span>

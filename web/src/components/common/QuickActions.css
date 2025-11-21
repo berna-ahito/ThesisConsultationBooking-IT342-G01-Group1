@@ -95,3 +95,26 @@
 .action-item:hover:not(:disabled) .action-arrow {
   transform: translateX(4px);
 }
+
+.action-icon svg {
+  display: block;
+}
+
+.action-badge {
+  background: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.action-item.primary .action-badge {
+  background: #059669;
+}
