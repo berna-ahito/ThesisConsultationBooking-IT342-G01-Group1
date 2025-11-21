@@ -6,14 +6,28 @@ import com.cit.thesis.model.User;
 import com.cit.thesis.model.UserRole;
 import com.cit.thesis.repository.ConsultationRepository;
 import com.cit.thesis.repository.UserRepository;
+import okhttp3.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final ConsultationRepository consultationRepository;
+
+    @Value("${supabase.url}")
+    private String supabaseUrl;
+
+    @Value("${supabase.anon.key}")
+    private String supabaseAnonKey;
+
+    @Value("${supabase.storage.bucket}")
+    private String storageBucket;
 
     public UserService(UserRepository userRepository, ConsultationRepository consultationRepository) {
         this.userRepository = userRepository;
@@ -56,6 +70,54 @@ public class UserService {
         return convertToDto(user);
     }
 
+    @Transactional
+    public UserDto uploadProfileImage(MultipartFile file, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        try {
+            if (file.isEmpty())
+                throw new RuntimeException("File is empty");
+            if (file.getSize() > 5 * 1024 * 1024)
+                throw new RuntimeException("File exceeds 5MB");
+
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new RuntimeException("Only images allowed");
+            }
+
+            String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            String fileName = user.getId() + "-" + System.currentTimeMillis() + ext;
+
+            OkHttpClient client = new OkHttpClient();
+
+            RequestBody requestBody = RequestBody.create(file.getBytes(), MediaType.parse(contentType));
+
+            Request request = new Request.Builder()
+                    .url(supabaseUrl + "/storage/v1/object/" + storageBucket + "/" + fileName)
+                    .post(requestBody)
+                    .addHeader("Authorization", "Bearer " + supabaseAnonKey)
+                    .addHeader("Content-Type", contentType)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+
+            if (!response.isSuccessful()) {
+                throw new RuntimeException("Upload failed: " + response.body().string());
+            }
+
+            String pictureUrl = supabaseUrl + "/storage/v1/object/public/" + storageBucket + "/" + fileName;
+
+            user.setPictureUrl(pictureUrl);
+            user = userRepository.save(user);
+
+            return convertToDto(user);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload: " + e.getMessage());
+        }
+    }
+
     private UserDto convertToDto(User user) {
         return new UserDto(
                 user.getId(),
@@ -70,7 +132,6 @@ public class UserService {
                 user.getAccountStatus());
     }
 
-    // Deactivate own account
     @Transactional
     public void deactivateMyAccount(String email) {
         User user = userRepository.findByEmail(email)
@@ -81,7 +142,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // Admin: Deactivate user
     @Transactional
     public UserDto deactivateUser(Long userId) {
         User user = userRepository.findById(userId)
@@ -93,7 +153,6 @@ public class UserService {
         return convertToDto(user);
     }
 
-    // Admin: Reactivate user
     @Transactional
     public UserDto reactivateUser(Long userId) {
         User user = userRepository.findById(userId)
@@ -105,22 +164,18 @@ public class UserService {
         return convertToDto(user);
     }
 
-    // Admin: Delete user (with consultation check)
     @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Check if user has consultations
         if (user.getRole() == UserRole.STUDENT_REP) {
-            // Check if student has consultations
             long consultationCount = consultationRepository.countByStudentId(userId);
             if (consultationCount > 0) {
                 throw new RuntimeException(
                         "Cannot delete user with existing consultations. Please deactivate instead.");
             }
         } else if (user.getRole() == UserRole.FACULTY_ADVISER) {
-            // Check if adviser has consultations
             long consultationCount = consultationRepository.countByAdviserId(userId);
             if (consultationCount > 0) {
                 throw new RuntimeException(

@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Button from "../components/common/Button";
-import CITULogo from "../assets/Cebu_Institute_of_Technology_University_logo.png";
 import "../pages/CompleteProfile.css";
 
 const PendingApprovalPage = () => {
@@ -17,7 +16,6 @@ const PendingApprovalPage = () => {
     <div className="complete-profile-container">
       <div className="complete-profile-card">
         <div className="profile-header">
-          <img src={CITULogo} alt="CIT-U Logo" className="logo" />
           <h1 className="gradient-text">Account Pending Approval</h1>
           <p className="subtitle">Hi, {user?.name}!</p>
         </div>

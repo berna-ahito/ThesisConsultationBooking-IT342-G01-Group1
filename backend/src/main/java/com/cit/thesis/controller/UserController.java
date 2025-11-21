@@ -6,6 +6,7 @@ import com.cit.thesis.security.JwtUtil;
 import com.cit.thesis.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/users")
@@ -42,6 +43,21 @@ public class UserController {
             String email = jwtUtil.extractUsername(token);
 
             UserDto updatedProfile = userService.updateProfile(email, request);
+            return ResponseEntity.ok(updatedProfile);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/profile/upload-image")
+    public ResponseEntity<?> uploadProfileImage(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            String email = jwtUtil.extractUsername(token);
+
+            UserDto updatedProfile = userService.uploadProfileImage(file, email);
             return ResponseEntity.ok(updatedProfile);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
