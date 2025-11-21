@@ -16,7 +16,7 @@ const CompleteProfilePage = () => {
     role: "STUDENT_REP",
     studentId: "",
     teamCode: "",
-    department: "",
+    department: "IT Department",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,11 +40,6 @@ const CompleteProfilePage = () => {
       !/^TEAM-\d{2}$/.test(formData.teamCode)
     ) {
       setError("Team code must follow format TEAM-XX (e.g., TEAM-01, TEAM-15)");
-      return;
-    }
-
-    if (formData.role === "FACULTY_ADVISER" && !formData.department) {
-      setError("Department is required");
       return;
     }
 
@@ -241,11 +236,11 @@ const CompleteProfilePage = () => {
                 label="Department"
                 type="text"
                 name="department"
-                value={formData.department}
-                onChange={handleChange}
+                value="IT Department"
+                onChange={() => {}}
                 placeholder="IT Department"
-                disabled={loading}
-                hint="Which department are you advising in?"
+                disabled={true}
+                hint="This system is exclusively for the IT Department"
                 required
               />
             )}

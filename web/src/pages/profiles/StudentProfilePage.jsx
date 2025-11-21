@@ -13,6 +13,7 @@ import Button from "../../components/common/Button";
 import Loader from "../../components/common/Loader";
 import "./ProfileCommon.css";
 import "./StudentProfilePage.css";
+import { deactivateMyAccount } from "../../services/userService";
 
 const StudentProfilePage = () => {
   const { user, updateUser } = useAuth();
@@ -50,6 +51,26 @@ const StudentProfilePage = () => {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeactivateAccount = async () => {
+    if (
+      window.confirm(
+        "⚠️ Are you sure you want to deactivate your account? You will be logged out and cannot access the system until reactivated by an administrator."
+      )
+    ) {
+      try {
+        setError("");
+        setSaving(true);
+        await deactivateMyAccount();
+        alert("Account deactivated successfully. You will be logged out.");
+        localStorage.clear();
+        window.location.href = "/login";
+      } catch {
+        setError("Failed to deactivate account");
+        setSaving(false);
+      }
     }
   };
 
@@ -251,6 +272,20 @@ const StudentProfilePage = () => {
                 fullWidth
               >
                 Save Changes
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleDeactivateAccount}
+                disabled={saving}
+                style={{
+                  marginTop: "10px",
+                  backgroundColor: "#dc3545",
+                  borderColor: "#dc3545",
+                }}
+              >
+                Deactivate My Account
               </Button>
             </div>
           </form>

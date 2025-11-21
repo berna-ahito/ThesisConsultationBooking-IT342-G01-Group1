@@ -68,7 +68,11 @@ transition: transform 0.2s ease;
 .header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1rem;
+}
+
+.header-right .notification-bell {
+  margin-right: 0.5rem;
 }
 
 .user-info {

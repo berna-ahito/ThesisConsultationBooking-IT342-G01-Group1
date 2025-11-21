@@ -74,6 +74,9 @@ public class AuthService {
                 user.setInstitutionId(1L);
                 user = userRepository.save(user);
             } else {
+                if (user.getActive() == false || "DEACTIVATED".equals(user.getAccountStatus())) {
+                    throw new RuntimeException("Account is deactivated. Contact administrator.");
+                }
                 // Existing user - check profile completion
                 if (!user.getIsProfileComplete()) {
                     String token = user.getRole() != null
@@ -82,9 +85,9 @@ public class AuthService {
                     return buildAuthResponse(user, token);
                 }
 
-                if (user.getRole() == UserRole.PENDING) {
+                if ("PENDING".equals(user.getAccountStatus())) {
                     throw new RuntimeException(
-                            "Your account is pending IT Department approval. You will be notified via email once approved.");
+                            "Your account is pending IT Department approval. Please check back later.");
                 }
             }
 
@@ -146,7 +149,7 @@ public class AuthService {
             if (request.getDepartment() == null || request.getDepartment().isBlank()) {
                 throw new RuntimeException("Department is required for faculty accounts");
             }
-            user.setDepartment(request.getDepartment());
+            user.setDepartment("IT Department");
             user.setRole(UserRole.FACULTY_ADVISER);
             user.setIsProfileComplete(true);
             user.setAccountStatus("PENDING");
@@ -172,6 +175,11 @@ public class AuthService {
             throw new RuntimeException("This email is registered with Google. Please use Google Sign-In.");
         }
 
+        if ("DEACTIVATED".equals(user.getAccountStatus())) {
+            throw new RuntimeException("ACCOUNT_DEACTIVATED");
+        }
+
+        // Password check
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Invalid credentials");
         }
@@ -183,8 +191,9 @@ public class AuthService {
             return buildAuthResponse(user, token);
         }
 
-        if (user.getRole() == UserRole.PENDING) {
-            throw new RuntimeException("Your account is pending approval. Contact IT Department.");
+        if ("PENDING".equals(user.getAccountStatus())) {
+            throw new RuntimeException(
+                    "Your account is pending IT Department approval. Please check back later.");
         }
 
         String token = user.getRole() != null

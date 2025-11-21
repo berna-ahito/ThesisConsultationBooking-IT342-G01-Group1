@@ -73,9 +73,17 @@ const LoginPage = () => {
       handleRedirect(response.user);
     } catch (err) {
       console.error("Email login error:", err);
-      setError(
-        err.response?.data?.message || "Login failed. Please try again."
-      );
+      const msg = err.response?.data;
+
+      if (msg === "ACCOUNT_DEACTIVATED" || msg?.includes("deactivated")) {
+        setError(
+          "Your account has been deactivated. Please contact the administrator."
+        );
+      } else if (msg?.includes("Invalid credentials")) {
+        setError("Incorrect email or password.");
+      } else {
+        setError("Login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

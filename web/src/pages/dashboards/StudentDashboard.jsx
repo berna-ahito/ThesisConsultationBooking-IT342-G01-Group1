@@ -1,7 +1,10 @@
 import { useAuth } from "../../context/AuthContext";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUpcomingConsultations } from "../../services/consultationService";
+import {
+  getUpcomingConsultations,
+  getMyConsultations,
+} from "../../services/consultationService";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import StatsGrid from "../../components/common/StatsGrid";
@@ -9,19 +12,27 @@ import UpcomingConsultations from "../../components/consultations/UpcomingConsul
 import QuickActions from "../../components/common/QuickActions";
 import Loader from "../../components/common/Loader";
 import "../../styles/dashboard-common.css";
+import {
+  CalendarIcon,
+  ListIcon,
+  UserIcon,
+} from "../../components/common/icons";
 
 const StudentDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [consultations, setConsultations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [upcomingCount, setUpcomingCount] = useState(0);
 
   const fetchConsultations = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await getUpcomingConsultations();
+      const upcomingData = await getUpcomingConsultations();
+      const allData = await getMyConsultations();
 
-      const formatted = data.map((consultation) => ({
+      const formatted = upcomingData.map((consultation) => ({
         id: consultation.id,
         day: new Date(consultation.scheduledDate).getDate().toString(),
         month: new Date(consultation.scheduledDate).toLocaleString("en", {
@@ -34,6 +45,9 @@ const StudentDashboard = () => {
       }));
 
       setConsultations(formatted);
+
+      setPendingCount(allData.filter((c) => c.status === "PENDING").length);
+      setUpcomingCount(allData.filter((c) => c.status === "APPROVED").length);
     } catch (error) {
       console.error("Failed to fetch consultations:", error);
     } finally {
@@ -72,14 +86,19 @@ const StudentDashboard = () => {
     {
       label: "Schedule Consultation",
       onClick: () => navigate("/student/book"),
+      icon: <CalendarIcon />,
+      primary: true,
     },
     {
       label: "View My Consultations",
       onClick: () => navigate("/student/consultations"),
+      icon: <ListIcon />,
+      badge: pendingCount + upcomingCount,
     },
     {
       label: "Update Profile",
       onClick: () => navigate("/student/profile"),
+      icon: <UserIcon />,
     },
   ];
 

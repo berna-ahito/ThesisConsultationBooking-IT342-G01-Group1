@@ -46,10 +46,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         String role = jwtUtil.extractRole(token);
                         System.out.println("🔍 Step 6: role = " + role);
 
+                        // Add debug logging
+                        System.out.println("🔍 Creating authority with role: " + role);
+                        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+                        System.out.println("🔍 Authority created: " + authority.getAuthority());
+
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                                 email,
                                 null,
-                                role != null ? Collections.singletonList(new SimpleGrantedAuthority(role))
+                                role != null ? Collections.singletonList(authority)
                                         : Collections.emptyList());
 
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -51,6 +51,28 @@ public class ScheduleService {
         User adviser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!request.getEndTime().isAfter(request.getStartTime())) {
+            throw new RuntimeException("End time must be after start time");
+        }
+
+        if (request.getAvailableDate().isBefore(LocalDate.now())) {
+            throw new RuntimeException("Cannot create schedule for past dates");
+        }
+
+        List<Schedule> overlapping = scheduleRepository.findOverlappingSchedules(
+                adviser.getId(),
+                request.getAvailableDate(),
+                request.getStartTime(),
+                request.getEndTime());
+
+        if (!overlapping.isEmpty()) {
+            throw new RuntimeException(
+                    "Schedule overlaps with existing schedule on " +
+                            request.getAvailableDate() + " at " +
+                            overlapping.get(0).getStartTime() + " - " +
+                            overlapping.get(0).getEndTime());
+        }
+
         Schedule schedule = new Schedule();
         schedule.setAdviserId(adviser.getId());
         schedule.setAvailableDate(request.getAvailableDate());

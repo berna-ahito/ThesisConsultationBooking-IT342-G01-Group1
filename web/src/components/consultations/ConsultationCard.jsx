@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import StatusBadge from "../common/StatusBadge";
 import Button from "../common/Button";
 import "./ConsultationCard.css";
+import { getCurrentUser } from "../../services/authService";
 
 const ConsultationCard = ({
   consultation,
@@ -12,6 +13,9 @@ const ConsultationCard = ({
   onCancel,
   processing = false,
 }) => {
+  const user = getCurrentUser();
+  const role = user?.role;
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-US", {
       weekday: "short",
@@ -21,16 +25,40 @@ const ConsultationCard = ({
     });
   };
 
+  let displayName;
+  let displayInitial;
+
+  // STUDENT → show adviser
+  if (
+    role?.toLowerCase() === "student" ||
+    role?.toLowerCase() === "student_rep"
+  ) {
+    displayName = consultation.adviserName;
+    displayInitial = consultation.adviserName?.charAt(0).toUpperCase() || "?";
+  }
+  // ADVISER → show student
+  else if (
+    role?.toLowerCase() === "adviser" ||
+    role?.toLowerCase() === "faculty" ||
+    role?.toLowerCase() === "faculty_adviser"
+  ) {
+    displayName = consultation.studentName;
+    displayInitial = consultation.studentName?.charAt(0).toUpperCase() || "?";
+  }
+  // FALLBACK
+  else {
+    displayName = consultation.studentName || consultation.adviserName;
+    displayInitial = displayName?.charAt(0).toUpperCase() || "?";
+  }
+
   return (
     <div className="compact-card">
       <div className="compact-top">
         <div className="compact-left">
-          <div className="compact-avatar">
-            {consultation.studentName?.charAt(0) || "?"}
-          </div>
+          <div className="compact-avatar">{displayInitial}</div>
 
           <div className="compact-info">
-            <h3 className="compact-name">{consultation.studentName}</h3>
+            <h3 className="compact-name">{displayName}</h3>
 
             {consultation.teamCode && (
               <span className="compact-team">{consultation.teamCode}</span>
@@ -58,6 +86,13 @@ const ConsultationCard = ({
           <div className="compact-row">
             <span className="label">Desc:</span>
             <span className="value">{consultation.description}</span>
+          </div>
+        )}
+
+        {consultation.adviserNotes && (
+          <div className="compact-row">
+            <span className="label">Notes:</span>
+            <span className="value">{consultation.adviserNotes}</span>
           </div>
         )}
       </div>

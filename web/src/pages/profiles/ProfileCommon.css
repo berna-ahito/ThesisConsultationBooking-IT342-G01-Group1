@@ -225,3 +225,15 @@
   font-weight: 600;
   font-size: 0.85rem;
 }
+
+.form-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-start; /* left-aligned */
+  width: 100%;
+}
+
+/* Ensure spacing from bottom panels */
+.form-actions .btn {
+  max-width: 200px;
+}

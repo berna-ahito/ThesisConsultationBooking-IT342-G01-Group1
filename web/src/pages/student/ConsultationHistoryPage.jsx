@@ -11,6 +11,7 @@ import Button from "../../components/common/Button";
 import ConsultationCard from "../../components/consultations/ConsultationCard";
 import Loader from "../../components/common/Loader";
 import "./ConsultationHistoryPage.css";
+import ConfirmModal from "../../components/common/ConfirmModal";
 
 const ConsultationHistoryPage = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ const ConsultationHistoryPage = () => {
   const [success, setSuccess] = useState("");
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [cancellingId, setCancellingId] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [consultationToCancel, setConsultationToCancel] = useState(null);
 
   useEffect(() => {
     fetchConsultations();
@@ -30,6 +33,13 @@ const ConsultationHistoryPage = () => {
     try {
       setLoading(true);
       const data = await getMyConsultations();
+
+      // ⭐ ADD THESE 4 LINES:
+      console.log("🔍 API Response:", data);
+      console.log("🔍 First item:", data[0]);
+      console.log("🔍 Adviser name:", data[0]?.adviserName);
+      console.log("🔍 Student name:", data[0]?.studentName);
+
       setConsultations(data);
     } catch (err) {
       setError("Failed to load consultation history");
@@ -53,22 +63,21 @@ const ConsultationHistoryPage = () => {
     filterConsultations();
   }, [filterConsultations]);
 
-  const handleCancel = async (consultationId) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to cancel this consultation request?"
-      )
-    ) {
-      return;
-    }
+  const handleCancel = (consultationId) => {
+    setConsultationToCancel(consultationId);
+    setShowConfirmModal(true);
+  };
 
+  const confirmCancel = async () => {
     try {
-      setCancellingId(consultationId);
+      setCancellingId(consultationToCancel);
       setError("");
-      await cancelConsultation(consultationId);
+      await cancelConsultation(consultationToCancel);
       setSuccess("Consultation cancelled successfully");
       setTimeout(() => setSuccess(""), 3000);
       fetchConsultations();
+      setShowConfirmModal(false);
+      setConsultationToCancel(null);
     } catch (err) {
       setError(err.response?.data || "Failed to cancel consultation");
     } finally {
@@ -174,6 +183,19 @@ const ConsultationHistoryPage = () => {
           )}
         </div>
       </div>
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setConsultationToCancel(null);
+        }}
+        onConfirm={confirmCancel}
+        title="Cancel Consultation"
+        message="Are you sure you want to cancel this consultation request? This action cannot be undone."
+        confirmText="Yes, Cancel"
+        cancelText="Keep Request"
+        loading={cancellingId === consultationToCancel}
+      />
     </DashboardLayout>
   );
 };

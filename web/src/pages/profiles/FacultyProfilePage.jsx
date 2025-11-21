@@ -10,6 +10,7 @@ import Loader from "../../components/common/Loader";
 import { supabase } from "../../services/supabaseClient";
 import "./ProfileCommon.css";
 import "./FacultyProfilePage.css";
+import { deactivateMyAccount } from "../../services/userService";
 
 const FacultyProfilePage = () => {
   const { user, updateUser } = useAuth();
@@ -44,6 +45,26 @@ const FacultyProfilePage = () => {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeactivateAccount = async () => {
+    if (
+      window.confirm(
+        "⚠️ Are you sure you want to deactivate your account? You will be logged out and cannot access the system until reactivated by an administrator."
+      )
+    ) {
+      try {
+        setError("");
+        setSaving(true);
+        await deactivateMyAccount();
+        alert("Account deactivated successfully. You will be logged out.");
+        localStorage.clear();
+        window.location.href = "/login";
+      } catch {
+        setError("Failed to deactivate account");
+        setSaving(false);
+      }
     }
   };
 
@@ -253,6 +274,20 @@ const FacultyProfilePage = () => {
                 >
                   Save Changes
                 </Button>
+
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleDeactivateAccount}
+                  disabled={saving}
+                  style={{
+                    marginTop: "10px",
+                    backgroundColor: "#dc3545",
+                    borderColor: "#dc3545",
+                  }}
+                >
+                  Deactivate My Account
+                </Button>
               </div>
             </form>
           </div>
@@ -275,7 +310,6 @@ const FacultyProfilePage = () => {
                 </span>
               </div>
             </div>
-
           </div>
         </div>
       </div>

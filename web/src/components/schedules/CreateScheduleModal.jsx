@@ -4,7 +4,7 @@ import FormInput from "../common/FormInput";
 import Alert from "../common/Alert";
 import "./CreateScheduleModal.css";
 
-const CreateScheduleModal = ({ onClose, onSubmit, loading }) => {
+const CreateScheduleModal = ({ onClose, onSubmit, loading, backendError }) => {
   const [formData, setFormData] = useState({
     availableDate: "",
     startTime: "",
@@ -48,7 +48,7 @@ const CreateScheduleModal = ({ onClose, onSubmit, loading }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="modal-body">
-          {error && (
+          {(error || backendError) && (
             <Alert type="error" message={error} onClose={() => setError("")} />
           )}
 

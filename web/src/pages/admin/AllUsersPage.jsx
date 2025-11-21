@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { getAllUsers } from "../../services/adminService";
+import {
+  getAllUsers,
+  getArchivedUsers,
+  deactivateUser,
+  reactivateUser,
+  deleteUser,
+} from "../../services/userService";
+import ConfirmModal from "../../components/common/ConfirmModal";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
@@ -14,10 +21,14 @@ const AllUsersPage = () => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("ALL");
+  const [actionLoading, setActionLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [filterRole]);
 
   useEffect(() => {
     filterUsers();
@@ -26,11 +37,18 @@ const AllUsersPage = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const data = await getAllUsers();
+
+      let data;
+
+      if (filterRole === "ARCHIVED") {
+        data = await getArchivedUsers();
+      } else {
+        data = await getAllUsers();
+      }
+
       setUsers(data);
-    } catch (err) {
+    } catch {
       setError("Failed to load users");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -39,12 +57,10 @@ const AllUsersPage = () => {
   const filterUsers = () => {
     let filtered = users;
 
-    // Filter by role
-    if (filterRole !== "ALL") {
-      filtered = filtered.filter((user) => user.role === filterRole);
+    if (filterRole !== "ALL" && filterRole !== "ARCHIVED") {
+      filtered = users.filter((user) => user.role === filterRole);
     }
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(
         (user) =>
@@ -56,6 +72,59 @@ const AllUsersPage = () => {
     }
 
     setFilteredUsers(filtered);
+  };
+
+  const handleDeactivate = async (userId) => {
+    if (window.confirm("Deactivate this user account?")) {
+      try {
+        setActionLoading(true);
+        await deactivateUser(userId);
+        setSuccess("User deactivated successfully");
+        fetchUsers();
+      } catch {
+        setError("Failed to deactivate user");
+      } finally {
+        setActionLoading(false);
+        setTimeout(() => setSuccess(""), 3000);
+      }
+    }
+  };
+
+  const handleReactivate = async (userId) => {
+    if (window.confirm("Reactivate this user account?")) {
+      try {
+        setActionLoading(true);
+        await reactivateUser(userId);
+        setSuccess("User reactivated successfully");
+        fetchUsers();
+      } catch {
+        setError("Failed to reactivate user");
+      } finally {
+        setActionLoading(false);
+        setTimeout(() => setSuccess(""), 3000);
+      }
+    }
+  };
+
+  const handleDeleteClick = (user) => {
+    setSelectedUser(user);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      setActionLoading(true);
+      await deleteUser(selectedUser.id);
+      setSuccess("User deleted successfully");
+      setShowDeleteModal(false);
+      setSelectedUser(null);
+      fetchUsers();
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to delete user");
+    } finally {
+      setActionLoading(false);
+      setTimeout(() => setSuccess(""), 3000);
+    }
   };
 
   const roleFilters = [
@@ -74,6 +143,11 @@ const AllUsersPage = () => {
       label: "Admins",
       value: "ADMIN",
       count: users.filter((u) => u.role === "ADMIN").length,
+    },
+    {
+      label: "Archived",
+      value: "ARCHIVED",
+      count: users.filter((u) => u.accountStatus === "DEACTIVATED").length,
     },
   ];
 
@@ -94,125 +168,179 @@ const AllUsersPage = () => {
           icon="👥"
         />
 
-      <div className="users-container">
-        {error && (
-          <Alert type="error" message={error} onClose={() => setError("")} />
-        )}
+        <div className="users-container">
+          {error && (
+            <Alert type="error" message={error} onClose={() => setError("")} />
+          )}
 
-        {/* Controls */}
-        <div className="users-controls">
-          <div className="search-box">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Search by name, email, student ID, or team code..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
+          {success && (
+            <Alert
+              type="success"
+              message={success}
+              onClose={() => setSuccess("")}
             />
-            {searchTerm && (
+          )}
+
+          {/* Controls */}
+          <div className="users-controls">
+            <div className="search-box">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder="Search by name, email, student ID, or team code..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="clear-search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            <div className="filter-buttons">
+              {roleFilters.map((filter) => (
+                <button
+                  key={filter.value}
+                  className={`filter-btn ${
+                    filterRole === filter.value ? "active" : ""
+                  }`}
+                  onClick={() => setFilterRole(filter.value)}
+                >
+                  {filter.label}
+                  <span className="filter-count">{filter.count}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Results Count */}
+          <div className="results-info">
+            Showing <strong>{filteredUsers.length}</strong> of{" "}
+            <strong>{users.length}</strong> users
+          </div>
+
+          {/* Users Table */}
+          {filteredUsers.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">🔍</div>
+              <h3>No Users Found</h3>
+              <p>Try adjusting your search or filter criteria.</p>
               <button
-                onClick={() => setSearchTerm("")}
-                className="clear-search"
+                onClick={() => {
+                  setSearchTerm("");
+                  setFilterRole("ALL");
+                }}
+                className="reset-btn"
               >
-                ✕
+                Reset Filters
               </button>
-            )}
-          </div>
-
-          <div className="filter-buttons">
-            {roleFilters.map((filter) => (
-              <button
-                key={filter.value}
-                className={`filter-btn ${
-                  filterRole === filter.value ? "active" : ""
-                }`}
-                onClick={() => setFilterRole(filter.value)}
-              >
-                {filter.label}
-                <span className="filter-count">{filter.count}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Results Count */}
-        <div className="results-info">
-          Showing <strong>{filteredUsers.length}</strong> of{" "}
-          <strong>{users.length}</strong> users
-        </div>
-
-        {/* Users Table */}
-        {filteredUsers.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">🔍</div>
-            <h3>No Users Found</h3>
-            <p>Try adjusting your search or filter criteria.</p>
-            <button
-              onClick={() => {
-                setSearchTerm("");
-                setFilterRole("ALL");
-              }}
-              className="reset-btn"
-            >
-              Reset Filters
-            </button>
-          </div>
-        ) : (
-          <div className="users-table-wrapper">
-            <table className="users-table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                  <th>Student ID</th>
-                  <th>Team Code</th>
-                  <th>Department</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td>
-                      <div className="user-cell">
-                        <div className="user-avatar">
-                          {user.pictureUrl ? (
-                            <img src={user.pictureUrl} alt={user.name} />
-                          ) : (
-                            <div className="avatar-placeholder">
-                              {user.name?.charAt(0)?.toUpperCase()}
-                            </div>
-                          )}
-                        </div>
-                        <span className="user-name">{user.name}</span>
-                      </div>
-                    </td>
-                    <td className="email-cell">{user.email}</td>
-                    <td>
-                      <StatusBadge status={user.role} type="role" />
-                    </td>
-                    <td>
-                      <StatusBadge status={user.accountStatus} type="account" />
-                    </td>
-                    <td className="center-cell">{user.studentId || "—"}</td>
-                    <td className="center-cell">
-                      {user.teamCode ? (
-                        <span className="team-code">{user.teamCode}</span>
-                      ) : (
-                        "—"
-                      )}
-                    </td>
-                    <td className="center-cell">{user.department || "—"}</td>
+            </div>
+          ) : (
+            <div className="users-table-wrapper">
+              <table className="users-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Student ID</th>
+                    <th>Team Code</th>
+                    <th>Department</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {filteredUsers.map((user) => (
+                    <tr key={user.id}>
+                      <td>
+                        <div className="user-cell">
+                          <div className="user-avatar">
+                            {user.pictureUrl ? (
+                              <img src={user.pictureUrl} alt={user.name} />
+                            ) : (
+                              <div className="avatar-placeholder">
+                                {user.name?.charAt(0)?.toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          <span className="user-name">{user.name}</span>
+                        </div>
+                      </td>
+                      <td className="email-cell">{user.email}</td>
+                      <td>
+                        <StatusBadge status={user.role} type="role" />
+                      </td>
+                      <td>
+                        <StatusBadge
+                          status={user.accountStatus}
+                          type="account"
+                        />
+                      </td>
+                      <td className="center-cell">{user.studentId || "—"}</td>
+                      <td className="center-cell">
+                        {user.teamCode ? (
+                          <span className="team-code">{user.teamCode}</span>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td className="center-cell">{user.department || "—"}</td>
+                      <td className="actions-cell">
+                        {user.accountStatus === "DEACTIVATED" ? (
+                          <button
+                            className="action-btn reactivate"
+                            onClick={() => handleReactivate(user.id)}
+                            disabled={actionLoading}
+                          >
+                            ✓ Reactivate
+                          </button>
+                        ) : (
+                          <button
+                            className="action-btn deactivate"
+                            onClick={() => handleDeactivate(user.id)}
+                            disabled={actionLoading}
+                          >
+                            ⊘ Deactivate
+                          </button>
+                        )}
+                        <button
+                          className="action-btn delete"
+                          onClick={() => handleDeleteClick(user)}
+                          disabled={actionLoading}
+                        >
+                          ✕ Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {showDeleteModal && selectedUser && (
+          <ConfirmModal
+            isOpen={showDeleteModal}
+            onClose={() => {
+              setShowDeleteModal(false);
+              setSelectedUser(null);
+            }}
+            onConfirm={handleDeleteConfirm}
+            title="Delete User Account"
+            message={`Are you sure you want to permanently delete ${selectedUser.name}'s account? This action cannot be undone.`}
+            confirmText="Delete Permanently"
+            cancelText="Cancel"
+            loading={actionLoading}
+          />
         )}
       </div>
-    </div>
     </DashboardLayout>
   );
 };
