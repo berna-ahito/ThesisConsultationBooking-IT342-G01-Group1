@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { getProfile, updateProfile } from "../../services/userService";
+import { getProfile, uploadProfileImage } from "../../services/userService";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import Loader from "../../components/common/Loader";
-import { supabase } from "../../services/supabaseClient";
 import "./ProfileCommon.css";
 import "./AdminProfilePage.css";
 
 const AdminProfilePage = () => {
+  /* eslint-disable no-unused-vars */
   const { user, updateUser } = useAuth();
 
   const [profile, setProfile] = useState(null);
@@ -40,9 +40,6 @@ const AdminProfilePage = () => {
     }
   };
 
-  // -------------------------------
-  // Avatar change + preview
-  // -------------------------------
   const handleAvatarChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -50,38 +47,12 @@ const AdminProfilePage = () => {
     setSelectedFile(file);
     setAvatarPreview(URL.createObjectURL(file));
   };
-
-  // -------------------------------
-  // Upload to Supabase Storage
-  // -------------------------------
   const handleAvatarUpload = async () => {
     if (!selectedFile) return;
 
     try {
       setUploading(true);
-
-      const timestamp = Date.now();
-      const ext = selectedFile.name.split(".").pop();
-      const fileName = `${user.id}_${timestamp}.${ext}`;
-
-      // Upload file
-      const { error } = await supabase.storage
-        .from("profile-images")
-        .upload(fileName, selectedFile, { upsert: true });
-
-      if (error) throw error;
-
-      // Get public URL
-      const { data: publicUrlData } = supabase.storage
-        .from("profile-images")
-        .getPublicUrl(fileName);
-
-      const pictureUrl = publicUrlData.publicUrl;
-
-      // Save to backend
-      const updated = await updateProfile({ pictureUrl });
-
-      // Update global user context
+      const updated = await uploadProfileImage(selectedFile);
       updateUser(updated);
       setProfile(updated);
       setSuccess("Profile photo updated!");
@@ -230,7 +201,6 @@ const AdminProfilePage = () => {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>

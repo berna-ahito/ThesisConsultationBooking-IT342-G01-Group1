@@ -1,6 +1,4 @@
 import api from "./api";
-import { supabase } from "./supabaseClient";
-
 
 export const getProfile = async () => {
     try {
@@ -21,56 +19,38 @@ export const updateProfile = async (profileData) => {
         throw error;
     }
 };
-
 export const uploadProfileImage = async (file) => {
-    const storedUser = localStorage.getItem("user");
-    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
-    const userId = parsedUser?.id || "anonymous";
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
 
-    const ext = file.name.split(".").pop();
-    const fileName = `${userId}-${Date.now()}.${ext}`;
-
-    const { error } = await supabase.storage
-        .from("profile-images")
-        .upload(fileName, file, {
-            cacheControl: "3600",
-            upsert: true,
+        const response = await api.post("/users/profile/upload-image", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
         });
 
-    if (error) {
-        console.error(error);
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to upload profile image:", error);
         throw error;
     }
-
-    const { data: publicData } = supabase.storage
-        .from("profile-images")
-        .getPublicUrl(fileName);
-
-    const pictureUrl = publicData.publicUrl;
-
-    const updatedProfile = await updateProfile({ pictureUrl });
-
-    return updatedProfile;
 };
 
-// Deactivate own account
 export const deactivateMyAccount = async () => {
     await api.put('/users/deactivate');
 };
 
-// Admin: Deactivate user
 export const deactivateUser = async (userId) => {
     const response = await api.put(`/users/admin/${userId}/deactivate`);
     return response.data;
 };
 
-// Admin: Reactivate user
 export const reactivateUser = async (userId) => {
     const response = await api.put(`/users/admin/${userId}/reactivate`);
     return response.data;
 };
 
-// Admin: Delete user
 export const deleteUser = async (userId) => {
     await api.delete(`/admin/users/${userId}`);
 };

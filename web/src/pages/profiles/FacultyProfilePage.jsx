@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { getProfile, updateProfile } from "../../services/userService";
+import {
+  getProfile,
+  updateProfile,
+  uploadProfileImage,
+  deactivateMyAccount,
+} from "../../services/userService";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import FormInput from "../../components/common/FormInput";
 import Button from "../../components/common/Button";
 import Loader from "../../components/common/Loader";
-import { supabase } from "../../services/supabaseClient";
 import "./ProfileCommon.css";
 import "./FacultyProfilePage.css";
-import { deactivateMyAccount } from "../../services/userService";
 
 const FacultyProfilePage = () => {
   const { user, updateUser } = useAuth();
@@ -86,27 +89,7 @@ const FacultyProfilePage = () => {
 
     try {
       setUploading(true);
-
-      const timestamp = Date.now();
-      const fileExt = selectedFile.name.split(".").pop();
-      const fileName = `${user.id}_${timestamp}.${fileExt}`;
-
-      const { error } = await supabase.storage
-        .from("profile-images")
-        .upload(fileName, selectedFile, { upsert: true });
-
-      if (error) throw error;
-
-      const { data: publicUrlData } = supabase.storage
-        .from("profile-images")
-        .getPublicUrl(fileName);
-
-      const pictureUrl = publicUrlData.publicUrl;
-
-      const updatedProfile = await updateProfile({
-        pictureUrl,
-      });
-
+      const updatedProfile = await uploadProfileImage(selectedFile);
       updateUser(updatedProfile);
       setSuccess("Profile photo updated!");
       setSelectedFile(null);
