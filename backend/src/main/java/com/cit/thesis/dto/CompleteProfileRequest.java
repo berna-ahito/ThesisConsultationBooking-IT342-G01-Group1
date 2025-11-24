@@ -19,7 +19,6 @@ public class CompleteProfileRequest {
     public CompleteProfileRequest(String role, String studentId, String department) {
         this.role = role;
         this.studentId = studentId;
-        this.teamCode = teamCode;
         this.department = department;
     }
 

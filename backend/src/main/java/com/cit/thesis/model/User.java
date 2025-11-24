@@ -1,7 +1,6 @@
 package com.cit.thesis.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
@@ -9,7 +8,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -66,6 +64,44 @@ public class User {
 
     @Column(name = "account_status", length = 20)
     private String accountStatus = "ACTIVE";
+
+    // Getters
+    public Long getId() { return id; }
+    public String getEmail() { return email; }
+    public String getName() { return name; }
+    public String getPasswordHash() { return passwordHash; }
+    public UserRole getRole() { return role; }
+    public String getStudentId() { return studentId; }
+    public String getTeamCode() { return teamCode; }
+    public Long getInstitutionId() { return institutionId; }
+    public String getDepartment() { return department; }
+    public String getAuthProvider() { return authProvider; }
+    public String getPictureUrl() { return pictureUrl; }
+    public Boolean getIsProfileComplete() { return isProfileComplete; }
+    public Boolean getEmailVerified() { return emailVerified; }
+    public Boolean getActive() { return active; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getApprovedAt() { return approvedAt; }
+    public String getAccountStatus() { return accountStatus; }
+
+    // Setters
+    public void setId(Long id) { this.id = id; }
+    public void setEmail(String email) { this.email = email; }
+    public void setName(String name) { this.name = name; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public void setRole(UserRole role) { this.role = role; }
+    public void setStudentId(String studentId) { this.studentId = studentId; }
+    public void setTeamCode(String teamCode) { this.teamCode = teamCode; }
+    public void setInstitutionId(Long institutionId) { this.institutionId = institutionId; }
+    public void setDepartment(String department) { this.department = department; }
+    public void setAuthProvider(String authProvider) { this.authProvider = authProvider; }
+    public void setPictureUrl(String pictureUrl) { this.pictureUrl = pictureUrl; }
+    public void setIsProfileComplete(Boolean isProfileComplete) { this.isProfileComplete = isProfileComplete; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+    public void setActive(Boolean active) { this.active = active; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setApprovedAt(LocalDateTime approvedAt) { this.approvedAt = approvedAt; }
+    public void setAccountStatus(String accountStatus) { this.accountStatus = accountStatus; }
 
     @PrePersist
     protected void onCreate() {

@@ -1,7 +1,6 @@
 package com.cit.thesis.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "consultations")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Consultation {
@@ -65,6 +63,42 @@ public class Consultation {
 
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
+
+    // Getters
+    public Long getId() { return id; }
+    public Long getStudentId() { return studentId; }
+    public String getTeamCode() { return teamCode; }
+    public Long getAdviserId() { return adviserId; }
+    public Long getScheduleId() { return scheduleId; }
+    public String getTopic() { return topic; }
+    public String getDescription() { return description; }
+    public LocalDate getScheduledDate() { return scheduledDate; }
+    public LocalTime getStartTime() { return startTime; }
+    public LocalTime getScheduledEnd() { return scheduledEnd; }
+    public ConsultationStatus getStatus() { return status; }
+    public String getAdviserNotes() { return adviserNotes; }
+    public String getRejectionReason() { return rejectionReason; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public LocalDateTime getCompletedAt() { return completedAt; }
+
+    // Setters
+    public void setId(Long id) { this.id = id; }
+    public void setStudentId(Long studentId) { this.studentId = studentId; }
+    public void setTeamCode(String teamCode) { this.teamCode = teamCode; }
+    public void setAdviserId(Long adviserId) { this.adviserId = adviserId; }
+    public void setScheduleId(Long scheduleId) { this.scheduleId = scheduleId; }
+    public void setTopic(String topic) { this.topic = topic; }
+    public void setDescription(String description) { this.description = description; }
+    public void setScheduledDate(LocalDate scheduledDate) { this.scheduledDate = scheduledDate; }
+    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
+    public void setScheduledEnd(LocalTime scheduledEnd) { this.scheduledEnd = scheduledEnd; }
+    public void setStatus(ConsultationStatus status) { this.status = status; }
+    public void setAdviserNotes(String adviserNotes) { this.adviserNotes = adviserNotes; }
+    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
 
     @PrePersist
     protected void onCreate() {
