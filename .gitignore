@@ -15,12 +15,9 @@ backend/*.jar
 backend/*.war
 backend/*.class
 
-# Backend env / config (use .example for sharing)
-backend/src/main/resources/application.properties
-backend/application-local.properties
+# Backend env (private)
 backend/.env
 backend/*.env
-!backend/src/main/resources/application.properties.example
 
 # ─── LOGS ───
 logs
@@ -42,4 +39,3 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
-``
