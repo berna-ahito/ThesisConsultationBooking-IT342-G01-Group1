@@ -11,6 +11,7 @@ import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import ConsultationCard from "../../components/consultations/ConsultationCard";
 import Loader from "../../components/common/Loader";
+import { ConsultationManagementIcon } from "../../components/common/icons/HeaderIcons";
 import "./PendingConsultationsPage.css";
 
 const PendingConsultationsPage = () => {
@@ -110,7 +111,7 @@ const PendingConsultationsPage = () => {
         <DashboardHeader
           title="Pending Consultation Requests"
           subtitle="Review and respond to student consultation requests"
-          icon="📋"
+          icon={<ConsultationManagementIcon />}
         />
 
         <div className="pending-container">

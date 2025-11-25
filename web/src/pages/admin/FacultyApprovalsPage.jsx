@@ -11,6 +11,7 @@ import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import UserCard from "../../components/common/UserCard";
 import Loader from "../../components/common/Loader";
+import { ProfessorIcon } from "../../components/common/icons/HeaderIcons";
 import "./FacultyApprovalsPage.css";
 
 const FacultyApprovalsPage = () => {
@@ -94,7 +95,7 @@ const FacultyApprovalsPage = () => {
         <DashboardHeader
           title="Pending Faculty Approvals"
           subtitle="Review and approve faculty adviser accounts"
-          icon="👨‍🏫"
+          icon={<ProfessorIcon />}
         />
 
         <div className="approvals-container">

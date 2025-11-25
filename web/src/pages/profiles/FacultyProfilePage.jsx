@@ -12,6 +12,7 @@ import Alert from "../../components/common/Alert";
 import FormInput from "../../components/common/FormInput";
 import Button from "../../components/common/Button";
 import Loader from "../../components/common/Loader";
+import { UserIcon } from "../../components/common/icons/HeaderIcons";
 import "./ProfileCommon.css";
 import "./FacultyProfilePage.css";
 
@@ -148,7 +149,7 @@ const FacultyProfilePage = () => {
         <DashboardHeader
           title="My Profile"
           subtitle="Manage your account information"
-          icon="👤"
+          icon={<UserIcon />}
         />
 
         <div className="profile-container">

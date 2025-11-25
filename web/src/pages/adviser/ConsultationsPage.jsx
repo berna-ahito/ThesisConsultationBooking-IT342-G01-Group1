@@ -9,6 +9,7 @@ import Alert from "../../components/common/Alert";
 import AddNotesModal from "../../components/consultations/AddNotesModal";
 import ConsultationCard from "../../components/consultations/ConsultationCard";
 import Loader from "../../components/common/Loader";
+import { ConsultationManagementIcon } from "../../components/common/icons/HeaderIcons";
 import "./ConsultationsPage.css";
 
 const ConsultationsPage = () => {
@@ -116,7 +117,7 @@ const ConsultationsPage = () => {
         <DashboardHeader
           title="My Consultations"
           subtitle="View and manage your consultation sessions"
-          icon="📋"
+          icon={<ConsultationManagementIcon />}
         />
 
         <div className="consultations-container">

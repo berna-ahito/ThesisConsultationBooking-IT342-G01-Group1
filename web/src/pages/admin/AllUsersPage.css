@@ -350,30 +350,33 @@
 }
 
 .action-btn.deactivate {
-  background-color: #ffc107;
-  color: #000;
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
 .action-btn.deactivate:hover:not(:disabled) {
-  background-color: #ffb300;
+  background-color: #fcd34d;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
 }
 
 .action-btn.reactivate {
-  background-color: #28a745;
-  color: white;
+  background-color: #d1fae5;
+  color: #065f46;
 }
 
 .action-btn.reactivate:hover:not(:disabled) {
-  background-color: #218838;
+  background-color: #a7f3d0;
+  box-shadow: 0 2px 8px rgba(6, 95, 70, 0.25);
 }
 
 .action-btn.delete {
-  background-color: #dc3545;
-  color: white;
+  background-color: #fee2e2;
+  color: #991b1b;
 }
 
 .action-btn.delete:hover:not(:disabled) {
-  background-color: #c82333;
+  background-color: #fecaca;
+  box-shadow: 0 2px 8px rgba(153, 27, 27, 0.25);
 }
 
 /* Pagination Controls */

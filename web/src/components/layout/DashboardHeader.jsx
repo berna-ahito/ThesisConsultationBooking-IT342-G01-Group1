@@ -2,11 +2,12 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 // import NotificationBell from "../notifications/NotificationBell"; // ✅ COMMENT OUT
 import "./DashboardHeader.css";
+import { GraduationIcon } from "../common/icons/HeaderIcons";
 
 const DashboardHeader = ({
   title = "Thesis Consultation Booking",
   subtitle,
-  icon = "🎓",
+  icon = null,
 }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -29,11 +30,14 @@ const DashboardHeader = ({
     }
   };
 
+  // Default icon is GraduationIcon if none provided
+  const iconToDisplay = icon || <GraduationIcon />;
+
   return (
     <header className="dashboard-header">
       <div className="header-container">
         <div className="header-left">
-          <div className="header-logo">{icon}</div>
+          <div className="header-logo">{iconToDisplay}</div>
           <div className="header-text">
             <h1 className="header-title">{title}</h1>
             {subtitle && <p className="header-subtitle">{subtitle}</p>}

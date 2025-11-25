@@ -12,6 +12,7 @@ import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import StatusBadge from "../../components/common/StatusBadge";
 import Loader from "../../components/common/Loader";
+import { UsersIcon } from "../../components/common/icons/HeaderIcons";
 import "./AllUsersPage.css";
 
 const AllUsersPage = () => {
@@ -29,10 +30,17 @@ const AllUsersPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [pageSize] = useState(20);
+  const [deactivatedCount, setDeactivatedCount] = useState(0);
+  const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
     fetchUsers();
   }, [filterRole]);
+
+  useEffect(() => {
+    fetchArchivedCount();
+    fetchAllUsersForCounts();
+  }, []);
 
   useEffect(() => {
     filterUsers();
@@ -63,6 +71,25 @@ const AllUsersPage = () => {
       setError("Failed to load users");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchArchivedCount = async () => {
+    try {
+      const archivedUsers = await getArchivedUsers();
+      setDeactivatedCount(archivedUsers.length);
+    } catch {
+      // Silently fail, this is just for counting
+    }
+  };
+
+  const fetchAllUsersForCounts = async () => {
+    try {
+      // Fetch all users without pagination for accurate role counts
+      const data = await getAllUsers(0, 1000); // Fetch with large page size
+      setAllUsers(data.content);
+    } catch {
+      // Silently fail, this is just for counting
     }
   };
 
@@ -140,26 +167,32 @@ const AllUsersPage = () => {
   };
 
   const roleFilters = [
-    { label: "All Users", value: "ALL", count: users.length },
+    { label: "All Users", value: "ALL", count: totalElements },
     {
       label: "Students",
       value: "STUDENT_REP",
-      count: users.filter((u) => u.role === "STUDENT_REP").length,
+      count: (filterRole === "ARCHIVED" ? allUsers : users).filter(
+        (u) => u.role === "STUDENT_REP"
+      ).length,
     },
     {
       label: "Faculty",
       value: "FACULTY_ADVISER",
-      count: users.filter((u) => u.role === "FACULTY_ADVISER").length,
+      count: (filterRole === "ARCHIVED" ? allUsers : users).filter(
+        (u) => u.role === "FACULTY_ADVISER"
+      ).length,
     },
     {
       label: "Admins",
       value: "ADMIN",
-      count: users.filter((u) => u.role === "ADMIN").length,
+      count: (filterRole === "ARCHIVED" ? allUsers : users).filter(
+        (u) => u.role === "ADMIN"
+      ).length,
     },
     {
       label: "Archived",
       value: "ARCHIVED",
-      count: users.filter((u) => u.accountStatus === "DEACTIVATED").length,
+      count: deactivatedCount,
     },
   ];
 
@@ -177,7 +210,7 @@ const AllUsersPage = () => {
         <DashboardHeader
           title="All Users"
           subtitle="Manage system users and accounts"
-          icon="👥"
+          icon={<UsersIcon />}
         />
 
         <div className="users-container">

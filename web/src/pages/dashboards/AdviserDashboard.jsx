@@ -13,6 +13,7 @@ import QuickActions from "../../components/common/QuickActions";
 import SchedulesTable from "../../components/schedules/SchedulesTable";
 import CreateScheduleModal from "../../components/schedules/CreateScheduleModal";
 import Loader from "../../components/common/Loader";
+import { ProfessorIcon } from "../../components/common/icons/HeaderIcons";
 import "../../styles/dashboard-common.css";
 import Alert from "../../components/common/Alert";
 import { getPendingConsultations } from "../../services/consultationService";
@@ -154,7 +155,7 @@ const AdviserDashboard = () => {
           user?.name?.split(" ")[0]
         }! 👋`}
         subtitle="Manage your thesis consultations and track student progress"
-        icon="👨‍🏫"
+        icon={<ProfessorIcon />}
       />
 
       {error && (

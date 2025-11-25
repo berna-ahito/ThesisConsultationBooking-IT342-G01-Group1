@@ -7,6 +7,7 @@ import DashboardHeader from "../../components/layout/DashboardHeader";
 import StatsGrid from "../../components/common/StatsGrid";
 import QuickActions from "../../components/common/QuickActions";
 import Loader from "../../components/common/Loader";
+import { SettingsIcon, ProfessorIcon, UsersIcon, UserIcon, GraduationHatIcon, HourglassIcon } from "../../components/common/icons/HeaderIcons";
 import "../../styles/dashboard-common.css";
 
 const AdminDashboard = () => {
@@ -38,19 +39,19 @@ const AdminDashboard = () => {
 
   const quickActions = [
     {
-      icon: "👨‍🏫",
+      icon: <ProfessorIcon />,
       label: "Pending Approvals",
       onClick: () => navigate("/admin/approvals"),
       primary: true,
       badge: pendingCount > 0 ? pendingCount : null,
     },
     {
-      icon: "👥",
+      icon: <UsersIcon />,
       label: "All Users",
       onClick: () => navigate("/admin/users"),
     },
     {
-      icon: "👤",
+      icon: <UserIcon />,
       label: "My Profile",
       onClick: () => navigate("/admin/profile"),
     },
@@ -69,7 +70,7 @@ const AdminDashboard = () => {
       <DashboardHeader
         title={`Welcome back, ${user?.name?.split(" ")[0]}! 👋`}
         subtitle="Monitor and manage the thesis consultation system"
-        icon="⚙️"
+        icon={<SettingsIcon />}
       />
 
       <main className="dashboard-main">
@@ -81,28 +82,28 @@ const AdminDashboard = () => {
             <h3 className="section-title">System Overview</h3>
             <div className="stats-grid">
               <div className="stat-card">
-                <div className="stat-icon">🎓</div>
+                <div className="stat-icon"><GraduationHatIcon /></div>
                 <div className="stat-info">
                   <p className="stat-label">Students</p>
                   <p className="stat-value">{stats?.students || 0}</p>
                 </div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon">👨‍🏫</div>
+                <div className="stat-icon"><ProfessorIcon /></div>
                 <div className="stat-info">
                   <p className="stat-label">Faculty Advisers</p>
                   <p className="stat-value">{stats?.faculty || 0}</p>
                 </div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon">⚙️</div>
+                <div className="stat-icon"><SettingsIcon /></div>
                 <div className="stat-info">
                   <p className="stat-label">Admins</p>
                   <p className="stat-value">{stats?.admins || 0}</p>
                 </div>
               </div>
               <div className="stat-card highlight">
-                <div className="stat-icon">⏳</div>
+                <div className="stat-icon"><HourglassIcon /></div>
                 <div className="stat-info">
                   <p className="stat-label">Pending Approval</p>
                   <p className="stat-value">{stats?.pendingUsers || 0}</p>

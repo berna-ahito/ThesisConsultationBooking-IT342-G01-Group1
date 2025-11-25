@@ -8,6 +8,7 @@ import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import FormInput from "../../components/common/FormInput";
 import Loader from "../../components/common/Loader";
+import { ScheduleIcon } from "../../components/common/icons/HeaderIcons";
 import "./BookConsultationPage.css";
 
 const BookConsultationPage = () => {
@@ -105,7 +106,7 @@ const BookConsultationPage = () => {
       <DashboardHeader
         title="Book Consultation"
         subtitle="Schedule a meeting with your thesis adviser"
-        icon="🗓️"
+        icon={<ScheduleIcon />}
       />
 
       <div className="booking-container">

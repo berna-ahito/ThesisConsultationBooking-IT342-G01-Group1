@@ -6,6 +6,7 @@ import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import Loader from "../../components/common/Loader";
+import { UserIcon } from "../../components/common/icons/HeaderIcons";
 import "./ProfileCommon.css";
 import "./AdminProfilePage.css";
 
@@ -79,7 +80,7 @@ const AdminProfilePage = () => {
         <DashboardHeader
           title="Administrator Profile"
           subtitle="View and manage your account information"
-          icon="👤"
+          icon={<UserIcon />}
         />
 
         <div className="profile-container">

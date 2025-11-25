@@ -10,6 +10,7 @@ import Alert from "../../components/common/Alert";
 import Button from "../../components/common/Button";
 import ConsultationCard from "../../components/consultations/ConsultationCard";
 import Loader from "../../components/common/Loader";
+import { BooksMultiIcon } from "../../components/common/icons/HeaderIcons";
 import "./ConsultationHistoryPage.css";
 import ConfirmModal from "../../components/common/ConfirmModal";
 
@@ -121,7 +122,7 @@ const ConsultationHistoryPage = () => {
         <DashboardHeader
           title="My Consultation History"
           subtitle="View and manage your consultation requests"
-          icon="📚"
+          icon={<BooksMultiIcon />}
         />
 
         <div className="history-container">

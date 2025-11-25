@@ -11,6 +11,7 @@ import StatsGrid from "../../components/common/StatsGrid";
 import UpcomingConsultations from "../../components/consultations/UpcomingConsultations";
 import QuickActions from "../../components/common/QuickActions";
 import Loader from "../../components/common/Loader";
+import { BookIcon } from "../../components/common/icons/HeaderIcons";
 import "../../styles/dashboard-common.css";
 import {
   CalendarIcon,
@@ -119,6 +120,7 @@ const StudentDashboard = () => {
       <DashboardHeader
         title={`Welcome back, ${user?.name?.split(" ")[0]}!`}
         subtitle="Here's your thesis consultation overview"
+        icon={<BookIcon />}
       />
 
       <main className="dashboard-main">
