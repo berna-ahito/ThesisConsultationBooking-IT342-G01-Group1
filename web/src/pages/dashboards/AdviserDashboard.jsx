@@ -18,6 +18,7 @@ import { ProfessorIcon } from "../../components/common/icons/HeaderIcons";
 import "../../styles/dashboard-common.css";
 import Alert from "../../components/common/Alert";
 import { getPendingConsultations } from "../../services/consultationService";
+import plusIcon from "../../assets/plus-circle-svgrepo-com.svg";
 import {
   PlusIcon,
   ListIcon,
@@ -187,8 +188,8 @@ const AdviserDashboard = () => {
           <div className="section-card">
             <div className="section-header">
               <h3>My Availability Schedules</h3>
-              <button onClick={handleCreateSchedule} className="btn-create">
-                ➕ Add Schedule
+              <button onClick={handleCreateSchedule} className="btn-create-icon" title="Add Schedule">
+                <img src={plusIcon} alt="Add" />
               </button>
             </div>
             <SchedulesTable
