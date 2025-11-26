@@ -25,6 +25,7 @@ const AllUsersPage = () => {
   const [filterRole, setFilterRole] = useState("ALL");
   const [actionLoading, setActionLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [success, setSuccess] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
@@ -33,6 +34,7 @@ const AllUsersPage = () => {
   const [pageSize] = useState(20);
   const [deactivatedCount, setDeactivatedCount] = useState(0);
   const [allUsers, setAllUsers] = useState([]);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -114,35 +116,45 @@ const AllUsersPage = () => {
     setFilteredUsers(filtered);
   };
 
-  const handleDeactivate = async (userId) => {
-    if (window.confirm("Deactivate this user account?")) {
-      try {
-        setActionLoading(true);
-        await deactivateUser(userId);
-        setSuccess("User deactivated successfully");
-        fetchUsers();
-      } catch {
-        setError("Failed to deactivate user");
-      } finally {
-        setActionLoading(false);
-        setTimeout(() => setSuccess(""), 3000);
-      }
+  const handleDeactivateClick = (userId, userName) => {
+    setSelectedUser({ id: userId, name: userName });
+    setConfirmAction("deactivate");
+    setShowConfirmModal(true);
+  };
+
+  const handleReactivateClick = (userId, userName) => {
+    setSelectedUser({ id: userId, name: userName });
+    setConfirmAction("reactivate");
+    setShowConfirmModal(true);
+  };
+
+  const confirmDeactivate = async () => {
+    try {
+      setActionLoading(true);
+      await deactivateUser(selectedUser.id);
+      setSuccess("User deactivated successfully");
+      setShowConfirmModal(false);
+      fetchUsers();
+    } catch {
+      setError("Failed to deactivate user");
+    } finally {
+      setActionLoading(false);
+      setTimeout(() => setSuccess(""), 3000);
     }
   };
 
-  const handleReactivate = async (userId) => {
-    if (window.confirm("Reactivate this user account?")) {
-      try {
-        setActionLoading(true);
-        await reactivateUser(userId);
-        setSuccess("User reactivated successfully");
-        fetchUsers();
-      } catch {
-        setError("Failed to reactivate user");
-      } finally {
-        setActionLoading(false);
-        setTimeout(() => setSuccess(""), 3000);
-      }
+  const confirmReactivate = async () => {
+    try {
+      setActionLoading(true);
+      await reactivateUser(selectedUser.id);
+      setSuccess("User reactivated successfully");
+      setShowConfirmModal(false);
+      fetchUsers();
+    } catch {
+      setError("Failed to reactivate user");
+    } finally {
+      setActionLoading(false);
+      setTimeout(() => setSuccess(""), 3000);
     }
   };
 
@@ -369,7 +381,7 @@ const AllUsersPage = () => {
                         {user.accountStatus === "DEACTIVATED" ? (
                           <button
                             className="action-btn reactivate"
-                            onClick={() => handleReactivate(user.id)}
+                            onClick={() => handleReactivateClick(user.id, user.name)}
                             disabled={actionLoading}
                           >
                             ✓ Reactivate
@@ -377,7 +389,7 @@ const AllUsersPage = () => {
                         ) : (
                           <button
                             className="action-btn deactivate"
-                            onClick={() => handleDeactivate(user.id)}
+                            onClick={() => handleDeactivateClick(user.id, user.name)}
                             disabled={actionLoading}
                           >
                             ⊘ Deactivate
@@ -412,6 +424,36 @@ const AllUsersPage = () => {
             confirmText="Delete Permanently"
             cancelText="Cancel"
             loading={actionLoading}
+            confirmVariant="danger"
+          />
+        )}
+
+        {showConfirmModal && selectedUser && (
+          <ConfirmModal
+            isOpen={showConfirmModal}
+            onClose={() => {
+              setShowConfirmModal(false);
+              setSelectedUser(null);
+            }}
+            onConfirm={
+              confirmAction === "deactivate"
+                ? confirmDeactivate
+                : confirmReactivate
+            }
+            title={
+              confirmAction === "deactivate"
+                ? "Deactivate User Account"
+                : "Reactivate User Account"
+            }
+            message={
+              confirmAction === "deactivate"
+                ? `Deactivate ${selectedUser.name}'s account? They will no longer be able to access the system.`
+                : `Reactivate ${selectedUser.name}'s account? They will regain access to the system.`
+            }
+            confirmText={confirmAction === "deactivate" ? "Deactivate" : "Reactivate"}
+            cancelText="Cancel"
+            loading={actionLoading}
+            confirmVariant={confirmAction === "deactivate" ? "danger" : "primary"}
           />
         )}
       </div>

@@ -1,14 +1,16 @@
 import { useState } from "react";
 import Button from "../common/Button";
+import Alert from "../common/Alert";
 import "./AddNotesModal.css";
 
 const AddNotesModal = ({ consultation, onClose, onSubmit, loading }) => {
   const [notes, setNotes] = useState(consultation?.adviserNotes || "");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!notes.trim()) {
-      alert("Please enter consultation notes");
+      setError("Please enter consultation notes");
       return;
     }
     onSubmit(consultation.id, notes);
@@ -48,6 +50,10 @@ const AddNotesModal = ({ consultation, onClose, onSubmit, loading }) => {
               </span>
             </div>
           </div>
+
+          {error && (
+            <Alert type="error" message={error} onClose={() => setError("")} />
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">

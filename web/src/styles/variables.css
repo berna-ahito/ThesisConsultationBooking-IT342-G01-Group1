@@ -40,7 +40,9 @@
 
   /* Semantic */
   --color-success: #10b981;
+  --color-success-dark: #059669;
   --color-error: #ef4444;
+  --color-error-dark: #dc2626;
   --color-warning: #f59e0b;
   --color-info: #3b82f6;
 

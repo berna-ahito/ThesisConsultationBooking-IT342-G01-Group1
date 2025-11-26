@@ -9,6 +9,7 @@ import {
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
+import ConfirmModal from "../../components/common/ConfirmModal";
 import FormInput from "../../components/common/FormInput";
 import Button from "../../components/common/Button";
 import Loader from "../../components/common/Loader";
@@ -29,6 +30,8 @@ const AdminProfilePage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState("");
+  const [deactivationAlert, setDeactivationAlert] = useState("");
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -51,23 +54,24 @@ const AdminProfilePage = () => {
     }
   };
 
-  const handleDeactivateAccount = async () => {
-    if (
-      window.confirm(
-        "⚠️ Are you sure you want to deactivate your account? You will be logged out and cannot access the system until reactivated by an administrator."
-      )
-    ) {
-      try {
-        setError("");
-        setSaving(true);
-        await deactivateMyAccount();
-        alert("Account deactivated successfully. You will be logged out.");
+  const handleDeactivateAccount = () => {
+    setShowDeactivateModal(true);
+  };
+
+  const confirmDeactivate = async () => {
+    try {
+      setError("");
+      setSaving(true);
+      await deactivateMyAccount();
+      setDeactivationAlert("Account deactivated successfully. You will be logged out.");
+      setTimeout(() => {
         localStorage.clear();
         window.location.href = "/login";
-      } catch {
-        setError("Failed to deactivate account");
-        setSaving(false);
-      }
+      }, 2000);
+    } catch {
+      setError("Failed to deactivate account");
+      setSaving(false);
+      setShowDeactivateModal(false);
     }
   };
 
@@ -200,6 +204,13 @@ const AdminProfilePage = () => {
               onClose={() => setSuccess("")}
             />
           )}
+          {deactivationAlert && (
+            <Alert
+              type="success"
+              message={deactivationAlert}
+              onClose={() => setDeactivationAlert("")}
+            />
+          )}
 
           <form onSubmit={handleSubmit} className="profile-form">
             <div className="form-section">
@@ -271,6 +282,18 @@ const AdminProfilePage = () => {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showDeactivateModal}
+        onClose={() => setShowDeactivateModal(false)}
+        onConfirm={confirmDeactivate}
+        title="Deactivate Account"
+        message="Are you sure you want to deactivate your account? You will be logged out and cannot access the system until reactivated by an administrator."
+        confirmText="Deactivate"
+        cancelText="Cancel"
+        loading={saving}
+        confirmVariant="danger"
+      />
     </DashboardLayout>
   );
 };

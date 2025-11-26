@@ -30,8 +30,14 @@ import "./App.css";
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 function App() {
+  if (!GOOGLE_CLIENT_ID) {
+    console.error(
+      "❌ VITE_GOOGLE_CLIENT_ID is not configured. Please check your .env file."
+    );
+  }
+
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID || "dummy-id"}>
       <AuthProvider>
         <Router>
           <Routes>

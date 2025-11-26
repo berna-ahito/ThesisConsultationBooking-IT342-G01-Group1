@@ -45,6 +45,11 @@ public class AuthService {
 
     public AuthResponse loginWithGoogle(GoogleLoginRequest request) {
         try {
+            // Check if credential is provided
+            if (request.getCredential() == null || request.getCredential().isEmpty()) {
+                throw new RuntimeException("Google credential is missing");
+            }
+
             // 1. Verify Google token
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(),
@@ -55,7 +60,7 @@ public class AuthService {
             GoogleIdToken idToken = verifier.verify(request.getCredential());
 
             if (idToken == null) {
-                throw new RuntimeException("Invalid Google token");
+                throw new RuntimeException("Invalid Google token. Please try again.");
             }
 
             // 2. Extract user info from Google
@@ -115,6 +120,8 @@ public class AuthService {
             return buildAuthResponse(user, token);
 
         } catch (Exception e) {
+            System.err.println("Google authentication error: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Google authentication failed: " + e.getMessage(), e);
         }
     }

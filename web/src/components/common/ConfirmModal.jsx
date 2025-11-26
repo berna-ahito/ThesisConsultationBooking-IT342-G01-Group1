@@ -10,6 +10,7 @@ const ConfirmModal = ({
   confirmText = "Confirm",
   cancelText = "Cancel",
   loading = false,
+  confirmVariant = "primary",
 }) => {
   if (!isOpen) return null;
 
@@ -31,7 +32,11 @@ const ConfirmModal = ({
           <Button variant="secondary" onClick={onClose} disabled={loading}>
             {cancelText}
           </Button>
-          <Button variant="primary" onClick={onConfirm} loading={loading}>
+          <Button
+            variant={confirmVariant}
+            onClick={onConfirm}
+            loading={loading}
+          >
             {confirmText}
           </Button>
         </div>

@@ -12,6 +12,7 @@ import DashboardHeader from "../../components/layout/DashboardHeader";
 import QuickActions from "../../components/common/QuickActions";
 import SchedulesTable from "../../components/schedules/SchedulesTable";
 import CreateScheduleModal from "../../components/schedules/CreateScheduleModal";
+import ConfirmModal from "../../components/common/ConfirmModal";
 import Loader from "../../components/common/Loader";
 import { ProfessorIcon } from "../../components/common/icons/HeaderIcons";
 import "../../styles/dashboard-common.css";
@@ -36,6 +37,8 @@ const AdviserDashboard = () => {
   const [success, setSuccess] = useState("");
   const [modalError, setModalError] = useState("");
   const [pendingCount, setPendingCount] = useState(0);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [scheduleToDelete, setScheduleToDelete] = useState(null);
 
   const fetchSchedules = useCallback(async () => {
     try {
@@ -93,25 +96,29 @@ const AdviserDashboard = () => {
     }
   };
 
-  const handleDeleteSchedule = async (scheduleId) => {
-    if (!window.confirm("Are you sure you want to delete this schedule?")) {
-      return;
-    }
+  const handleDeleteSchedule = (scheduleId) => {
+    setScheduleToDelete(scheduleId);
+    setShowDeleteModal(true);
+  };
 
+  const confirmDeleteSchedule = async () => {
     try {
       setError("");
-      await deleteSchedule(scheduleId);
+      await deleteSchedule(scheduleToDelete);
 
       setSuccess("Schedule deleted successfully!");
       setTimeout(() => setSuccess(""), 3000);
 
       await fetchSchedules();
       await fetchPendingCount();
+      setShowDeleteModal(false);
+      setScheduleToDelete(null);
     } catch (err) {
       console.error("❌ Failed to delete schedule:", err);
       setError(
         err.response?.data || err.message || "Failed to delete schedule"
       );
+      setShowDeleteModal(false);
     }
   };
 
@@ -204,6 +211,21 @@ const AdviserDashboard = () => {
           backendError={modalError}
         />
       )}
+
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setScheduleToDelete(null);
+        }}
+        onConfirm={confirmDeleteSchedule}
+        title="Delete Schedule"
+        message="Are you sure you want to delete this schedule? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={submitting}
+        confirmVariant="danger"
+      />
     </DashboardLayout>
   );
 };

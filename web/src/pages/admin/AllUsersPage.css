@@ -393,7 +393,7 @@
 }
 
 .page-btn {
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border: 2px solid #e5e7eb;
   background: white;
   border-radius: 6px;
@@ -401,14 +401,15 @@
   transition: all 0.2s;
   font-weight: 500;
   color: #6b7280;
+  font-size: 0.95rem;
 }
 
 .page-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8b1538 0%, #a91d42 100%);
+  background: #1e293b;
   color: white;
-  border-color: #8b1538;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(139, 21, 56, 0.3);
+  border-color: #1e293b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
 }
 
 .page-btn:disabled {

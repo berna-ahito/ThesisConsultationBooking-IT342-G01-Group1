@@ -22,6 +22,8 @@ const ConsultationsPage = () => {
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [selectedConsultation, setSelectedConsultation] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [page, setPage] = useState(1);
+  const perPage = 6;
 
   useEffect(() => {
     fetchConsultations();
@@ -51,6 +53,7 @@ const ConsultationsPage = () => {
         consultations.filter((c) => c.status === activeFilter)
       );
     }
+    setPage(1);
   }, [consultations, activeFilter]);
 
   useEffect(() => {
@@ -160,17 +163,53 @@ const ConsultationsPage = () => {
               </p>
             </div>
           ) : (
-            <div className="consultations-list">
-              {filteredConsultations.map((consultation) => (
-                <ConsultationCard
-                  key={consultation.id}
-                  consultation={consultation}
-                  showActions={true}
-                  onAddNotes={handleAddNotes}
-                  processing={submitting}
-                />
-              ))}
-            </div>
+            <>
+              <div className="consultations-list">
+                {filteredConsultations
+                  .slice((page - 1) * perPage, page * perPage)
+                  .map((consultation) => (
+                    <ConsultationCard
+                      key={consultation.id}
+                      consultation={consultation}
+                      showActions={true}
+                      onAddNotes={handleAddNotes}
+                      processing={submitting}
+                    />
+                  ))}
+              </div>
+              {Math.ceil(filteredConsultations.length / perPage) > 1 && (
+                <div className="pagination-controls">
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setPage(Math.max(1, page - 1))
+                    }
+                    disabled={page === 1}
+                  >
+                    ← Previous
+                  </button>
+                  <span className="pagination-info">
+                    Page {page} of {Math.ceil(filteredConsultations.length / perPage)}
+                  </span>
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setPage(
+                        Math.min(
+                          Math.ceil(filteredConsultations.length / perPage),
+                          page + 1
+                        )
+                      )
+                    }
+                    disabled={
+                      page === Math.ceil(filteredConsultations.length / perPage)
+                    }
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
 

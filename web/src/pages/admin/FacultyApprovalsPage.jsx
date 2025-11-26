@@ -8,6 +8,7 @@ import {
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
+import ConfirmModal from "../../components/common/ConfirmModal";
 import Button from "../../components/common/Button";
 import UserCard from "../../components/common/UserCard";
 import Loader from "../../components/common/Loader";
@@ -21,6 +22,11 @@ const FacultyApprovalsPage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [processingId, setProcessingId] = useState(null);
+  const [page, setPage] = useState(1);
+  const perPage = 6;
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     fetchPendingUsers();
@@ -39,17 +45,26 @@ const FacultyApprovalsPage = () => {
     }
   };
 
-  const handleApprove = async (userId, userName) => {
-    if (!window.confirm(`Approve ${userName} as Faculty Adviser?`)) {
-      return;
-    }
+  const handleApproveClick = (userId, userName) => {
+    setSelectedUser({ id: userId, name: userName });
+    setConfirmAction("approve");
+    setShowConfirmModal(true);
+  };
 
+  const handleRejectClick = (userId, userName) => {
+    setSelectedUser({ id: userId, name: userName });
+    setConfirmAction("reject");
+    setShowConfirmModal(true);
+  };
+
+  const confirmApprove = async () => {
     try {
-      setProcessingId(userId);
+      setProcessingId(selectedUser.id);
       setError("");
-      await approveUser(userId);
-      setSuccess(`${userName} has been approved successfully!`);
+      await approveUser(selectedUser.id);
+      setSuccess(`${selectedUser.name} has been approved successfully!`);
       setTimeout(() => setSuccess(""), 3000);
+      setShowConfirmModal(false);
       fetchPendingUsers();
     } catch (err) {
       setError(err.response?.data?.error || "Failed to approve user");
@@ -58,21 +73,14 @@ const FacultyApprovalsPage = () => {
     }
   };
 
-  const handleReject = async (userId, userName) => {
-    if (
-      !window.confirm(
-        `Reject ${userName}? This will permanently delete their account.`
-      )
-    ) {
-      return;
-    }
-
+  const confirmReject = async () => {
     try {
-      setProcessingId(userId);
+      setProcessingId(selectedUser.id);
       setError("");
-      await rejectUser(userId);
-      setSuccess(`${userName}'s account has been rejected`);
+      await rejectUser(selectedUser.id);
+      setSuccess(`${selectedUser.name}'s account has been rejected`);
       setTimeout(() => setSuccess(""), 3000);
+      setShowConfirmModal(false);
       fetchPendingUsers();
     } catch (err) {
       setError(err.response?.data?.error || "Failed to reject user");
@@ -120,20 +128,79 @@ const FacultyApprovalsPage = () => {
               </Button>
             </div>
           ) : (
-            <div className="pending-users-grid">
-              {pendingUsers.map((user) => (
-                <UserCard
-                  key={user.id}
-                  user={user}
-                  showActions={true}
-                  onApprove={handleApprove}
-                  onReject={handleReject}
-                  processing={processingId === user.id}
-                />
-              ))}
-            </div>
+            <>
+              <div className="pending-users-grid">
+                {pendingUsers
+                  .slice((page - 1) * perPage, page * perPage)
+                  .map((user) => (
+                    <UserCard
+                      key={user.id}
+                      user={user}
+                      showActions={true}
+                      onApprove={handleApproveClick}
+                      onReject={handleRejectClick}
+                      processing={processingId === user.id}
+                    />
+                  ))}
+              </div>
+              {Math.ceil(pendingUsers.length / perPage) > 1 && (
+                <div className="pagination-controls">
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setPage(Math.max(1, page - 1))
+                    }
+                    disabled={page === 1}
+                  >
+                    ← Previous
+                  </button>
+                  <span className="pagination-info">
+                    Page {page} of {Math.ceil(pendingUsers.length / perPage)}
+                  </span>
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setPage(
+                        Math.min(
+                          Math.ceil(pendingUsers.length / perPage),
+                          page + 1
+                        )
+                      )
+                    }
+                    disabled={
+                      page === Math.ceil(pendingUsers.length / perPage)
+                    }
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
+
+        <ConfirmModal
+          isOpen={showConfirmModal}
+          onClose={() => setShowConfirmModal(false)}
+          onConfirm={
+            confirmAction === "approve" ? confirmApprove : confirmReject
+          }
+          title={
+            confirmAction === "approve"
+              ? "Approve Faculty Adviser"
+              : "Reject Faculty Account"
+          }
+          message={
+            confirmAction === "approve"
+              ? `Approve ${selectedUser?.name} as Faculty Adviser?`
+              : `Reject ${selectedUser?.name}? This will permanently delete their account.`
+          }
+          confirmText={confirmAction === "approve" ? "Approve" : "Reject"}
+          cancelText="Cancel"
+          loading={processingId === selectedUser?.id}
+          confirmVariant={confirmAction === "approve" ? "primary" : "danger"}
+        />
+        />
       </div>
     </DashboardLayout>
   );

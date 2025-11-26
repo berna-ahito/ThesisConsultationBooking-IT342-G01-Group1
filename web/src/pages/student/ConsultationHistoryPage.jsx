@@ -25,6 +25,8 @@ const ConsultationHistoryPage = () => {
   const [cancellingId, setCancellingId] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [consultationToCancel, setConsultationToCancel] = useState(null);
+  const [page, setPage] = useState(1);
+  const perPage = 6;
 
   useEffect(() => {
     fetchConsultations();
@@ -51,6 +53,7 @@ const ConsultationHistoryPage = () => {
         consultations.filter((c) => c.status === activeFilter)
       );
     }
+    setPage(1);
   }, [consultations, activeFilter]);
 
   useEffect(() => {
@@ -168,17 +171,53 @@ const ConsultationHistoryPage = () => {
               </Button>
             </div>
           ) : (
-            <div className="consultations-list">
-              {filteredConsultations.map((consultation) => (
-                <ConsultationCard
-                  key={consultation.id}
-                  consultation={consultation}
-                  showActions={true}
-                  onCancel={handleCancel}
-                  processing={cancellingId === consultation.id}
-                />
-              ))}
-            </div>
+            <>
+              <div className="consultations-list">
+                {filteredConsultations
+                  .slice((page - 1) * perPage, page * perPage)
+                  .map((consultation) => (
+                    <ConsultationCard
+                      key={consultation.id}
+                      consultation={consultation}
+                      showActions={true}
+                      onCancel={handleCancel}
+                      processing={cancellingId === consultation.id}
+                    />
+                  ))}
+              </div>
+              {Math.ceil(filteredConsultations.length / perPage) > 1 && (
+                <div className="pagination-controls">
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setPage(Math.max(1, page - 1))
+                    }
+                    disabled={page === 1}
+                  >
+                    ← Previous
+                  </button>
+                  <span className="pagination-info">
+                    Page {page} of {Math.ceil(filteredConsultations.length / perPage)}
+                  </span>
+                  <button
+                    className="pagination-btn"
+                    onClick={() =>
+                      setPage(
+                        Math.min(
+                          Math.ceil(filteredConsultations.length / perPage),
+                          page + 1
+                        )
+                      )
+                    }
+                    disabled={
+                      page === Math.ceil(filteredConsultations.length / perPage)
+                    }
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

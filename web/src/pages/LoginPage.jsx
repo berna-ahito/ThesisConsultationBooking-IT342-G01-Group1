@@ -19,6 +19,9 @@ const LoginPage = () => {
   const justRegistered = location.state?.registered === true;
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+  // Log client ID for debugging
+  console.log("Google Client ID configured:", !!GOOGLE_CLIENT_ID);
+
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -95,6 +98,10 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
+      if (!credentialResponse.credential) {
+        throw new Error("No credential received from Google");
+      }
+
       const response = await loginWithGoogle(credentialResponse.credential);
 
       // Save to localStorage
@@ -108,7 +115,8 @@ const LoginPage = () => {
       handleRedirect(response.user);
     } catch (err) {
       console.error("Google login error:", err);
-      setError("Google sign-in failed. Please try again.");
+      const errorMsg = err.response?.data || err.message || "Google sign-in failed";
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
