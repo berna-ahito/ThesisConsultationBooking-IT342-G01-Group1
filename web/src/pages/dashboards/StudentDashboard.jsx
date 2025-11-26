@@ -5,6 +5,7 @@ import {
   getUpcomingConsultations,
   getMyConsultations,
 } from "../../services/consultationService";
+import { formatStudentId } from "../../utils/formatters";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import StatsGrid from "../../components/common/StatsGrid";
@@ -67,7 +68,7 @@ const StudentDashboard = () => {
   const stats = [
     {
       label: "Student ID",
-      value: user?.studentId || "N/A",
+      value: formatStudentId(user?.studentId) || "N/A",
       primary: true,
     },
     {

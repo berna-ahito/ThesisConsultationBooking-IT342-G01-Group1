@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { completeProfile } from "../services/authService";
+import { formatStudentId } from "../utils/formatters";
 import ThesisHubLogo from "../assets/Icon_Prototype.png";
 import "./CompleteProfile.css";
 import Alert from "../components/common/Alert";
@@ -90,6 +91,10 @@ const CompleteProfilePage = () => {
     // Auto-uppercase team code as user types
     if (name === "teamCode") {
       setFormData({ ...formData, [name]: value.toUpperCase() });
+    }
+    // Auto-format student ID as user types
+    else if (name === "studentId") {
+      setFormData({ ...formData, [name]: formatStudentId(value) });
     } else {
       setFormData({ ...formData, [name]: value });
     }

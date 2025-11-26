@@ -6,6 +6,7 @@ import {
   reactivateUser,
   deleteUser,
 } from "../../services/userService";
+import { formatStudentId } from "../../utils/formatters";
 import ConfirmModal from "../../components/common/ConfirmModal";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
@@ -355,7 +356,7 @@ const AllUsersPage = () => {
                           type="account"
                         />
                       </td>
-                      <td className="center-cell">{user.studentId || "—"}</td>
+                      <td className="center-cell">{formatStudentId(user.studentId) || "—"}</td>
                       <td className="center-cell">
                         {user.teamCode ? (
                           <span className="team-code">{user.teamCode}</span>

@@ -5,6 +5,7 @@ import {
   updateProfile,
   uploadProfileImage,
 } from "../../services/userService";
+import { formatStudentId } from "../../utils/formatters";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
@@ -78,6 +79,10 @@ const StudentProfilePage = () => {
     const { name, value } = e.target;
     if (name === "teamCode") {
       setFormData({ ...formData, [name]: value.toUpperCase() });
+    }
+    // Auto-format student ID as user types
+    else if (name === "studentId") {
+      setFormData({ ...formData, [name]: formatStudentId(value) });
     } else {
       setFormData({ ...formData, [name]: value });
     }
