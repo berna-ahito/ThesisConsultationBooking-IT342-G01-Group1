@@ -168,9 +168,13 @@ public class AuthService {
             user.setAccountStatus("ACTIVE");
 
         } else if (selectedRole == UserRole.FACULTY_ADVISER) {
+            if (request.getFacultyId() == null || request.getFacultyId().isBlank()) {
+                throw new RuntimeException("Faculty ID is required for faculty accounts");
+            }
             if (request.getDepartment() == null || request.getDepartment().isBlank()) {
                 throw new RuntimeException("Department is required for faculty accounts");
             }
+            user.setFacultyId(request.getFacultyId());
             user.setDepartment("IT Department");
             user.setRole(UserRole.FACULTY_ADVISER);
             user.setIsProfileComplete(true);
@@ -285,6 +289,7 @@ public class AuthService {
                 user.getRole() != null ? user.getRole().name() : null,
                 user.getIsProfileComplete(),
                 user.getStudentId(),
+                user.getFacultyId(),
                 user.getTeamCode(),
                 user.getDepartment(),
                 user.getAccountStatus());

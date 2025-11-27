@@ -178,6 +178,21 @@ const AdviserDashboard = () => {
       )}
 
       <main className="dashboard-main">
+        <div className="stats-row">
+          <div className="stat-card primary">
+            <div className="stat-label">Faculty ID</div>
+            <div className="stat-value">{user?.facultyId || "N/A"}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">Department</div>
+            <div className="stat-value">{user?.department || "N/A"}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">Pending Requests</div>
+            <div className="stat-value">{pendingCount}</div>
+          </div>
+        </div>
+
         <div className="dashboard-grid">
           <QuickActions
             actions={quickActions}
@@ -188,7 +203,11 @@ const AdviserDashboard = () => {
           <div className="section-card">
             <div className="section-header">
               <h3>My Availability Schedules</h3>
-              <button onClick={handleCreateSchedule} className="btn-create-icon" title="Add Schedule">
+              <button
+                onClick={handleCreateSchedule}
+                className="btn-create-icon"
+                title="Add Schedule"
+              >
                 <img src={plusIcon} alt="Add" />
               </button>
             </div>

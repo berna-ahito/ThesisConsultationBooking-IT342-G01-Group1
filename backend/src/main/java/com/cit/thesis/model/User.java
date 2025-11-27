@@ -34,6 +34,9 @@ public class User {
     @Column(name = "student_id", unique = true)
     private String studentId;
 
+    @Column(name = "faculty_id", unique = true)
+    private String facultyId;
+
     @Column(name = "team_code", length = 20)
     private String teamCode;
 
