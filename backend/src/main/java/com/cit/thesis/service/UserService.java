@@ -141,6 +141,7 @@ public class UserService {
                 user.getRole() != null ? user.getRole().name() : null,
                 user.getIsProfileComplete(),
                 user.getStudentId(),
+                user.getFacultyId(),
                 user.getTeamCode(),
                 user.getDepartment(),
                 user.getAccountStatus());

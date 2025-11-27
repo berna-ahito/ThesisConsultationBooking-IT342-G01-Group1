@@ -13,12 +13,15 @@ public class CompleteProfileRequest {
 
     private String department;
 
+    private String facultyId;
+
     public CompleteProfileRequest() {
     }
 
     public CompleteProfileRequest(String role, String studentId, String department, String teamCode) {
         this.role = role;
         this.studentId = studentId;
+        this.facultyId = facultyId;
         this.teamCode = teamCode;
         this.department = department;
     }
@@ -37,6 +40,14 @@ public class CompleteProfileRequest {
 
     public void setStudentId(String studentId) {
         this.studentId = studentId;
+    }
+
+    public String getFacultyId() {
+        return facultyId;
+    }
+
+    public void setFacultyId(String facultyId) {
+        this.facultyId = facultyId;
     }
 
     public String getTeamCode() {

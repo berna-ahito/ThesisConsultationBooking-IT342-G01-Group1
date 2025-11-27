@@ -16,6 +16,7 @@ const CompleteProfilePage = () => {
   const [formData, setFormData] = useState({
     role: "STUDENT_REP",
     studentId: "",
+    facultyId: "",
     teamCode: "",
     department: "IT Department",
   });
@@ -237,17 +238,30 @@ const CompleteProfilePage = () => {
             )}
 
             {formData.role === "FACULTY_ADVISER" && (
-              <FormInput
-                label="Department"
-                type="text"
-                name="department"
-                value="IT Department"
-                onChange={() => {}}
-                placeholder="IT Department"
-                disabled={true}
-                hint="This system is exclusively for the IT Department"
-                required
-              />
+              <>
+                <FormInput
+                  label="Faculty ID"
+                  type="text"
+                  name="facultyId"
+                  value={formData.facultyId}
+                  onChange={handleChange}
+                  placeholder="22-9845-210"
+                  disabled={loading}
+                  hint="Enter your university faculty/employee ID number"
+                  required
+                />
+
+                <FormInput
+                  label="Department"
+                  type="text"
+                  name="department"
+                  value="IT Department"
+                  onChange={() => {}}
+                  disabled={true}
+                  hint="This system is exclusively for the IT Department"
+                  required
+                />
+              </>
             )}
 
             {requiresApproval && (

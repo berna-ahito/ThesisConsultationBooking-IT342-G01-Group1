@@ -105,7 +105,6 @@ const FacultyApprovalsPage = () => {
           subtitle="Review and approve faculty adviser accounts"
           icon={<ProfessorIcon />}
         />
-
         <div className="approvals-container">
           {error && (
             <Alert type="error" message={error} onClose={() => setError("")} />
@@ -147,9 +146,7 @@ const FacultyApprovalsPage = () => {
                 <div className="pagination-controls">
                   <button
                     className="pagination-btn"
-                    onClick={() =>
-                      setPage(Math.max(1, page - 1))
-                    }
+                    onClick={() => setPage(Math.max(1, page - 1))}
                     disabled={page === 1}
                   >
                     ← Previous
@@ -167,9 +164,7 @@ const FacultyApprovalsPage = () => {
                         )
                       )
                     }
-                    disabled={
-                      page === Math.ceil(pendingUsers.length / perPage)
-                    }
+                    disabled={page === Math.ceil(pendingUsers.length / perPage)}
                   >
                     Next →
                   </button>
@@ -178,7 +173,6 @@ const FacultyApprovalsPage = () => {
             </>
           )}
         </div>
-
         <ConfirmModal
           isOpen={showConfirmModal}
           onClose={() => setShowConfirmModal(false)}
@@ -199,7 +193,6 @@ const FacultyApprovalsPage = () => {
           cancelText="Cancel"
           loading={processingId === selectedUser?.id}
           confirmVariant={confirmAction === "approve" ? "primary" : "danger"}
-        />
         />
       </div>
     </DashboardLayout>

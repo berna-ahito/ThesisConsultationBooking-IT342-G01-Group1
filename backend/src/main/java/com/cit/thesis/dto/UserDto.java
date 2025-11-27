@@ -8,12 +8,13 @@ public class UserDto {
     private String role;
     private Boolean isProfileComplete;
     private String studentId;
+    private String facultyId;
     private String teamCode;
     private String department;
     private String accountStatus;
 
     public UserDto(Long id, String email, String name, String pictureUrl, String role,
-            Boolean isProfileComplete, String studentId, String teamCode,
+            Boolean isProfileComplete, String studentId, String facultyId, String teamCode,
             String department, String accountStatus) {
         this.id = id;
         this.email = email;
@@ -22,18 +23,19 @@ public class UserDto {
         this.role = role;
         this.isProfileComplete = isProfileComplete;
         this.studentId = studentId;
+        this.facultyId = facultyId;
         this.teamCode = teamCode;
         this.department = department;
         this.accountStatus = accountStatus;
     }
 
     public UserDto(Long id, String email, String name, String pictureUrl, String role,
-            Boolean isProfileComplete, String studentId, String department) {
-        this(id, email, name, pictureUrl, role, isProfileComplete, studentId, null, department, "ACTIVE");
+            Boolean isProfileComplete, String studentId, String facultyId, String department) {
+        this(id, email, name, pictureUrl, role, isProfileComplete, studentId, facultyId, null, department, "ACTIVE");
     }
 
     public UserDto(Long id, String email, String name, String pictureUrl, String role) {
-        this(id, email, name, pictureUrl, role, true, null, null, null, "ACTIVE");
+        this(id, email, name, pictureUrl, role, true, null, null, null, null, "ACTIVE");
     }
 
     public UserDto() {
@@ -93,6 +95,14 @@ public class UserDto {
 
     public void setStudentId(String studentId) {
         this.studentId = studentId;
+    }
+
+    public String getFacultyId() {
+        return facultyId;
+    }
+
+    public void setFacultyId(String facultyId) {
+        this.facultyId = facultyId;
     }
 
     public String getTeamCode() {
