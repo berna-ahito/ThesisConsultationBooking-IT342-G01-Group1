@@ -1,8 +1,10 @@
 import PropTypes from "prop-types";
+import { useEffect } from "react";
 import StatusBadge from "../common/StatusBadge";
 import Button from "../common/Button";
 import "./ConsultationCard.css";
 import { getCurrentUser } from "../../services/authService";
+import notesIcon from "../../assets/add-document-note-svgrepo-com.svg";
 
 const ConsultationCard = ({
   consultation,
@@ -16,6 +18,19 @@ const ConsultationCard = ({
   const user = getCurrentUser();
   const role = user?.role;
 
+  // Debug: Log what fields are available
+  useEffect(() => {
+    console.log("📋 ConsultationCard Data:", {
+      adviserName: consultation.adviserName,
+      adviserPictureUrl: consultation.adviserPictureUrl,
+      adviserPicture: consultation.adviserPicture,
+      studentName: consultation.studentName,
+      studentPictureUrl: consultation.studentPictureUrl,
+      studentPicture: consultation.studentPicture,
+      allFields: Object.keys(consultation)
+    });
+  }, [consultation]);
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-US", {
       weekday: "short",
@@ -27,6 +42,7 @@ const ConsultationCard = ({
 
   let displayName;
   let displayInitial;
+  let pictureUrl = null;
 
   // STUDENT → show adviser
   if (
@@ -35,6 +51,8 @@ const ConsultationCard = ({
   ) {
     displayName = consultation.adviserName;
     displayInitial = consultation.adviserName?.charAt(0).toUpperCase() || "?";
+    // Try multiple picture URL field names
+    pictureUrl = consultation.adviserPictureUrl || consultation.adviserPicture || consultation.adviserProfilePicture;
   }
   // ADVISER → show student
   else if (
@@ -44,6 +62,8 @@ const ConsultationCard = ({
   ) {
     displayName = consultation.studentName;
     displayInitial = consultation.studentName?.charAt(0).toUpperCase() || "?";
+    // Try multiple picture URL field names
+    pictureUrl = consultation.studentPictureUrl || consultation.studentPicture || consultation.studentProfilePicture;
   }
   // FALLBACK
   else {
@@ -55,7 +75,17 @@ const ConsultationCard = ({
     <div className="compact-card">
       <div className="compact-top">
         <div className="compact-left">
-          <div className="compact-avatar">{displayInitial}</div>
+          <div className="compact-avatar">
+            {pictureUrl ? (
+              <img 
+                src={pictureUrl} 
+                alt={displayName}
+                className="avatar-image"
+              />
+            ) : (
+              displayInitial
+            )}
+          </div>
 
           <div className="compact-info">
             <h3 className="compact-name">{displayName}</h3>
@@ -126,7 +156,8 @@ const ConsultationCard = ({
                 onClick={() => onAddNotes(consultation)}
                 disabled={processing}
               >
-                📝 Add Notes
+                <img src={notesIcon} alt="Add Notes" className="button-icon" />
+                Add Notes
               </Button>
             )}
 

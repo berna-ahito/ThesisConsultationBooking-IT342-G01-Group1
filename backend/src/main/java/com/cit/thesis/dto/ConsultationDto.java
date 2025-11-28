@@ -7,9 +7,11 @@ public class ConsultationDto {
     private Long id;
     private Long studentId;
     private String studentName;
+    private String studentPictureUrl;
     private String teamCode;
     private Long adviserId;
     private String adviserName;
+    private String adviserPictureUrl;
     private String topic;
     private String description;
     private LocalDate scheduledDate;
@@ -143,5 +145,21 @@ public class ConsultationDto {
 
     public void setAdviserNotes(String adviserNotes) {
         this.adviserNotes = adviserNotes;
+    }
+
+    public String getStudentPictureUrl() {
+        return studentPictureUrl;
+    }
+
+    public void setStudentPictureUrl(String studentPictureUrl) {
+        this.studentPictureUrl = studentPictureUrl;
+    }
+
+    public String getAdviserPictureUrl() {
+        return adviserPictureUrl;
+    }
+
+    public void setAdviserPictureUrl(String adviserPictureUrl) {
+        this.adviserPictureUrl = adviserPictureUrl;
     }
 }

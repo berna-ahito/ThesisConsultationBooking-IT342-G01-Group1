@@ -7,9 +7,9 @@
 /* ===== LEFT: VISUAL PANEL ===== */
 .profile-visual-panel {
   flex: 0 0 45%;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%),
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.85) 100%),
     url('/bg-image.webp') center/cover no-repeat;
-  background-blend-mode: overlay;
+  background-blend-mode: darken;
   color: #fff;
   padding: 48px 40px;
   display: flex;

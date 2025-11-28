@@ -9,6 +9,18 @@
   letter-spacing: 0.3px;
   font-family: inherit;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.button-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  filter: invert(1) brightness(1);
+  margin-right: 6px;
 }
 
 .btn-full-width {

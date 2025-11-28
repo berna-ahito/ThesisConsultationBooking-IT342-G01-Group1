@@ -33,7 +33,15 @@ const UpcomingConsultations = ({
             {consultations.map((consultation) => (
               <div key={consultation.id} className="consultation-item">
                 <div className="consultation-avatar">
-                  {consultation.adviser?.charAt(0) || "A"}
+                  {consultation.adviserPicture || consultation.adviserPictureUrl ? (
+                    <img 
+                      src={consultation.adviserPicture || consultation.adviserPictureUrl} 
+                      alt={consultation.adviser}
+                      className="avatar-image"
+                    />
+                  ) : (
+                    consultation.adviser?.charAt(0) || "A"
+                  )}
                 </div>
                 <div className="consultation-details">
                   <h4 className="consultation-name">{consultation.adviser}</h4>

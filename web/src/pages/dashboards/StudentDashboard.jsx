@@ -46,6 +46,7 @@ const StudentDashboard = () => {
         }),
         title: consultation.topic || "Thesis Consultation",
         adviser: consultation.adviserName || "Adviser",
+        adviserPicture: consultation.adviserPictureUrl,
         time: `${consultation.startTime} - ${consultation.endTime}`,
         status: consultation.status.toLowerCase(),
       }));

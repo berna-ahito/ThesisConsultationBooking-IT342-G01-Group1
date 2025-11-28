@@ -342,7 +342,7 @@ public class ConsultationService {
                 User student = userRepository.findById(consultation.getStudentId()).orElse(null);
                 User adviser = userRepository.findById(consultation.getAdviserId()).orElse(null);
 
-                return new ConsultationDto(
+                ConsultationDto dto = new ConsultationDto(
                                 consultation.getId(),
                                 consultation.getStudentId(),
                                 student != null ? student.getName() : "Unknown",
@@ -356,6 +356,16 @@ public class ConsultationService {
                                 consultation.getScheduledEnd(),
                                 consultation.getStatus().name(),
                                 consultation.getAdviserNotes());
+                
+                // Set picture URLs
+                if (student != null) {
+                        dto.setStudentPictureUrl(student.getPictureUrl());
+                }
+                if (adviser != null) {
+                        dto.setAdviserPictureUrl(adviser.getPictureUrl());
+                }
+                
+                return dto;
         }
 
         public List<ConsultationDto> getConsultationsForAdviser(String email) {
