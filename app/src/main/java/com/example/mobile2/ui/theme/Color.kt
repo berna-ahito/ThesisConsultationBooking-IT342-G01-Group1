@@ -1,4 +1,4 @@
-package com.example.thesisconsultation_mobile.ui.theme
+package com.example.mobile2.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

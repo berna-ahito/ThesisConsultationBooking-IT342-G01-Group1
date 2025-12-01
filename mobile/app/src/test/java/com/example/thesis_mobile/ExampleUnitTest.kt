@@ -1,4 +1,4 @@
-package com.example.thesisconsultation_mobile
+package com.example.thesis_mobile
 
 import org.junit.Test
 
