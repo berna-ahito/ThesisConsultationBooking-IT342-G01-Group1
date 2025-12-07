@@ -229,6 +229,7 @@ const AdviserDashboard = () => {
           onSubmit={handleSubmitSchedule}
           loading={submitting}
           backendError={modalError}
+          existingSchedules={schedules}
         />
       )}
 

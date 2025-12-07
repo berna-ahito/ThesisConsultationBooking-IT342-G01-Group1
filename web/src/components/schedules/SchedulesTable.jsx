@@ -1,4 +1,5 @@
 import Button from "../common/Button";
+import { formatTo12Hour } from "../../utils/formatters";
 import "./SchedulesTable.css";
 
 const SchedulesTable = ({ schedules, onDelete, onCreate }) => {
@@ -43,7 +44,7 @@ const SchedulesTable = ({ schedules, onDelete, onCreate }) => {
             <tr key={schedule.id}>
               <td>{formatDate(schedule.availableDate)}</td>
               <td>
-                {schedule.startTime} - {schedule.endTime}
+                {formatTo12Hour(schedule.startTime)} - {formatTo12Hour(schedule.endTime)}
               </td>
               <td>
                 <span

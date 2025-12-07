@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { bookConsultation } from "../../services/consultationService";
 import { getAvailableSchedules } from "../../services/scheduleService";
+import { formatTo12Hour } from "../../utils/formatters";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import Alert from "../../components/common/Alert";
@@ -90,7 +91,7 @@ const BookConsultationPage = () => {
       day: "numeric",
       year: "numeric",
     });
-    return `${dateStr} - ${schedule.startTime} to ${schedule.endTime} (${schedule.adviserName})`;
+    return `${dateStr} - ${formatTo12Hour(schedule.startTime)} to ${formatTo12Hour(schedule.endTime)} (${schedule.adviserName})`;
   };
 
   if (loading) {

@@ -5,6 +5,7 @@ import Button from "../common/Button";
 import "./ConsultationCard.css";
 import { getCurrentUser } from "../../services/authService";
 import notesIcon from "../../assets/add-document-note-svgrepo-com.svg";
+import { formatTo12Hour } from "../../utils/formatters";
 
 const ConsultationCard = ({
   consultation,
@@ -96,7 +97,7 @@ const ConsultationCard = ({
 
             <span className="compact-date">
               {formatDate(consultation.scheduledDate)} •{" "}
-              {consultation.startTime}
+              {formatTo12Hour(consultation.startTime)}
             </span>
           </div>
         </div>

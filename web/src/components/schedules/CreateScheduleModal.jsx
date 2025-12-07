@@ -2,20 +2,62 @@ import { useState } from "react";
 import Button from "../common/Button";
 import FormInput from "../common/FormInput";
 import Alert from "../common/Alert";
+import { formatTo12Hour } from "../../utils/formatters";
 import "./CreateScheduleModal.css";
 
-const CreateScheduleModal = ({ onClose, onSubmit, loading, backendError }) => {
+const CreateScheduleModal = ({ onClose, onSubmit, loading, backendError, existingSchedules = [] }) => {
   const [formData, setFormData] = useState({
     availableDate: "",
     startTime: "",
     endTime: "",
   });
   const [error, setError] = useState("");
+  const [conflictWarning, setConflictWarning] = useState("");
+
+  const checkForTimeConflict = (date, startTime, endTime) => {
+    if (!date || !startTime || !endTime) return null;
+
+    const selectedDate = new Date(date).toISOString().split('T')[0];
+
+    const conflict = existingSchedules.find((schedule) => {
+      const scheduleDate = new Date(schedule.availableDate).toISOString().split('T')[0];
+
+      if (scheduleDate !== selectedDate) return false;
+
+      const existingStart = schedule.startTime;
+      const existingEnd = schedule.endTime;
+
+      // Check if times overlap
+      return startTime < existingEnd && endTime > existingStart;
+    });
+
+    return conflict || null;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const newFormData = { ...formData, [name]: value };
+    setFormData(newFormData);
     setError("");
+
+    // Check for conflicts in real-time
+    if (newFormData.availableDate && newFormData.startTime && newFormData.endTime) {
+      const conflict = checkForTimeConflict(
+        newFormData.availableDate,
+        newFormData.startTime,
+        newFormData.endTime
+      );
+      if (conflict) {
+        setConflictWarning(
+          `This time conflicts with an existing schedule on ${newFormData.availableDate} ` +
+          `from ${formatTo12Hour(conflict.startTime)} to ${formatTo12Hour(conflict.endTime)}. You won't be able to add this schedule.`
+        );
+      } else {
+        setConflictWarning("");
+      }
+    } else {
+      setConflictWarning("");
+    }
   };
 
   const handleSubmit = (e) => {
@@ -67,7 +109,11 @@ const CreateScheduleModal = ({ onClose, onSubmit, loading, backendError }) => {
 
         <form onSubmit={handleSubmit} className="modal-body">
           {(error || backendError) && (
-            <Alert type="error" message={error} onClose={() => setError("")} />
+            <Alert type="error" message={error || backendError} onClose={() => setError("")} />
+          )}
+
+          {conflictWarning && (
+            <Alert type="error" message={conflictWarning} />
           )}
 
           <FormInput
@@ -110,7 +156,7 @@ const CreateScheduleModal = ({ onClose, onSubmit, loading, backendError }) => {
             >
               Cancel
             </Button>
-            <Button type="submit" variant="primary" loading={loading}>
+            <Button type="submit" variant="primary" loading={loading} disabled={loading || !!conflictWarning}>
               Create Schedule
             </Button>
           </div>

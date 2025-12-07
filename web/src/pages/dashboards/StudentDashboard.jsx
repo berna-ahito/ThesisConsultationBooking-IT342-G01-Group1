@@ -5,7 +5,7 @@ import {
   getUpcomingConsultations,
   getMyConsultations,
 } from "../../services/consultationService";
-import { formatStudentId } from "../../utils/formatters";
+import { formatStudentId, formatTo12Hour } from "../../utils/formatters";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/layout/DashboardHeader";
 import StatsGrid from "../../components/common/StatsGrid";
@@ -47,7 +47,7 @@ const StudentDashboard = () => {
         title: consultation.topic || "Thesis Consultation",
         adviser: consultation.adviserName || "Adviser",
         adviserPicture: consultation.adviserPictureUrl,
-        time: `${consultation.startTime} - ${consultation.endTime}`,
+        time: `${formatTo12Hour(consultation.startTime)} - ${formatTo12Hour(consultation.endTime)}`,
         status: consultation.status.toLowerCase(),
       }));
 
