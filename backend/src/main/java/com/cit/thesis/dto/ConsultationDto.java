@@ -19,6 +19,7 @@ public class ConsultationDto {
     private LocalTime endTime;
     private String status;
     private String adviserNotes;
+    private String rejectionReason;
 
     public ConsultationDto() {
     }
@@ -26,7 +27,7 @@ public class ConsultationDto {
     public ConsultationDto(Long id, Long studentId, String studentName, String teamCode,
             Long adviserId, String adviserName, String topic, String description,
             LocalDate scheduledDate, LocalTime startTime, LocalTime endTime,
-            String status, String adviserNotes) {
+            String status, String adviserNotes, String rejectionReason) {
         this.id = id;
         this.studentId = studentId;
         this.studentName = studentName;
@@ -40,6 +41,7 @@ public class ConsultationDto {
         this.endTime = endTime;
         this.status = status;
         this.adviserNotes = adviserNotes;
+        this.rejectionReason = rejectionReason;
     }
 
     // Getters and Setters
@@ -145,6 +147,14 @@ public class ConsultationDto {
 
     public void setAdviserNotes(String adviserNotes) {
         this.adviserNotes = adviserNotes;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
     }
 
     public String getStudentPictureUrl() {
