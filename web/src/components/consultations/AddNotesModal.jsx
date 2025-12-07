@@ -67,7 +67,7 @@ const AddNotesModal = ({ consultation, onClose, onSubmit, loading }) => {
                 id="notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Enter your notes about the consultation...&#10;&#10;Example:&#10;- Discussed research methodology&#10;- Reviewed literature review section&#10;- Next steps: Complete data analysis by next week"
+                placeholder="Enter your notes about the consultation..."
                 rows={10}
                 disabled={loading}
                 required

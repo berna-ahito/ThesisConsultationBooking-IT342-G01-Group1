@@ -89,11 +89,6 @@
   align-items: center;
 }
 
-/* Details */
-.compact-details {
-  margin-bottom: 12px;
-}
-
 .compact-row {
   display: flex;
   gap: 8px;
@@ -105,6 +100,25 @@
   font-weight: 600;
   color: #6b7280;
   min-width: 48px;
+  flex-shrink: 0;
+}
+
+.value {
+  color: #111827;
+  font-weight: 500;
+  flex: 1;
+}
+
+.rejection-reason {
+  background: #fef2f2;
+  border-left: 3px solid #ef4444;
+  padding: 6px 10px;
+  border-radius: 4px;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  max-width: fit-content;
 }
 
 .value {

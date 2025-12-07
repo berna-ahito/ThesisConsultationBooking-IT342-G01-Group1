@@ -28,7 +28,7 @@ const ConsultationCard = ({
       studentName: consultation.studentName,
       studentPictureUrl: consultation.studentPictureUrl,
       studentPicture: consultation.studentPicture,
-      allFields: Object.keys(consultation)
+      allFields: Object.keys(consultation),
     });
   }, [consultation]);
 
@@ -53,7 +53,10 @@ const ConsultationCard = ({
     displayName = consultation.adviserName;
     displayInitial = consultation.adviserName?.charAt(0).toUpperCase() || "?";
     // Try multiple picture URL field names
-    pictureUrl = consultation.adviserPictureUrl || consultation.adviserPicture || consultation.adviserProfilePicture;
+    pictureUrl =
+      consultation.adviserPictureUrl ||
+      consultation.adviserPicture ||
+      consultation.adviserProfilePicture;
   }
   // ADVISER → show student
   else if (
@@ -64,7 +67,10 @@ const ConsultationCard = ({
     displayName = consultation.studentName;
     displayInitial = consultation.studentName?.charAt(0).toUpperCase() || "?";
     // Try multiple picture URL field names
-    pictureUrl = consultation.studentPictureUrl || consultation.studentPicture || consultation.studentProfilePicture;
+    pictureUrl =
+      consultation.studentPictureUrl ||
+      consultation.studentPicture ||
+      consultation.studentProfilePicture;
   }
   // FALLBACK
   else {
@@ -78,8 +84,8 @@ const ConsultationCard = ({
         <div className="compact-left">
           <div className="compact-avatar">
             {pictureUrl ? (
-              <img 
-                src={pictureUrl} 
+              <img
+                src={pictureUrl}
                 alt={displayName}
                 className="avatar-image"
               />
@@ -124,6 +130,15 @@ const ConsultationCard = ({
           <div className="compact-row">
             <span className="label">Notes:</span>
             <span className="value">{consultation.adviserNotes}</span>
+          </div>
+        )}
+
+        {consultation.rejectionReason && consultation.status === "REJECTED" && (
+          <div className="compact-row">
+            <span className="label">Reason:</span>
+            <span className="rejection-reason">
+              {consultation.rejectionReason}
+            </span>
           </div>
         )}
       </div>

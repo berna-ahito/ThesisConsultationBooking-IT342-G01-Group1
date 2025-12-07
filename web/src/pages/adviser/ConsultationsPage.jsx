@@ -18,7 +18,7 @@ const ConsultationsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [activeFilter, setActiveFilter] = useState("ALL");
+  const [activeFilter, setActiveFilter] = useState("ACTIVE");
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [selectedConsultation, setSelectedConsultation] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -45,8 +45,28 @@ const ConsultationsPage = () => {
     }
   };
 
+  const isOldConsultation = useCallback((consultation) => {
+    const consultDate = new Date(consultation.scheduledDate);
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    const isOld = consultDate < threeDaysAgo;
+    const isInactive = ["REJECTED", "CANCELLED", "COMPLETED"].includes(
+      consultation.status
+    );
+
+    return isOld && isInactive;
+  }, []);
   const filterConsultations = useCallback(() => {
-    if (activeFilter === "ALL") {
+    if (activeFilter === "ACTIVE") {
+      setFilteredConsultations(
+        consultations.filter((c) => ["PENDING", "APPROVED"].includes(c.status))
+      );
+    } else if (activeFilter === "HISTORY") {
+      setFilteredConsultations(
+        consultations.filter((c) => isOldConsultation(c))
+      );
+    } else if (activeFilter === "ALL") {
       setFilteredConsultations(consultations);
     } else {
       setFilteredConsultations(
@@ -54,7 +74,7 @@ const ConsultationsPage = () => {
       );
     }
     setPage(1);
-  }, [consultations, activeFilter]);
+  }, [consultations, activeFilter, isOldConsultation]);
 
   useEffect(() => {
     filterConsultations();
@@ -83,26 +103,22 @@ const ConsultationsPage = () => {
   };
 
   const filters = [
-    { label: "All", value: "ALL", count: consultations.length },
     {
-      label: "Pending",
-      value: "PENDING",
-      count: consultations.filter((c) => c.status === "PENDING").length,
+      label: "Active",
+      value: "ACTIVE",
+      count: consultations.filter((c) =>
+        ["PENDING", "APPROVED"].includes(c.status)
+      ).length,
     },
     {
-      label: "Approved",
-      value: "APPROVED",
-      count: consultations.filter((c) => c.status === "APPROVED").length,
+      label: "All",
+      value: "ALL",
+      count: consultations.length,
     },
     {
-      label: "Completed",
-      value: "COMPLETED",
-      count: consultations.filter((c) => c.status === "COMPLETED").length,
-    },
-    {
-      label: "Rejected",
-      value: "REJECTED",
-      count: consultations.filter((c) => c.status === "REJECTED").length,
+      label: "History",
+      value: "HISTORY",
+      count: consultations.filter((c) => isOldConsultation(c)).length,
     },
   ];
 
@@ -181,15 +197,14 @@ const ConsultationsPage = () => {
                 <div className="pagination-controls">
                   <button
                     className="pagination-btn"
-                    onClick={() =>
-                      setPage(Math.max(1, page - 1))
-                    }
+                    onClick={() => setPage(Math.max(1, page - 1))}
                     disabled={page === 1}
                   >
                     ← Previous
                   </button>
                   <span className="pagination-info">
-                    Page {page} of {Math.ceil(filteredConsultations.length / perPage)}
+                    Page {page} of{" "}
+                    {Math.ceil(filteredConsultations.length / perPage)}
                   </span>
                   <button
                     className="pagination-btn"

@@ -355,8 +355,9 @@ public class ConsultationService {
                                 consultation.getStartTime(),
                                 consultation.getScheduledEnd(),
                                 consultation.getStatus().name(),
-                                consultation.getAdviserNotes());
-                
+                                consultation.getAdviserNotes(),
+                                consultation.getRejectionReason());
+
                 // Set picture URLs
                 if (student != null) {
                         dto.setStudentPictureUrl(student.getPictureUrl());
@@ -364,7 +365,7 @@ public class ConsultationService {
                 if (adviser != null) {
                         dto.setAdviserPictureUrl(adviser.getPictureUrl());
                 }
-                
+
                 return dto;
         }
 
