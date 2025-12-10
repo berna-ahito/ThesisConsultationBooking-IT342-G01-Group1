@@ -5,9 +5,6 @@ import java.util.Collections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.cit.thesis.dto.AuthResponse;
 import com.cit.thesis.dto.CompleteProfileRequest;
@@ -30,17 +27,15 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final AuditLogService auditLogService;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            JwtUtil jwtUtil, AuditLogService auditLogService) {
+            JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
-        this.auditLogService = auditLogService;
     }
 
     public AuthResponse loginWithGoogle(GoogleLoginRequest request) {
@@ -105,16 +100,6 @@ public class AuthService {
             String token = user.getRole() != null
                     ? jwtUtil.generateToken(user.getEmail(), user.getRole().name())
                     : jwtUtil.generateToken(user.getEmail());
-
-            // 5. Log successful login
-            auditLogService.log(
-                    user.getId(),
-                    user.getEmail(),
-                    "USER_LOGIN",
-                    "User",
-                    user.getId(),
-                    "Google OAuth login",
-                    getClientIp());
 
             // 6. Return response
             return buildAuthResponse(user, token);
@@ -188,16 +173,6 @@ public class AuthService {
 
         user = userRepository.save(user);
 
-        /// Log profile completion
-        auditLogService.log(
-                user.getId(),
-                user.getEmail(),
-                "PROFILE_COMPLETED",
-                "User",
-                user.getId(),
-                "Completed profile as " + user.getRole().name(),
-                getClientIp());
-
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
         return buildAuthResponse(user, token);
     }
@@ -231,16 +206,6 @@ public class AuthService {
                     "Your account is pending IT Department approval. Please check back later.");
         }
 
-        // Log successful login
-        auditLogService.log(
-                user.getId(),
-                user.getEmail(),
-                "USER_LOGIN",
-                "User",
-                user.getId(),
-                "Email/password login",
-                getClientIp());
-
         String token = user.getRole() != null
                 ? jwtUtil.generateToken(user.getEmail(), user.getRole().name())
                 : jwtUtil.generateToken(user.getEmail());
@@ -264,16 +229,6 @@ public class AuthService {
 
         user = userRepository.save(user);
 
-        // Log new registration
-        auditLogService.log(
-                user.getId(),
-                user.getEmail(),
-                "USER_REGISTERED",
-                "User",
-                user.getId(),
-                "New user registration via email",
-                getClientIp());
-
         String token = user.getRole() != null
                 ? jwtUtil.generateToken(user.getEmail(), user.getRole().name())
                 : jwtUtil.generateToken(user.getEmail());
@@ -295,23 +250,5 @@ public class AuthService {
                 user.getAccountStatus());
 
         return new AuthResponse(token, userDto);
-    }
-
-    private String getClientIp() {
-        try {
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder
-                    .getRequestAttributes();
-            if (attributes != null) {
-                HttpServletRequest request = attributes.getRequest();
-                String ip = request.getHeader("X-Forwarded-For");
-                if (ip == null || ip.isEmpty()) {
-                    ip = request.getRemoteAddr();
-                }
-                return ip;
-            }
-        } catch (Exception e) {
-            // Ignore
-        }
-        return "unknown";
     }
 }

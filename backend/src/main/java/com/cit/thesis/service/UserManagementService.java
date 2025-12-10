@@ -22,13 +22,11 @@ import java.util.stream.Collectors;
 public class UserManagementService {
 
         private final UserRepository userRepository;
-        private final AuditLogService auditLogService;
         private final ConsultationRepository consultationRepository;
 
-        public UserManagementService(UserRepository userRepository, AuditLogService auditLogService,
+        public UserManagementService(UserRepository userRepository,
                         ConsultationRepository consultationRepository) {
                 this.userRepository = userRepository;
-                this.auditLogService = auditLogService;
                 this.consultationRepository = consultationRepository;
         }
 
@@ -82,16 +80,6 @@ public class UserManagementService {
 
                 user = userRepository.save(user);
 
-                // Log user approval
-                auditLogService.log(
-                                null,
-                                "system",
-                                "USER_APPROVED",
-                                "User",
-                                user.getId(),
-                                "Admin approved " + user.getEmail() + " as " + user.getRole().name(),
-                                null);
-
                 return convertToDto(user);
         }
 
@@ -103,16 +91,6 @@ public class UserManagementService {
                 if (!"PENDING".equals(user.getAccountStatus())) {
                         throw new RuntimeException("User is not pending approval");
                 }
-
-                // Log user rejection
-                auditLogService.log(
-                                null,
-                                "system",
-                                "USER_REJECTED",
-                                "User",
-                                user.getId(),
-                                "Admin rejected " + user.getEmail(),
-                                null);
 
                 userRepository.delete(user);
 
@@ -129,31 +107,12 @@ public class UserManagementService {
                 long totalConsultations = studentConsultations + adviserConsultations;
 
                 if (totalConsultations == 0) {
-                        // Hard delete - remove completely from database
-                        auditLogService.log(
-                                        null,
-                                        "system",
-                                        "USER_HARD_DELETED",
-                                        "User",
-                                        user.getId(),
-                                        "Admin permanently deleted " + user.getEmail() + " (no consultations)",
-                                        null);
 
                         userRepository.delete(user);
                 } else {
                         // Soft delete - keep for audit trail
                         user.setAccountStatus("DEACTIVATED");
                         user.setActive(false);
-
-                        auditLogService.log(
-                                        null,
-                                        "system",
-                                        "USER_SOFT_DELETED",
-                                        "User",
-                                        user.getId(),
-                                        "Admin deactivated " + user.getEmail() + " (" + totalConsultations
-                                                        + " consultations)",
-                                        null);
 
                         userRepository.save(user);
                 }
