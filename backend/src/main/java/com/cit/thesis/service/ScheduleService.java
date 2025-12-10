@@ -42,10 +42,13 @@ public class ScheduleService {
                 User adviser = userRepository.findByEmail(email)
                                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+                LocalDate today = LocalDate.now();
                 List<Schedule> schedules = scheduleRepository
                                 .findByAdviserIdOrderByAvailableDateAsc(adviser.getId());
 
+                // Filter to only show today and future schedules
                 return schedules.stream()
+                                .filter(schedule -> !schedule.getAvailableDate().isBefore(today))
                                 .map(this::mapToDto)
                                 .collect(Collectors.toList());
         }
@@ -54,11 +57,14 @@ public class ScheduleService {
                 User adviser = userRepository.findByEmail(email)
                                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+                LocalDate today = LocalDate.now();
                 Pageable pageable = PageRequest.of(page, size);
                 Page<Schedule> schedulePage = scheduleRepository
                                 .findByAdviserIdOrderByAvailableDateAsc(adviser.getId(), pageable);
 
+                // Filter out past schedules
                 List<ScheduleDto> dtos = schedulePage.getContent().stream()
+                                .filter(schedule -> !schedule.getAvailableDate().isBefore(today))
                                 .map(this::mapToDto)
                                 .collect(Collectors.toList());
 
