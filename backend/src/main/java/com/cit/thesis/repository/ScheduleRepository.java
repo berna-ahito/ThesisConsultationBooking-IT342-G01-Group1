@@ -18,6 +18,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
         List<Schedule> findByIsBookedFalseAndAvailableDateAfterOrderByAvailableDateAsc(LocalDate date);
 
+        @Query("SELECT s FROM Schedule s WHERE s.isBooked = false AND s.availableDate >= :date ORDER BY s.availableDate ASC")
+        List<Schedule> findAvailableSchedulesFromDate(@Param("date") LocalDate date);
+
         Page<Schedule> findByAdviserIdOrderByAvailableDateAsc(Long adviserId, Pageable pageable);
 
         @Query("SELECT s FROM Schedule s WHERE s.adviserId = :adviserId " +

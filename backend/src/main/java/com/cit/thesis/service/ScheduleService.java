@@ -31,7 +31,7 @@ public class ScheduleService {
         public List<ScheduleDto> getAvailableSchedules() {
                 LocalDate today = LocalDate.now();
                 List<Schedule> schedules = scheduleRepository
-                                .findByIsBookedFalseAndAvailableDateAfterOrderByAvailableDateAsc(today);
+                                .findAvailableSchedulesFromDate(today);
 
                 return schedules.stream()
                                 .map(this::mapToDto)
