@@ -1,0 +1,54 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="256dp"
+    android:height="256dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+    
+    <!-- Rounded square background with gradient (dark blue to teal) -->
+    <path
+        android:pathData="M 32,32 L 224,32 Q 224,32 224,64 L 224,192 Q 224,224 192,224 L 64,224 Q 32,224 32,192 L 32,64 Q 32,32 32,32 Z"
+        android:fillColor="#001F3F" />
+    
+    <path
+        android:pathData="M 32,32 L 224,32 Q 224,32 224,64 L 224,192 Q 224,224 192,224 L 64,224 Q 32,224 32,192 L 32,64 Q 32,32 32,32 Z"
+        android:fillColor="#00B8D9"
+        android:fillAlpha="0.7" />
+    
+    <!-- Left roof beam (diagonal line) -->
+    <path
+        android:pathData="M 50,90 L 130,50"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="20"
+        android:strokeLineCap="round" />
+    
+    <!-- Right roof beam (diagonal line) -->
+    <path
+        android:pathData="M 206,90 L 126,50"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="20"
+        android:strokeLineCap="round" />
+    
+    <!-- Left vertical bar -->
+    <path
+        android:pathData="M 70,130 L 70,200 Q 70,216 86,216 Q 102,216 102,200 L 102,160"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="18"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent" />
+    
+    <!-- Middle vertical bar -->
+    <path
+        android:pathData="M 128,130 L 128,200 Q 128,216 144,216 Q 160,216 160,200 L 160,130"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="18"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent" />
+    
+    <!-- Right vertical bar -->
+    <path
+        android:pathData="M 186,130 L 186,200 Q 186,216 202,216 Q 218,216 218,200 L 218,160"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="18"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent" />
+</vector>
