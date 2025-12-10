@@ -26,16 +26,13 @@ public class ConsultationService {
         private final ConsultationRepository consultationRepository;
         private final ScheduleRepository scheduleRepository;
         private final UserRepository userRepository;
-        private final AuditLogService auditLogService;
 
         public ConsultationService(ConsultationRepository consultationRepository,
                         ScheduleRepository scheduleRepository,
-                        UserRepository userRepository,
-                        AuditLogService auditLogService) {
+                        UserRepository userRepository) {
                 this.consultationRepository = consultationRepository;
                 this.scheduleRepository = scheduleRepository;
                 this.userRepository = userRepository;
-                this.auditLogService = auditLogService;
         }
 
         public List<ConsultationDto> getMyConsultations(String email) {
@@ -134,16 +131,6 @@ public class ConsultationService {
                 schedule.setIsBooked(true);
                 scheduleRepository.save(schedule);
 
-                // Log consultation booking
-                auditLogService.log(
-                                student.getId(),
-                                student.getEmail(),
-                                "CONSULTATION_BOOKED",
-                                "Consultation",
-                                consultation.getId(),
-                                "Booked consultation with " + adviser.getName() + " on " + schedule.getAvailableDate(),
-                                null);
-
                 return mapToDto(consultation);
 
         }
@@ -187,16 +174,6 @@ public class ConsultationService {
 
                 consultation.setStatus(ConsultationStatus.CANCELLED);
                 consultationRepository.save(consultation);
-
-                // Log cancellation
-                auditLogService.log(
-                                user.getId(),
-                                user.getEmail(),
-                                "CONSULTATION_CANCELLED",
-                                "Consultation",
-                                consultation.getId(),
-                                "Cancelled consultation on " + consultation.getScheduledDate(),
-                                null);
         }
 
         public ConsultationDto getConsultationDetails(Long consultationId, String email) {
@@ -248,16 +225,6 @@ public class ConsultationService {
                 consultation.setStatus(ConsultationStatus.APPROVED);
                 consultation = consultationRepository.save(consultation);
 
-                // Log approval
-                auditLogService.log(
-                                adviser.getId(),
-                                adviser.getEmail(),
-                                "CONSULTATION_APPROVED",
-                                "Consultation",
-                                consultation.getId(),
-                                "Approved consultation with student ID " + consultation.getStudentId(),
-                                null);
-
                 return mapToDto(consultation);
         }
 
@@ -290,16 +257,6 @@ public class ConsultationService {
                 consultation.setRejectionReason(rejectionReason);
                 consultation = consultationRepository.save(consultation);
 
-                // Log rejection
-                auditLogService.log(
-                                adviser.getId(),
-                                adviser.getEmail(),
-                                "CONSULTATION_REJECTED",
-                                "Consultation",
-                                consultation.getId(),
-                                "Rejected consultation. Reason: " + rejectionReason,
-                                null);
-
                 return mapToDto(consultation);
         }
 
@@ -324,16 +281,6 @@ public class ConsultationService {
                 }
 
                 consultation = consultationRepository.save(consultation);
-
-                // Log notes addition
-                auditLogService.log(
-                                adviser.getId(),
-                                adviser.getEmail(),
-                                "CONSULTATION_NOTES_ADDED",
-                                "Consultation",
-                                consultation.getId(),
-                                "Added notes and marked as completed",
-                                null);
 
                 return mapToDto(consultation);
         }

@@ -19,7 +19,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ConsultationRepository consultationRepository;
-    private final AuditLogService auditLogService;
 
     @Value("${supabase.url}")
     private String supabaseUrl;
@@ -30,11 +29,9 @@ public class UserService {
     @Value("${supabase.storage.bucket}")
     private String storageBucket;
 
-    public UserService(UserRepository userRepository, ConsultationRepository consultationRepository,
-            AuditLogService auditLogService) {
+    public UserService(UserRepository userRepository, ConsultationRepository consultationRepository) {
         this.userRepository = userRepository;
         this.consultationRepository = consultationRepository;
-        this.auditLogService = auditLogService;
     }
 
     public UserDto getUserProfile(String email) {
@@ -70,16 +67,6 @@ public class UserService {
         }
 
         user = userRepository.save(user);
-
-        // Log profile update
-        auditLogService.log(
-                user.getId(),
-                user.getEmail(),
-                "PROFILE_UPDATED",
-                "User",
-                user.getId(),
-                "Updated profile information",
-                null);
 
         return convertToDto(user);
     }
@@ -155,16 +142,6 @@ public class UserService {
         user.setActive(false);
         user.setAccountStatus("DEACTIVATED");
         userRepository.save(user);
-
-        // Log self-deactivation
-        auditLogService.log(
-                user.getId(),
-                user.getEmail(),
-                "ACCOUNT_SELF_DEACTIVATED",
-                "User",
-                user.getId(),
-                "User deactivated their own account",
-                null);
     }
 
     @Transactional
@@ -175,16 +152,6 @@ public class UserService {
         user.setActive(false);
         user.setAccountStatus("DEACTIVATED");
         user = userRepository.save(user);
-
-        // Log admin deactivation
-        auditLogService.log(
-                null,
-                "admin",
-                "USER_DEACTIVATED",
-                "User",
-                user.getId(),
-                "Admin deactivated user: " + user.getEmail(),
-                null);
 
         return convertToDto(user);
     }
@@ -197,16 +164,6 @@ public class UserService {
         user.setActive(true);
         user.setAccountStatus("ACTIVE");
         user = userRepository.save(user);
-
-        // Log reactivation
-        auditLogService.log(
-                null,
-                "admin",
-                "USER_REACTIVATED",
-                "User",
-                user.getId(),
-                "Admin reactivated user: " + user.getEmail(),
-                null);
 
         return convertToDto(user);
     }
@@ -229,16 +186,6 @@ public class UserService {
                         "Cannot delete user with existing consultations. Please deactivate instead.");
             }
         }
-
-        // Log deletion
-        auditLogService.log(
-                null,
-                "admin",
-                "USER_PERMANENTLY_DELETED",
-                "User",
-                user.getId(),
-                "Admin permanently deleted user: " + user.getEmail(),
-                null);
 
         userRepository.delete(user);
     }
