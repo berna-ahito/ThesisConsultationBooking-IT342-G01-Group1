@@ -3,6 +3,8 @@ package com.cit.thesis.repository;
 import com.cit.thesis.model.Consultation;
 import com.cit.thesis.model.ConsultationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,4 +33,8 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
     long countByAdviserId(Long adviserId);
 
     Page<Consultation> findByStudentIdOrderByScheduledDateDesc(Long studentId, Pageable pageable);
+
+    @Query("SELECT c FROM Consultation c WHERE c.studentId = :studentId AND c.scheduledDate >= :date ORDER BY c.scheduledDate ASC")
+    List<Consultation> findUpcomingConsultationsFromDate(@Param("studentId") Long studentId,
+            @Param("date") LocalDate date);
 }

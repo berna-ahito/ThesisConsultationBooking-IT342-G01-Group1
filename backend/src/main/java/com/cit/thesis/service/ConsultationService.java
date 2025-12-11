@@ -53,7 +53,7 @@ public class ConsultationService {
 
                 LocalDate today = LocalDate.now();
                 List<Consultation> consultations = consultationRepository
-                                .findByStudentIdAndScheduledDateAfterOrderByScheduledDateAsc(user.getId(), today);
+                                .findUpcomingConsultationsFromDate(user.getId(), today);
 
                 return consultations.stream()
                                 .map(this::mapToDto)
