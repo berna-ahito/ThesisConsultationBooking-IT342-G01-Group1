@@ -27,6 +27,7 @@ const StudentDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [pendingCount, setPendingCount] = useState(0);
   const [upcomingCount, setUpcomingCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
 
   const fetchConsultations = useCallback(async () => {
     try {
@@ -47,7 +48,9 @@ const StudentDashboard = () => {
         title: consultation.topic || "Thesis Consultation",
         adviser: consultation.adviserName || "Adviser",
         adviserPicture: consultation.adviserPictureUrl,
-        time: `${formatTo12Hour(consultation.startTime)} - ${formatTo12Hour(consultation.endTime)}`,
+        time: `${formatTo12Hour(consultation.startTime)} - ${formatTo12Hour(
+          consultation.endTime
+        )}`,
         status: consultation.status.toLowerCase(),
       }));
 
@@ -55,6 +58,9 @@ const StudentDashboard = () => {
 
       setPendingCount(allArray.filter((c) => c.status === "PENDING").length);
       setUpcomingCount(allArray.filter((c) => c.status === "APPROVED").length);
+      setCompletedCount(
+        allArray.filter((c) => c.status === "COMPLETED").length
+      );
     } catch (error) {
       console.error("Failed to fetch consultations:", error);
     } finally {
@@ -84,7 +90,7 @@ const StudentDashboard = () => {
     },
     {
       label: "Completed",
-      value: 0,
+      value: completedCount,
       description: "Sessions this semester",
     },
   ];
